@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeGamestore.Infrastructure", "PracticeGamestore.Infrastructure\PracticeGamestore.Infrastructure.csproj", "{4D746D23-E148-4682-9B9F-C7282766C4F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeGamestore.API", "PracticeGamestore.API\PracticeGamestore.API.csproj", "{4D746D23-E148-4682-9B9F-C7282766C4F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeGamestore.DataAccess", "PracticeGamestore.DataAccess\PracticeGamestore.DataAccess.csproj", "{7A93E1FF-127B-4B77-81B7-2D0B16764AB2}"
 EndProject
