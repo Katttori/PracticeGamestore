@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeGamestore.API", "Pr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeGamestore.DataAccess", "PracticeGamestore.DataAccess\PracticeGamestore.DataAccess.csproj", "{7A93E1FF-127B-4B77-81B7-2D0B16764AB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeGamestore.Business", "PracticeGamestore.Business\PracticeGamestore.Business.csproj", "{CF0E404F-5475-48D0-AD7C-8B229904FAF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{7A93E1FF-127B-4B77-81B7-2D0B16764AB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A93E1FF-127B-4B77-81B7-2D0B16764AB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A93E1FF-127B-4B77-81B7-2D0B16764AB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF0E404F-5475-48D0-AD7C-8B229904FAF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF0E404F-5475-48D0-AD7C-8B229904FAF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF0E404F-5475-48D0-AD7C-8B229904FAF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF0E404F-5475-48D0-AD7C-8B229904FAF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
