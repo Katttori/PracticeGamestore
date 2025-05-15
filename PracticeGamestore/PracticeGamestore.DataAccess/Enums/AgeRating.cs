@@ -1,6 +1,6 @@
 namespace PracticeGamestore.DataAccess.Enums;
 
-public enum AgeCategory
+public enum AgeRating
 {
     ThreePlus = 3,
     SevenPlus = 7,

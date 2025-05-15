@@ -10,7 +10,7 @@ public class Game
     public byte[]? Picture { get; set; }
     public string Description { get; set; } = string.Empty;
     public double Rating { get; set; }
-    public AgeCategory AgeCategory { get; set; }
+    public AgeRating AgeRating { get; set; }
     public DateTime ReleaseDate { get; set; }
     public Guid PublisherId { get; set; }
     public Publisher Publisher { get; set; } = null!;
