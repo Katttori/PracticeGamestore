@@ -1,17 +1,7 @@
+using PracticeGamestore.DataAccess.Enums;
 namespace PracticeGamestore.DataAccess.Entities;
 
-public enum AgeCategoryEnum
-{
-    Toddlers,
-    Children, 
-    Preteens, 
-    Teens,
-    Adults,
-    MatureAdults,
-    ForEveryone
-}
-
-public class GameEntity
+public class Game
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -20,10 +10,8 @@ public class GameEntity
     public byte[]? Picture { get; set; }
     public string Description { get; set; } = string.Empty;
     public double Rating { get; set; }
-    public AgeCategoryEnum AgeCategory { get; set; }
+    public AgeCategory AgeCategory { get; set; }
     public DateTime ReleaseDate { get; set; }
     public Guid PublisherId { get; set; }
-
-    public PublisherEntity Publisher { get; set; } = null!;
-
+    public Publisher Publisher { get; set; } = null!;
 }
