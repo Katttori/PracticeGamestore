@@ -8,11 +8,11 @@ public class GameOrder: IEntityTypeConfiguration<Entities.GameOrder>
     {
         builder.ToTable("game_order");
         
-        builder.Property(go=> go.Game)
+        builder.Property(go=> go.GameId)
             .HasColumnName("game_id")
             .IsRequired();
 
-        builder.Property(go => go.Order)
+        builder.Property(go => go.OrderId)
             .HasColumnName("order_id")
             .IsRequired();
         

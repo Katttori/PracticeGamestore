@@ -13,6 +13,8 @@ public class BlackList: IEntityTypeConfiguration<Blacklist>
             .HasColumnName("id")
             .ValueGeneratedOnAdd()
             .IsRequired();
+        
+        builder.HasKey(b => b.Id);
 
         builder.Property(b => b.CountryId)
             .HasColumnName("country_id")

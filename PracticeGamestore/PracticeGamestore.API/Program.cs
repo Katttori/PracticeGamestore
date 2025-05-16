@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using PracticeGamestore.DataAccess;
+using PracticeGamestore.DataAccess.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<GamestoreDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GamestoreDatabase")));
-
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
