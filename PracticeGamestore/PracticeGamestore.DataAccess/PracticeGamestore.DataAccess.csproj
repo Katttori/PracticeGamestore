@@ -8,6 +8,24 @@
 
     <ItemGroup>
       <None Remove="Properties\launchSettings.json" />
+      <None Remove="Configurations\GameOrderConfiguration\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.13" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.13" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.13">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Configurations\GameOrderConfiguration\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Configurations\GameOrderConfiguration\**" />
     </ItemGroup>
 
 </Project>
