@@ -9,11 +9,20 @@
 
     <ItemGroup>
         <ProjectReference Include="../PracticeGamestore.DataAccess/PracticeGamestore.DataAccess.csproj" />
+        <ProjectReference Include="..\PracticeGamestore.Business\PracticeGamestore.Business.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.13"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.13">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove=".env" />
     </ItemGroup>
 
 </Project>
