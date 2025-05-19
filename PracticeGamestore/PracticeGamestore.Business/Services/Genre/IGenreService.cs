@@ -1,12 +1,12 @@
-using PracticeGamestore.Business.Models;
+using PracticeGamestore.Business.DataTransferObjects;
 
 namespace PracticeGamestore.Business.Services.Genre;
 
 public interface IGenreService
 {
-    public Task<IEnumerable<GenreModel>> GetAllAsync();
-    public Task<GenreModel?> GetByIdAsync(Guid id);
-    public Task<Guid?> CreateAsync(GenreModel model);
-    public Task<bool> UpdateAsync(GenreModel model);
+    public Task<IEnumerable<GenreDto>> GetAllAsync();
+    public Task<GenreDto?> GetByIdAsync(Guid id);
+    public Task<Guid?> CreateAsync(GenreDto model);
+    public Task<bool> UpdateAsync(GenreDto model);
     public Task DeleteAsync(Guid id);
 }

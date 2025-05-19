@@ -1,6 +1,6 @@
-namespace PracticeGamestore.DTOs.Genre;
+namespace PracticeGamestore.Models.Genre;
 
-public class GenreDto
+public class GenreResponseModel
 {
     public Guid Id { get; set; }
     public required string Name { get; set; }

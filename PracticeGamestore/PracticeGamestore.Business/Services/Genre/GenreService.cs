@@ -1,33 +1,40 @@
+using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
-using PracticeGamestore.Business.Models;
 using PracticeGamestore.DataAccess.Repositories.Genre;
 
 namespace PracticeGamestore.Business.Services.Genre;
 
 public class GenreService(IGenreRepository genreRepository, IUnitOfWork unitOfWork) : IGenreService
 {
-    public async Task<IEnumerable<GenreModel>> GetAllAsync()
+    public async Task<IEnumerable<GenreDto>> GetAllAsync()
     {
         var entities = await genreRepository.GetAllAsync();
-        return entities.Select(e => e.ToModel());
+        return entities.Select(e => e.ToDto());
     }
 
-    public async Task<GenreModel?> GetByIdAsync(Guid id)
+    public async Task<GenreDto?> GetByIdAsync(Guid id)
     {
         var entity = await genreRepository.GetByIdAsync(id);
-        return entity?.ToModel();
+        return entity?.ToDto();
     }
 
-    public async Task<Guid?> CreateAsync(GenreModel model)
+    public async Task<Guid?> CreateAsync(GenreDto model)
     {
-        var id = await genreRepository.CreateAsync(model.ToEntity());
+        var createdId = await genreRepository.CreateAsync(model.ToEntity());
         var changes = await unitOfWork.SaveChangesAsync();
-        return changes > 0 ? id : null;
+        return changes > 0 ? createdId : null;
     }
 
-    public async Task<bool> UpdateAsync(GenreModel model)
+    public async Task<bool> UpdateAsync(GenreDto model)
     {
-        await genreRepository.UpdateAsync(model.ToEntity());
+        var entity = await genreRepository.GetByIdAsync(model.Id);
+        if (entity is null) return false;
+        
+        entity.Name = model.Name;
+        entity.ParentId = model.ParentId;
+        entity.Description = model.Description;
+        
+        genreRepository.Update(entity);
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0;
     }
