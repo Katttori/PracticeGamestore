@@ -19,21 +19,21 @@ public class GenreService(IGenreRepository genreRepository, IUnitOfWork unitOfWo
         return entity?.ToDto();
     }
 
-    public async Task<Guid?> CreateAsync(GenreDto model)
+    public async Task<Guid?> CreateAsync(GenreDto dto)
     {
-        var createdId = await genreRepository.CreateAsync(model.ToEntity());
+        var createdId = await genreRepository.CreateAsync(dto.ToEntity());
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0 ? createdId : null;
     }
 
-    public async Task<bool> UpdateAsync(GenreDto model)
+    public async Task<bool> UpdateAsync(GenreDto dto)
     {
-        var entity = await genreRepository.GetByIdAsync(model.Id);
+        var entity = await genreRepository.GetByIdAsync(dto.Id);
         if (entity is null) return false;
         
-        entity.Name = model.Name;
-        entity.ParentId = model.ParentId;
-        entity.Description = model.Description;
+        entity.Name = dto.Name;
+        entity.ParentId = dto.ParentId;
+        entity.Description = dto.Description;
         
         genreRepository.Update(entity);
         var changes = await unitOfWork.SaveChangesAsync();
