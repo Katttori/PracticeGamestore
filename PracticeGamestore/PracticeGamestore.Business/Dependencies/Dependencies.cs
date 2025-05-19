@@ -15,8 +15,7 @@ public static class Dependencies
     private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<GamestoreDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+            options.UseSqlServer(configuration.GetConnectionString("GamestoreDatabase")));
     }
 
     public static void AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
