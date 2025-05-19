@@ -1,6 +1,7 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Repositories.Genre;
+using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Genre;
 

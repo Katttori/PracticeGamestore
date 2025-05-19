@@ -19,21 +19,27 @@ public class GenreController(IGenreService genreService) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var genre = await genreService.GetByIdAsync(id);
-        return genre is null ? NotFound() : Ok(genre.ToModel());
+        return genre is null
+            ? NotFound($"Genre with id: {id} was not found.") 
+            : Ok(genre.ToModel());
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GenreRequestModel model)
     {
         var createdId = await genreService.CreateAsync(model.ToDto());
-        return createdId is null ? BadRequest() : CreatedAtAction(nameof(GetById), new { id = createdId }, createdId);
+        return createdId is null 
+            ? BadRequest("Failed to create genre.") 
+            : CreatedAtAction(nameof(GetById), new { id = createdId }, createdId);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] GenreRequestModel model)
     {
         var isUpdated = await genreService.UpdateAsync(model.ToDto());
-        return isUpdated ? NoContent() : BadRequest();
+        return isUpdated 
+            ? NoContent() 
+            : BadRequest($"Update failed. Genre with id: {id} might not exist.");
     }
 
     [HttpDelete("{id:guid}")]

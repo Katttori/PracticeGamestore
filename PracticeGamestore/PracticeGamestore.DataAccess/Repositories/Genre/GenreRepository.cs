@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace PracticeGamestore.DataAccess.Repositories.Genre;
 
 public class GenreRepository(GamestoreDbContext context) : IGenreRepository
