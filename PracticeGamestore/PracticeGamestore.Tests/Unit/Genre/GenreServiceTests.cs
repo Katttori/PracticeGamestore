@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
@@ -32,9 +31,9 @@ public class GenreServiceTests
         };
         _genreRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(entities);
         
-        var result = await _service.GetAllAsync();
+        var result = (await _service.GetAllAsync()).ToList();
         
-        Assert.That(result.Count(), Is.EqualTo(entities.Count));
+        Assert.That(result.Count, Is.EqualTo(entities.Count));
         Assert.That(result.First().Id, Is.EqualTo(entities.First().Id));
         Assert.That(result.First().Name, Is.EqualTo(entities.First().Name));
     }
@@ -42,7 +41,7 @@ public class GenreServiceTests
     [Test]
     public async Task GetByIdAsync_WhenGenreExists_ReturnsGenreDto()
     {
-        var entity = new DataAccess.Entities.Genre() { Id = Guid.NewGuid(), Name = "Strategy" };
+        var entity = new DataAccess.Entities.Genre { Id = Guid.NewGuid(), Name = "Strategy" };
         _genreRepositoryMock.Setup(x => x.GetByIdAsync(entity.Id)).ReturnsAsync(entity);
         
         var result = await _service.GetByIdAsync(entity.Id);
@@ -55,10 +54,86 @@ public class GenreServiceTests
     [Test]
     public async Task GetByIdAsync_WhenGenreDoesNotExist_ReturnsNull()
     {
-        _genreRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as DataAccess.Entities.Genre);
+        _genreRepositoryMock
+            .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(null as DataAccess.Entities.Genre);
         
         var result = await _service.GetByIdAsync(Guid.NewGuid());
         
         Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public async Task CreateAsync_WhenChangesSavedSuccessfully_ReturnsCreatedId()
+    {
+        var dto = new GenreDto(Guid.NewGuid(), "Action");
+        _genreRepositoryMock
+            .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
+            .ReturnsAsync(dto.Id);
+        _unitOfWorkMock
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
+        
+        var result = await _service.CreateAsync(dto);
+        
+        Assert.That(result, Is.EqualTo(dto.Id));
+    }
+    
+    [Test]
+    public async Task CreateAsync_WhenSaveChangesFailed_ReturnsNull()
+    {
+        var dto = new GenreDto(Guid.NewGuid(), "Action");
+        _genreRepositoryMock
+            .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
+            .ReturnsAsync(dto.Id);
+        _unitOfWorkMock
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(0);
+        
+        var result = await _service.CreateAsync(dto);
+        
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ReturnsTrue()
+    {
+        var id = Guid.NewGuid();
+        var dto = new GenreDto(id, "Action");
+        var entity = new DataAccess.Entities.Genre { Id = id, Name = "Action" };
+        _genreRepositoryMock
+            .Setup(x => x.GetByIdAsync(entity.Id))
+            .ReturnsAsync(entity);
+        _unitOfWorkMock
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
+        
+        var result = await _service.UpdateAsync(dto);
+        
+        Assert.That(result, Is.True);
+    }
+    
+    [Test]
+    public async Task UpdateAsync_WhenEntityDoesNotExist_ReturnsFalse()
+    {
+        var dto = new GenreDto(Guid.NewGuid(), "Action");
+        _genreRepositoryMock
+            .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(null as DataAccess.Entities.Genre);
+        
+        var result = await _service.UpdateAsync(dto);
+        
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public async Task DeleteAsync_CallsDeleteAndSaveChanges()
+    {
+        var id = Guid.NewGuid();
+        
+         await _service.DeleteAsync(id);
+         
+         _genreRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
+         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 }
