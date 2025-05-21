@@ -32,8 +32,9 @@ public class PlatformService: IPlatformService
     {
         var entity = platform.MapToEntity();
         var id = await _repository.CreateAsync(entity);
-        await _unitOfWork.SaveChangesAsync();
-        return id != Guid.Empty ? id : null;
+        var changes = await _unitOfWork.SaveChangesAsync();
+        
+        return changes > 0 ? entity.Id : null;
     }
     
     public async Task<bool> UpdateAsync(PlatformDto platform)
@@ -44,10 +45,9 @@ public class PlatformService: IPlatformService
         p.Name = platform.Name;
         p.Description = platform.Description;
         
-        var updatedPlatform = await _repository.UpdateAsync(p);
-        if (updatedPlatform is null) return false;
-        await _unitOfWork.SaveChangesAsync();
-        return true;
+        _repository.UpdateAsync(p);
+        var changes = await _unitOfWork.SaveChangesAsync();
+        return changes > 0;
     }
     
     public async Task DeleteAsync(Guid id)
