@@ -36,7 +36,7 @@ public class PlatformController: ControllerBase
         var platformDto = platform.MapToPlatformDto();
         var id = await _platformService.CreateAsync(platformDto);
         if (id is null) return BadRequest("Failed to create platform");
-        return CreatedAtAction(nameof(GetPlatformById), new { id }, platform);
+        return CreatedAtAction(nameof(GetPlatformById), new { id },  platformDto.MapToPlatformModel());
     }
     
     [HttpPut("{id:guid}")]
