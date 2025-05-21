@@ -22,16 +22,9 @@ public class PlatformRepository(GamestoreDbContext context): IPlatformRepository
         return p.Entity.Id;
     }
     
-    public async Task<Entities.Platform?> UpdateAsync(Entities.Platform platform)
+    public async void Update(Entities.Platform platform)
     {
-        var p = await context.Platforms.FirstOrDefaultAsync(p => p.Id == platform.Id);
-        if (p is null) return null;
-        
-        p.Name = platform.Name;
-        p.Description = platform.Description;
-        
-        context.Platforms.Update(p);
-        return p;
+        context.Platforms.Update(platform);
     }
     
     public async Task DeleteAsync(Guid id)
