@@ -22,17 +22,9 @@ public class CountryRepository(GamestoreDbContext context): ICountryRepository
         return c.Entity.Id;
     }
     
-    public async Task<Entities.Country>? UpdateAsync(Entities.Country country)
+    public void Update(Entities.Country country)
     {
-        var c = await context.Countries.FirstOrDefaultAsync(c => c.Id == country.Id);
-        if (c == null) return null;
-
-        c.Name = country.Name;
-        c.Blacklists = country.Blacklists;
-        c.CountryStatus = country.CountryStatus;
-        
-        context.Countries.Update(c);
-        return c;
+        context.Countries.Update(country);
     }
     
     public async Task DeleteAsync(Guid id)
