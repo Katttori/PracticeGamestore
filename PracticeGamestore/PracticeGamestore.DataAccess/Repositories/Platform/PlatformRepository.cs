@@ -30,6 +30,7 @@ public class PlatformRepository(GamestoreDbContext context): IPlatformRepository
         p.Name = platform.Name;
         p.Description = platform.Description;
         
+        context.Platforms.Update(p);
         return p;
     }
     
