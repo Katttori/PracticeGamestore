@@ -23,6 +23,7 @@ public class GenreControllerTests
     [Test]
     public async Task GetAll_ReturnsOkWithGenres()
     {
+        //Arrange
         var genreDtos = new List<GenreDto>
         {
             new(Guid.NewGuid(), "FPS"),
@@ -30,8 +31,10 @@ public class GenreControllerTests
         };
         _genreServiceMock.Setup(x => x.GetAllAsync()).ReturnsAsync(genreDtos);
         
+        // Act
         var result = await _genreController.GetAll();
         
+        // Assert
         var okResult = result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         var responseModels = 
@@ -44,10 +47,13 @@ public class GenreControllerTests
     [Test]
     public async Task GetById_WhenGenreIsNull_ReturnsNotFound()
     {
+        //Arrange
         _genreServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as GenreDto);
         
+        // Act
         var result = await _genreController.GetById(Guid.NewGuid());
         
+        // Assert
         var notFoundResult = result as NotFoundObjectResult;
         Assert.That(notFoundResult, Is.Not.Null);
     }
@@ -55,11 +61,14 @@ public class GenreControllerTests
     [Test]
     public async Task GetById_WhenGenreFound_ReturnsOkWithGenre()
     {
+        //Arrange
         var genreDto = new GenreDto(Guid.NewGuid(), "FPS");
         _genreServiceMock.Setup(x => x.GetByIdAsync(genreDto.Id)).ReturnsAsync(genreDto);
         
+        // Act
         var result = await _genreController.GetById(genreDto.Id);
         
+        // Assert
         var okResult = result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         var receivedGenre = okResult?.Value as GenreResponseModel;
@@ -71,11 +80,14 @@ public class GenreControllerTests
     [Test]
     public async Task Create_WhenOperationFailed_ReturnsBadRequest()
     {
+        //Arrange
         var model = new GenreRequestModel { Name = "FPS" };
         _genreServiceMock.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(null as Guid?);
         
+        // Act
         var result = await _genreController.Create(model);
         
+        // Assert
         var badRequestResult = result as BadRequestObjectResult;
         Assert.That(badRequestResult, Is.Not.Null);
     }
@@ -83,11 +95,14 @@ public class GenreControllerTests
     [Test]
     public async Task Create_WhenOperationSuccessful_ReturnsCreatedWithId()
     {
+        //Arrange
         var newId = Guid.NewGuid();
         _genreServiceMock.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(newId);
         
+        // Act
         var result = await _genreController.Create(new GenreRequestModel { Name = "FPS" });
         
+        // Assert
         var createdResult = result as CreatedAtActionResult;
         Assert.That(createdResult, Is.Not.Null);
         Assert.That(createdResult?.Value, Is.EqualTo(newId));
@@ -96,10 +111,13 @@ public class GenreControllerTests
     [Test]
     public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
     {
+        //Arrange
         _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<GenreDto>())).ReturnsAsync(true);
         
+        // Act
         var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
         
+        // Assert
         var noContentResult = result as NoContentResult;
         Assert.That(noContentResult, Is.Not.Null);
     }
@@ -107,10 +125,13 @@ public class GenreControllerTests
     [Test]
     public async Task Update_WhenOperationFailed_ReturnsBadRequest()
     {
+        //Arrange
         _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<GenreDto>())).ReturnsAsync(false);
         
+        // Act
         var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
         
+        // Assert
         var badRequestResult = result as BadRequestObjectResult;
         Assert.That(badRequestResult, Is.Not.Null);
     }
@@ -118,10 +139,13 @@ public class GenreControllerTests
     [Test]
     public async Task Delete_ReturnsNoContent()
     {
+        //Arrange
         _genreServiceMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
         
+        // Act
         var result = await _genreController.Delete(Guid.NewGuid());
         
+        // Assert
         var noContentResult = result as NoContentResult;
         Assert.That(noContentResult, Is.Not.Null);
     }
