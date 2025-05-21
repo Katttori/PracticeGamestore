@@ -36,7 +36,7 @@ public class PlatformRepository(GamestoreDbContext context): IPlatformRepository
     
     public async Task DeleteAsync(Guid id)
     {
-        var platform = await context.Platforms.FirstOrDefaultAsync(p => p.Id == id);
+        var platform = await context.Platforms.FindAsync(id);
         if (platform is null) return;
         
         context.Platforms.Remove(platform);
