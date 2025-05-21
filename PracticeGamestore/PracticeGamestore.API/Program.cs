@@ -7,8 +7,6 @@ builder.Services.AddControllers();
 
 builder.Services.AddBusinessServices(builder.Configuration);
 
-builder.Services.AddScoped<IGenreService, GenreService>();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
