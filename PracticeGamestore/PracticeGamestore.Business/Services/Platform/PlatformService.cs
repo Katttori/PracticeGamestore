@@ -45,7 +45,7 @@ public class PlatformService: IPlatformService
         p.Name = platform.Name;
         p.Description = platform.Description;
         
-        _repository.UpdateAsync(p);
+        await _repository.UpdateAsync(p)!;
         var changes = await _unitOfWork.SaveChangesAsync();
         return changes > 0;
     }
