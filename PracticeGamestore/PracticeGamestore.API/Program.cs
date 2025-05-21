@@ -3,6 +3,7 @@ using PracticeGamestore.Business.Dependencies;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddBusinessServices(builder.Configuration);
 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
