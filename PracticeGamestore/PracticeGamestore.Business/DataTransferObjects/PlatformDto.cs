@@ -6,9 +6,9 @@ public class PlatformDto
     public string Name { get; set; }
     public string Description { get; set; }
     
-    public PlatformDto(Guid? guid, string name, string description)
+    public PlatformDto(Guid? id, string name, string description)
     {
-        Id = guid ?? Guid.NewGuid();
+        Id = id ?? Guid.NewGuid();
         Name = name;
         Description = description;
     }
