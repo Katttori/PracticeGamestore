@@ -6,7 +6,7 @@ using PracticeGamestore.Models.Platform;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("platforms")]
-public class PlatformController(IPlatformService platformService): ControllerBase
+public class PlatformController(IPlatformService platformService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllPlatforms()
