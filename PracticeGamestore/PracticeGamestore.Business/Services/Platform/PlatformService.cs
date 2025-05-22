@@ -5,7 +5,7 @@ using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Platform;
 
-public class PlatformService: IPlatformService
+public class PlatformService : IPlatformService
 {
     private readonly IPlatformRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
@@ -39,13 +39,13 @@ public class PlatformService: IPlatformService
     
     public async Task<bool> UpdateAsync(PlatformDto platform)
     {
-        var p = await _repository.GetByIdAsync(platform.Id);
-        if (p is null) return false;
+        var updatedPlatform = await _repository.GetByIdAsync(platform.Id);
+        if (updatedPlatform is null) return false;
         
-        p.Name = platform.Name;
-        p.Description = platform.Description;
+        updatedPlatform.Name = platform.Name;
+        updatedPlatform.Description = platform.Description;
         
-        _repository.Update(p);
+        _repository.Update(updatedPlatform);
         var changes = await _unitOfWork.SaveChangesAsync();
         return changes > 0;
     }

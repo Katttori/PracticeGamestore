@@ -6,26 +6,19 @@ using PracticeGamestore.Models.Platform;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("platforms")]
-public class PlatformController: ControllerBase
+public class PlatformController(IPlatformService platformService): ControllerBase
 {
-    private readonly IPlatformService _platformService;
-    
-    public PlatformController(IPlatformService platformService)
-    {
-        _platformService = platformService;
-    }
-    
     [HttpGet]
     public async Task<IActionResult> GetAllPlatforms()
     {
-        var platforms = await _platformService.GetAllAsync();
+        var platforms = await platformService.GetAllAsync();
         return Ok(platforms.Select(p => p.MapToPlatformModel()));
     }
     
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetPlatformById(Guid id)
     {
-        var platform = await _platformService.GetByIdAsync(id);
+        var platform = await platformService.GetByIdAsync(id);
         if (platform is null) return NotFound($"Platform with id {id} not found");
         return Ok(platform.MapToPlatformModel());
     }
@@ -34,7 +27,7 @@ public class PlatformController: ControllerBase
     public async Task<IActionResult> CreatePlatform([FromBody] PlatformRequestModel platform)
     {
         var platformDto = platform.MapToPlatformDto();
-        var id = await _platformService.CreateAsync(platformDto);
+        var id = await platformService.CreateAsync(platformDto);
         if (id is null) return BadRequest("Failed to create platform");
         return CreatedAtAction(nameof(GetPlatformById), new { id },  platformDto.MapToPlatformModel());
     }
@@ -42,14 +35,14 @@ public class PlatformController: ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformRequestModel platform)
     {
-        var isUpdated = await _platformService.UpdateAsync(platform.MapToPlatformDto());
+        var isUpdated = await platformService.UpdateAsync(platform.MapToPlatformDto());
         return isUpdated ? NoContent() : BadRequest($"Error while trying to update the platform");
     }
     
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeletePlatform(Guid id)
     {
-        await _platformService.DeleteAsync(id);
+        await platformService.DeleteAsync(id);
         return NoContent();
     }
 }

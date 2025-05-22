@@ -2,10 +2,10 @@ using PracticeGamestore.Business.DataTransferObjects;
 namespace PracticeGamestore.Business.Services.Platform;
 
 public interface IPlatformService
-{
-    public Task<IEnumerable<PlatformDto>> GetAllAsync();
-    public Task<PlatformDto?> GetByIdAsync(Guid id);
-    public Task<Guid?> CreateAsync(PlatformDto platform);
-    public Task<bool> UpdateAsync(PlatformDto platform);
-    public Task DeleteAsync(Guid id);
+{ 
+    Task<IEnumerable<PlatformDto>> GetAllAsync(); 
+    Task<PlatformDto?> GetByIdAsync(Guid id); 
+    Task<Guid?> CreateAsync(PlatformDto platform); 
+    Task<bool> UpdateAsync(PlatformDto platform); 
+    Task DeleteAsync(Guid id);
 }
