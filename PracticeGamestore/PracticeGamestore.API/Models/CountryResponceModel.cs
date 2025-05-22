@@ -2,7 +2,7 @@ using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.API.Models;
 
-public class CountryResponceModel
+public class CountryResponseModel
 {
     public Guid Id { get; set; }
     
