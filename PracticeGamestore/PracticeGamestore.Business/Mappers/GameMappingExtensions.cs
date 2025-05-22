@@ -6,8 +6,7 @@ namespace PracticeGamestore.Business.Mappers;
 
 public static class GameMappingExtensions
 {
-
-    public static GameDto ToDto(this Game game)
+    public static GameDto MapToGameDto(this Game game)
     {
         return new (
             game.Id,
@@ -26,7 +25,7 @@ public static class GameMappingExtensions
         );
     }
 
-    private static Game ToEntity(this GameDto dto)
+    private static Game MapToGameEntity(this GameDto dto)
     {
         return new ()
         {
@@ -43,9 +42,9 @@ public static class GameMappingExtensions
         };
     }
     
-    public static (Game Game, List<Guid> GenreIds, List<Guid> PlatformIds) ToEntityWithRelations(this GameDto dto)
+    public static (Game Game, List<Guid> GenreIds, List<Guid> PlatformIds) MapToGameEntityWithRelations(this GameDto dto)
     {
-        var game = dto.ToEntity();
+        var game = dto.MapToGameEntity();
         return (game, dto.GenreIds, dto.PlatformIds);
     }
 }

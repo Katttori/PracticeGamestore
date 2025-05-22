@@ -1,7 +1,6 @@
 using PracticeGamestore.Enums;
 namespace PracticeGamestore.Business.DataTransferObjects;
 
-
 public class GameDto
 {
     public Guid Id { get; set; }

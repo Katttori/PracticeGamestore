@@ -1,15 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PracticeGamestore.Business.Services;
 using PracticeGamestore.DataAccess;
+using PracticeGamestore.DataAccess.Repositories;
 using PracticeGamestore.DataAccess.UnitOfWork;
+
 namespace PracticeGamestore.Business.Dependencies;
 
 public static class Dependencies
 {
     private static void AddDataAccessServices(this IServiceCollection services)
     {
-           services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IGameRepository, GameRepository>();
     }
 
     private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -22,5 +26,6 @@ public static class Dependencies
     {
         services.RegisterDbContext(configuration);
         services.AddDataAccessServices();
+        services.AddScoped<IGameService, GameService>();
     }
 }

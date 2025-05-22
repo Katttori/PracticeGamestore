@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using PracticeGamestore.Enums;
 
 namespace PracticeGamestore.Models;
@@ -9,7 +8,7 @@ public class GameResponseModel
     public required string Name { get; set; }
     public required string Key { get; set; }
     public decimal Price { get; set; }
-    public string? Picture { get; set; }
+    public byte[]? Picture { get; set; }
     public string Description { get; set; } = string.Empty;
     public double Rating { get; set; }
     public AgeRating AgeRating { get; set; }
