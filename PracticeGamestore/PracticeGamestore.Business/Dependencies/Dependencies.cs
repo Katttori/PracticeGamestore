@@ -5,6 +5,7 @@ using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.DataAccess;
 using PracticeGamestore.DataAccess.Repositories;
 using PracticeGamestore.DataAccess.UnitOfWork;
+
 namespace PracticeGamestore.Business.Dependencies;
 
 public static class Dependencies

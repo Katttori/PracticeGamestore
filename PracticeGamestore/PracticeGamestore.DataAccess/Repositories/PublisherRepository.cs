@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using PracticeGamestore.DataAccess.Entities;
+
 namespace PracticeGamestore.DataAccess.Repositories;
 
-public class PublisherRepository(GamestoreDbContext context): IPublisherRepository
+public class PublisherRepository(GamestoreDbContext context) : IPublisherRepository
 {
     private readonly IQueryable<Publisher> _publisherNoTracking = context.Publishers.AsNoTracking();
     

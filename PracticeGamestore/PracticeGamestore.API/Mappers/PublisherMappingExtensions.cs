@@ -5,12 +5,12 @@ namespace PracticeGamestore.Mappers;
 
 public static class PublisherMappingExtensions
 {
-    public static PublisherDto ToDto(this PublisherRequestModel model, Guid? id = null)
+    public static PublisherDto MapToPublisherDto(this PublisherRequestModel model, Guid? id = null)
     {
         return new (id, model.Name, model.Description, model.PageUrl);
     }
 
-    public static PublisherResponseModel ToModel(this PublisherDto publisherDto)
+    public static PublisherResponseModel MapToPublisherModel(this PublisherDto publisherDto)
     {
         return new ()
         {

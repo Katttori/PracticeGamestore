@@ -1,15 +1,16 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.DataAccess.Entities;
+
 namespace PracticeGamestore.Business.Mappers;
 
 public static class PublisherMappingExtensions
 {
-    public static PublisherDto ToDto(this Publisher publisher)
+    public static PublisherDto MapToPublisherDto(this Publisher publisher)
     {
         return new (publisher.Id, publisher.Name, publisher.Description, publisher.PageUrl);
     }
 
-    public static Publisher ToEntity(this PublisherDto publisherDto)
+    public static Publisher MapToPublisherEntity(this PublisherDto publisherDto)
     {
         return new ()
         {
@@ -19,5 +20,4 @@ public static class PublisherMappingExtensions
             Id = publisherDto.Id
         };
     }
-    
 }

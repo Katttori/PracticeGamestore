@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace PracticeGamestore.DataAccess.Configurations;
 
-public class File: IEntityTypeConfiguration<Entities.File>
+public class File : IEntityTypeConfiguration<Entities.File>
 {
     public void Configure(EntityTypeBuilder<Entities.File> builder)
     {

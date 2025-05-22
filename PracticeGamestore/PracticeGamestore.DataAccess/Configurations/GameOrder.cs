@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace PracticeGamestore.DataAccess.Configurations;
 
-public class GameOrder: IEntityTypeConfiguration<Entities.GameOrder>
+public class GameOrder : IEntityTypeConfiguration<Entities.GameOrder>
 {
     public void Configure(EntityTypeBuilder<Entities.GameOrder> builder)
     {

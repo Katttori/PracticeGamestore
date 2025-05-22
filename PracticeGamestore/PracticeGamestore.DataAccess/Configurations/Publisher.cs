@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace PracticeGamestore.DataAccess.Configurations;
 
-public class Publisher: IEntityTypeConfiguration<Entities.Publisher>
+public class Publisher : IEntityTypeConfiguration<Entities.Publisher>
 {
     public void Configure(EntityTypeBuilder<Entities.Publisher> builder)
     {
