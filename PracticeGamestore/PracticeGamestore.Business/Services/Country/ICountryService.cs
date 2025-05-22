@@ -4,9 +4,9 @@ namespace PracticeGamestore.Business.Services.Country;
 
 public interface ICountryService
 {
-    public Task<IEnumerable<CountryDto>> GetAllAsync();
-    public Task<CountryDto?> GetByIdAsync(Guid id);
-    public Task<Guid?> CreateAsync(CountryDto country);
-    public Task<bool> UpdateAsync(CountryDto country);
-    public Task DeleteAsync(Guid id);
+    Task<IEnumerable<CountryDto>> GetAllAsync();
+    Task<CountryDto?> GetByIdAsync(Guid id);
+    Task<Guid?> CreateAsync(CountryDto country);
+    Task<bool> UpdateAsync(CountryDto country);
+    Task DeleteAsync(Guid id);
 }

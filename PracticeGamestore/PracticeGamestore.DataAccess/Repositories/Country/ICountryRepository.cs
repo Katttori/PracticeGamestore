@@ -1,10 +1,10 @@
 namespace PracticeGamestore.DataAccess.Repositories.Country;
 
 public interface ICountryRepository
-{
-    public Task<IEnumerable<Entities.Country>> GetAllAsync();
-    public Task<Entities.Country?> GetByIdAsync(Guid id);
-    public Task<Guid> CreateAsync(Entities.Country country);
-    public void Update(Entities.Country country);
-    public Task DeleteAsync(Guid id);
+{ 
+    Task<IEnumerable<Entities.Country>> GetAllAsync(); 
+    Task<Entities.Country?> GetByIdAsync(Guid id); 
+    Task<Guid> CreateAsync(Entities.Country country); 
+    void Update(Entities.Country country); 
+    Task DeleteAsync(Guid id);
 }

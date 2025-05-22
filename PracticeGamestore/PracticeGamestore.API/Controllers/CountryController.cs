@@ -6,7 +6,7 @@ using PracticeGamestore.Business.Services.Country;
 namespace PracticeGamestore.API.Controllers;
 
 [ApiController, Route("countries")]
-public class CountryController(ICountryService countryService): ControllerBase
+public class CountryController(ICountryService countryService) : ControllerBase
 {
     
     [HttpGet]

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PracticeGamestore.DataAccess.Repositories.Country;
 
-public class CountryRepository(GamestoreDbContext context): ICountryRepository
+public class CountryRepository(GamestoreDbContext context) : ICountryRepository
 {
     private readonly IQueryable<Entities.Country> _countriesNoTracking = context.Countries.AsNoTracking();
 
