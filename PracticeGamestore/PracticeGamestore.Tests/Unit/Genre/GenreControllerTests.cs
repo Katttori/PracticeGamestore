@@ -36,8 +36,8 @@ public class GenreControllerTests
         var result = await _genreController.GetAll();
         
         // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
-        Assert.That(okResult, Is.Not.Null);
         var responseModels = 
             (okResult?.Value as IEnumerable<GenreResponseModel> ?? Array.Empty<GenreResponseModel>()).ToList();
         Assert.That(responseModels.Count, Is.EqualTo(genreDtos.Count));
@@ -55,8 +55,7 @@ public class GenreControllerTests
         var result = await _genreController.GetById(Guid.NewGuid());
         
         // Assert
-        var notFoundResult = result as NotFoundObjectResult;
-        Assert.That(notFoundResult, Is.Not.Null);
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
     }
     
     [Test]
@@ -71,9 +70,8 @@ public class GenreControllerTests
         var result = await _genreController.GetById(genreDto.Id);
         
         // Assert
-        var okResult = result as OkObjectResult;
-        Assert.That(okResult, Is.Not.Null);
-        var receivedGenre = okResult?.Value as GenreResponseModel;
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        var receivedGenre = (result as OkObjectResult)?.Value as GenreResponseModel;
         Assert.That(receivedGenre, Is.Not.Null);
         Assert.That(receivedGenre?.Id, Is.EqualTo(genreDto.Id));
         Assert.That(receivedGenre?.Name, Is.EqualTo(genreDto.Name));
@@ -91,8 +89,7 @@ public class GenreControllerTests
         var result = await _genreController.Create(model);
         
         // Assert
-        var badRequestResult = result as BadRequestObjectResult;
-        Assert.That(badRequestResult, Is.Not.Null);
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
     
     [Test]
@@ -107,8 +104,8 @@ public class GenreControllerTests
         var result = await _genreController.Create(new GenreRequestModel { Name = "FPS" });
         
         // Assert
+        Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
         var createdResult = result as CreatedAtActionResult;
-        Assert.That(createdResult, Is.Not.Null);
         Assert.That(createdResult?.Value, Is.EqualTo(newId));
     }
     
@@ -122,8 +119,7 @@ public class GenreControllerTests
         var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
         
         // Assert
-        var noContentResult = result as NoContentResult;
-        Assert.That(noContentResult, Is.Not.Null);
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
     
     [Test]
@@ -136,8 +132,7 @@ public class GenreControllerTests
         var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
         
         // Assert
-        var badRequestResult = result as BadRequestObjectResult;
-        Assert.That(badRequestResult, Is.Not.Null);
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
     
     [Test]
@@ -150,7 +145,6 @@ public class GenreControllerTests
         var result = await _genreController.Delete(Guid.NewGuid());
         
         // Assert
-        var noContentResult = result as NoContentResult;
-        Assert.That(noContentResult, Is.Not.Null);
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
 }
