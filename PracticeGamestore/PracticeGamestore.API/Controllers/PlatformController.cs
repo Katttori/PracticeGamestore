@@ -19,8 +19,7 @@ public class PlatformController(IPlatformService platformService): ControllerBas
     public async Task<IActionResult> GetPlatformById(Guid id)
     {
         var platform = await platformService.GetByIdAsync(id);
-        if (platform is null) return NotFound($"Platform with id {id} not found");
-        return Ok(platform.MapToPlatformModel());
+        return platform is null ? NotFound($"Platform with id: {id} was not found.") : Ok(platform.MapToPlatformModel());
     }
     
     [HttpPost]
