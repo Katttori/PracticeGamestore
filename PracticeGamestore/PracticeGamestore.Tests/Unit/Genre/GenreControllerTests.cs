@@ -29,6 +29,7 @@ public class GenreControllerTests
             new(Guid.NewGuid(), "FPS"),
             new(Guid.NewGuid(), "Action"),
         };
+        
         _genreServiceMock.Setup(x => x.GetAllAsync()).ReturnsAsync(genreDtos);
         
         // Act
@@ -63,6 +64,7 @@ public class GenreControllerTests
     {
         //Arrange
         var genreDto = new GenreDto(Guid.NewGuid(), "FPS");
+        
         _genreServiceMock.Setup(x => x.GetByIdAsync(genreDto.Id)).ReturnsAsync(genreDto);
         
         // Act
@@ -82,6 +84,7 @@ public class GenreControllerTests
     {
         //Arrange
         var model = new GenreRequestModel { Name = "FPS" };
+        
         _genreServiceMock.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(null as Guid?);
         
         // Act
@@ -97,6 +100,7 @@ public class GenreControllerTests
     {
         //Arrange
         var newId = Guid.NewGuid();
+        
         _genreServiceMock.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(newId);
         
         // Act

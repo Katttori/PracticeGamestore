@@ -5,12 +5,12 @@ namespace PracticeGamestore.Mappers;
 
 public static class GenreMappingExtensions
 {   
-    public static GenreDto ToDto(this GenreRequestModel model)
+    public static GenreDto MapToGenreDto(this GenreRequestModel model)
     {
         return new(null, model.Name, model.ParentId, model.Description);
     }
     
-    public static GenreResponseModel ToModel(this GenreDto dto)
+    public static GenreResponseModel MapToGenreModel(this GenreDto dto)
     {
         return new()
         {

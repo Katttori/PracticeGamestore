@@ -5,7 +5,7 @@ namespace PracticeGamestore.Business.Mappers;
 
 public static class GenreMappingExtensions
 {
-    public static Genre ToEntity(this GenreDto dto)
+    public static Genre MapToGenreEntity(this GenreDto dto)
     {
         return new()
         {
@@ -16,7 +16,7 @@ public static class GenreMappingExtensions
         };
     }
 
-    public static GenreDto ToDto(this Genre entity)
+    public static GenreDto MapToGenreDto(this Genre entity)
     {
         return new(entity.Id, entity.Name, entity.ParentId, entity.Description);
     }

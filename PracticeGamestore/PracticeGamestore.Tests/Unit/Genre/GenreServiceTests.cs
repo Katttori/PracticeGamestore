@@ -30,6 +30,7 @@ public class GenreServiceTests
             new() { Id = Guid.NewGuid(), Name = "Action" },
             new() { Id = Guid.NewGuid(), Name = "FPS" },
         };
+        
         _genreRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(entities);
         
         // Act
@@ -46,6 +47,7 @@ public class GenreServiceTests
     {
         //Arrange
         var entity = new DataAccess.Entities.Genre { Id = Guid.NewGuid(), Name = "Strategy" };
+        
         _genreRepositoryMock.Setup(x => x.GetByIdAsync(entity.Id)).ReturnsAsync(entity);
         
         // Act
@@ -77,6 +79,7 @@ public class GenreServiceTests
     {
         //Arrange
         var dto = new GenreDto(Guid.NewGuid(), "Action");
+        
         _genreRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
             .ReturnsAsync(dto.Id);
@@ -96,6 +99,7 @@ public class GenreServiceTests
     {
         //Arrange
         var dto = new GenreDto(Guid.NewGuid(), "Action");
+        
         _genreRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
             .ReturnsAsync(dto.Id);
@@ -117,6 +121,7 @@ public class GenreServiceTests
         var id = Guid.NewGuid();
         var dto = new GenreDto(id, "Action");
         var entity = new DataAccess.Entities.Genre { Id = id, Name = "Action" };
+        
         _genreRepositoryMock
             .Setup(x => x.GetByIdAsync(entity.Id))
             .ReturnsAsync(entity);
@@ -136,6 +141,7 @@ public class GenreServiceTests
     {
         //Arrange
         var dto = new GenreDto(Guid.NewGuid(), "Action");
+        
         _genreRepositoryMock
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Genre);

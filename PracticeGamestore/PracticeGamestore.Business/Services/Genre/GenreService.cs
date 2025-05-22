@@ -10,18 +10,18 @@ public class GenreService(IGenreRepository genreRepository, IUnitOfWork unitOfWo
     public async Task<IEnumerable<GenreDto>> GetAllAsync()
     {
         var entities = await genreRepository.GetAllAsync();
-        return entities.Select(e => e.ToDto());
+        return entities.Select(e => e.MapToGenreDto());
     }
 
     public async Task<GenreDto?> GetByIdAsync(Guid id)
     {
         var entity = await genreRepository.GetByIdAsync(id);
-        return entity?.ToDto();
+        return entity?.MapToGenreDto();
     }
 
     public async Task<Guid?> CreateAsync(GenreDto dto)
     {
-        var createdId = await genreRepository.CreateAsync(dto.ToEntity());
+        var createdId = await genreRepository.CreateAsync(dto.MapToGenreEntity());
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0 ? createdId : null;
     }
