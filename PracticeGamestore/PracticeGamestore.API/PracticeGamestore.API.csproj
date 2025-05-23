@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../PracticeGamestore.DataAccess/PracticeGamestore.DataAccess.csproj" />
         <ProjectReference Include="..\PracticeGamestore.Business\PracticeGamestore.Business.csproj" />
     </ItemGroup>
 
