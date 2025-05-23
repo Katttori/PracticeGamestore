@@ -41,8 +41,8 @@ public class CountryController(ICountryService countryService) : ControllerBase
         var countryDto = countryRequestModel.MapToDto();
         countryDto.Id = id;
         var updated = await countryService.UpdateAsync(countryDto);
-        return !updated ?
-            BadRequest($"Country with id {id} not found")
+        return !updated 
+            ? BadRequest($"Country with id {id} not found")
             : NoContent();
     }
     
