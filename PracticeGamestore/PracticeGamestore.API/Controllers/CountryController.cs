@@ -13,14 +13,16 @@ public class CountryController(ICountryService countryService) : ControllerBase
     public async Task<IActionResult> GetAllCountries()
     {
         var countries = await countryService.GetAllAsync();
-        return Ok(countries.Select(c => c.MapToResponseModel()));
+        return Ok(countries.Select(c => c.MapToModel()));
     }
     
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetCountryById(Guid id)
     {
         var country = await countryService.GetByIdAsync(id);
-        return country == null ? NotFound($"Country with id {id} not found") : Ok(country.MapToResponseModel());
+        return country == null 
+            ? NotFound($"Country with id {id} not found") 
+            : Ok(country.MapToModel());
     }
     
     [HttpPost]
@@ -28,8 +30,9 @@ public class CountryController(ICountryService countryService) : ControllerBase
     {
         var countryDto = countryRequestModel.MapToDto();
         var id = await countryService.CreateAsync(countryDto);
-        return id == null ? BadRequest("Failed to create country") 
-            : CreatedAtAction(nameof(GetCountryById), new { id }, countryDto.MapToResponseModel());
+        return id == null 
+            ? BadRequest("Failed to create country") 
+            : CreatedAtAction(nameof(GetCountryById), new { id }, countryDto.MapToModel());
     }
     
     [HttpPut("{id:guid}")]
@@ -38,8 +41,9 @@ public class CountryController(ICountryService countryService) : ControllerBase
         var countryDto = countryRequestModel.MapToDto();
         countryDto.Id = id;
         var updated = await countryService.UpdateAsync(countryDto);
-        if (!updated) return BadRequest($"Country with id {id} not found");
-        return NoContent();
+        return !updated ?
+            BadRequest($"Country with id {id} not found")
+            : NoContent();
     }
     
     [HttpDelete("{id:guid}")]

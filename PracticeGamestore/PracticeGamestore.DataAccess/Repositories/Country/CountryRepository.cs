@@ -18,8 +18,8 @@ public class CountryRepository(GamestoreDbContext context) : ICountryRepository
 
     public async Task<Guid> CreateAsync(Entities.Country country)
     {
-        var c = await context.Countries.AddAsync(country);
-        return c.Entity.Id;
+        var entity = await context.Countries.AddAsync(country);
+        return entity.Entity.Id;
     }
     
     public void Update(Entities.Country country)
