@@ -15,5 +15,4 @@ public class CountryDto
         CountryStatus = countryStatus;
     }
 
-
 }

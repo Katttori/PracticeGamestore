@@ -7,7 +7,6 @@ namespace PracticeGamestore.Business.Services.Country;
 
 public class CountryService(ICountryRepository countryRepository, IUnitOfWork unitOfWork) : ICountryService
 {
-    
     public async Task<IEnumerable<CountryDto>> GetAllAsync()
     {
         var countries = await countryRepository.GetAllAsync();
@@ -46,5 +45,4 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
         await countryRepository.DeleteAsync(id);
         await unitOfWork.SaveChangesAsync();
     }
-    
 }

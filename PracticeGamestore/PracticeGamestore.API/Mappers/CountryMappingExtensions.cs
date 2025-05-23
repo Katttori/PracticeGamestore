@@ -11,7 +11,7 @@ public static class CountryMappingExtensions
         return new(Guid.Empty, countryRequestModel.Name, CountryStatus.Allowed);
     }
     
-    public static CountryResponseModel MapToModel(this CountryDto countryDto)
+    public static CountryResponseModel MapToCountryModel(this CountryDto countryDto)
     {
         return new()
         {

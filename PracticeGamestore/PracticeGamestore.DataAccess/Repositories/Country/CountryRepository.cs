@@ -34,5 +34,4 @@ public class CountryRepository(GamestoreDbContext context) : ICountryRepository
 
         context.Countries.Remove(country);
     }
-
 }

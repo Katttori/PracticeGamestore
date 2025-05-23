@@ -13,7 +13,7 @@ public class CountryController(ICountryService countryService) : ControllerBase
     public async Task<IActionResult> GetAllCountries()
     {
         var countries = await countryService.GetAllAsync();
-        return Ok(countries.Select(c => c.MapToModel()));
+        return Ok(countries.Select(c => c.MapToCountryModel()));
     }
     
     [HttpGet("{id:guid}")]
@@ -22,7 +22,7 @@ public class CountryController(ICountryService countryService) : ControllerBase
         var country = await countryService.GetByIdAsync(id);
         return country == null 
             ? NotFound($"Country with id {id} not found") 
-            : Ok(country.MapToModel());
+            : Ok(country.MapToCountryModel());
     }
     
     [HttpPost]
@@ -32,7 +32,7 @@ public class CountryController(ICountryService countryService) : ControllerBase
         var id = await countryService.CreateAsync(countryDto);
         return id == null 
             ? BadRequest("Failed to create country") 
-            : CreatedAtAction(nameof(GetCountryById), new { id }, countryDto.MapToModel());
+            : CreatedAtAction(nameof(GetCountryById), new { id }, countryDto.MapToCountryModel());
     }
     
     [HttpPut("{id:guid}")]
