@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.DataAccess;
 using PracticeGamestore.DataAccess.Repositories.Genre;
@@ -11,8 +12,9 @@ public static class Dependencies
 {
     private static void AddDataAccessServices(this IServiceCollection services)
     {
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IGenreRepository, GenreRepository>();
+       services.AddScoped<IUnitOfWork, UnitOfWork>();
+       services.AddScoped<IGenreRepository, GenreRepository>();
+       services.AddScoped<IPlatformService, PlatformService>();
     }
 
     private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -26,5 +28,6 @@ public static class Dependencies
         services.RegisterDbContext(configuration);
         services.AddDataAccessServices();
         services.AddScoped<IGenreService, GenreService>();
+        services.AddScoped<IPlatformService, PlatformService>();
     }
 }
