@@ -6,7 +6,7 @@ namespace PracticeGamestore.Business.Mappers;
 
 public static class GameMappingExtensions
 {
-    public static GameDto MapToGameDto(this Game game)
+    public static GameResponseDto MapToGameDto(this Game game)
     {
         return new (
             game.Id,
@@ -18,33 +18,33 @@ public static class GameMappingExtensions
             game.Rating,
             (Enums.AgeRating)(int)game.AgeRating,
             game.ReleaseDate,
-            game.PublisherId,
-            // to change: use genre's and platform's dtos instead of ids
-            game.GameGenres.Select(gg => gg.GenreId).ToList(),
-            game.GamePlatforms.Select(gp => gp.PlatformId).ToList()
+            game.Publisher.MapToPublisherDto(),
+            game.GamePlatforms.Select(gp => gp.Platform.MapToPlatformDto()).ToList(),
+            game.GameGenres.Select(gg => gg.Genre.MapToGenreDto()).ToList()
+
         );
     }
 
-    private static Game MapToGameEntity(this GameDto dto)
+    private static Game MapToGameEntity(this GameRequestDto requestDto)
     {
         return new ()
         {
-            Id = dto.Id,
-            Name = dto.Name,
-            Key = dto.Key,
-            Price = dto.Price,
-            Picture = dto.Picture,
-            Description = dto.Description,
-            Rating = dto.Rating,
-            AgeRating = (AgeRating)(int)dto.AgeRating,
-            ReleaseDate = dto.ReleaseDate,
-            PublisherId = dto.PublisherId
+            Id = requestDto.Id,
+            Name = requestDto.Name,
+            Key = requestDto.Key,
+            Price = requestDto.Price,
+            Picture = requestDto.Picture,
+            Description = requestDto.Description,
+            Rating = requestDto.Rating,
+            AgeRating = (AgeRating)(int)requestDto.AgeRating,
+            ReleaseDate = requestDto.ReleaseDate,
+            PublisherId = requestDto.PublisherId
         };
     }
     
-    public static (Game Game, List<Guid> GenreIds, List<Guid> PlatformIds) MapToGameEntityWithRelations(this GameDto dto)
+    public static (Game Game, List<Guid> GenreIds, List<Guid> PlatformIds) MapToGameEntityWithRelations(this GameRequestDto requestDto)
     {
-        var game = dto.MapToGameEntity();
-        return (game, dto.GenreIds, dto.PlatformIds);
+        var game = requestDto.MapToGameEntity();
+        return (game, requestDto.GenreIds, requestDto.PlatformIds);
     }
 }

@@ -1,4 +1,7 @@
 using PracticeGamestore.Enums;
+using PracticeGamestore.Models.Genre;
+using PracticeGamestore.Models.Platform;
+using PracticeGamestore.Models.Publisher;
 
 namespace PracticeGamestore.Models;
 
@@ -13,9 +16,8 @@ public class GameResponseModel
     public double Rating { get; set; }
     public AgeRating AgeRating { get; set; }
     public DateTime ReleaseDate { get; set; }
-    public Guid PublisherId { get; set; }
-    // to change: replace ids with genre and platform models
-    public required List<Guid> GenreIds { get; set; }
-    public required List<Guid> PlatformIds { get; set; }
+    public required PublisherResponseModel Publisher { get; set; }
+    public required List<GenreResponseModel> Genres { get; set; }
+    public required List<PlatformResponseModel> Platforms { get; set; }
 
 }

@@ -1,7 +1,8 @@
 using PracticeGamestore.Enums;
+
 namespace PracticeGamestore.Business.DataTransferObjects;
 
-public class GameDto
+public class GameResponseDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
@@ -12,25 +13,13 @@ public class GameDto
     public double Rating { get; set; }
     public AgeRating AgeRating { get; set; }
     public DateTime ReleaseDate { get; set; }
-    public Guid PublisherId { get; set; }
-    public List<Guid> GenreIds { get; set; }
-    public List<Guid> PlatformIds { get; set; }
+    public PublisherDto Publisher { get; set; } 
+    public List<PlatformDto> Platforms { get; set; } 
+    public List<GenreDto> Genres { get; set; }
 
-    public GameDto(
-        Guid? id,
-        string name, 
-        string key, 
-        decimal price,
-        byte[]? picture,
-        string description,
-        double rating,
-        AgeRating ageRating,
-        DateTime releaseDate,
-        Guid publisherId,
-        List<Guid> genreIds,
-        List<Guid> platformIds)
+    public GameResponseDto(Guid id, string name, string key, decimal price, byte[]? picture, string description, double rating, AgeRating ageRating, DateTime releaseDate, PublisherDto publisher, List<PlatformDto> platforms, List<GenreDto> genres)
     {
-        Id = id ?? new Guid();
+        Id = id;
         Name = name;
         Key = key;
         Price = price;
@@ -39,8 +28,8 @@ public class GameDto
         Rating = rating;
         AgeRating = ageRating;
         ReleaseDate = releaseDate;
-        PublisherId = publisherId;
-        GenreIds = genreIds;
-        PlatformIds = platformIds;
+        Publisher = publisher;
+        Platforms = platforms;
+        Genres = genres;
     }
 }

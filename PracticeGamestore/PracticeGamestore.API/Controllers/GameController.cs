@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using PracticeGamestore.Business.Services;
+using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models;
 

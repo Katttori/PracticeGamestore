@@ -5,7 +5,7 @@ namespace PracticeGamestore.Mappers;
 
 public static class GameMappingExtensions
 {
-    public static GameDto MapToGameDto(this GameRequestModel model, Guid? id = null)
+    public static GameRequestDto MapToGameDto(this GameRequestModel model, Guid? id = null)
     {
         return new (
             id,
@@ -23,20 +23,20 @@ public static class GameMappingExtensions
         );
     }
     
-    public static GameResponseModel MapToGameModel(this GameDto dto)
+    public static GameResponseModel MapToGameModel(this GameResponseDto responseDto)
     {
         return new ()
         {
-            Id = dto.Id,
-            Name = dto.Name,
-            Key = dto.Key,
-            AgeRating = dto.AgeRating,
-            Price = dto.Price,
-            Description = dto.Description,
-            PublisherId = dto.PublisherId,
-            Picture = dto.Picture,
-            GenreIds = dto.GenreIds,
-            PlatformIds = dto.PlatformIds
+            Id = responseDto.Id,
+            Name = responseDto.Name,
+            Key = responseDto.Key,
+            AgeRating = responseDto.AgeRating,
+            Price = responseDto.Price,
+            Description = responseDto.Description,
+            Picture = responseDto.Picture,
+            Publisher = responseDto.Publisher.MapToPublisherModel(),
+            Genres = responseDto.Genres.Select(g => g.MapToGenreModel()).ToList(),
+            Platforms = responseDto.Platforms.Select(g => g.MapToPlatformModel()).ToList()
         };
     }
 }

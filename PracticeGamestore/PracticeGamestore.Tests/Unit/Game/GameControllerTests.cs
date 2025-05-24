@@ -1,9 +1,9 @@
 using Moq;
 using NUnit.Framework;
-using PracticeGamestore.Business.Services;
+using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Controllers;
 
-namespace PracticeGamestore.API.Tests.Unit.Game;
+namespace PracticeGamestore.Tests.Unit.Game;
 
 [TestFixture]
 public class GameControllerTests

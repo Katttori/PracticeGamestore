@@ -1,13 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PracticeGamestore.Business.Services;
+using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.DataAccess;
 using PracticeGamestore.DataAccess.Repositories;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
+using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Dependencies;

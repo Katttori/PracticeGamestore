@@ -14,5 +14,4 @@ public class GameRequestModel
     public Guid PublisherId { get; set; }
     public required List<Guid> GenreIds { get; set; }
     public required List<Guid> PlatformIds { get; set; }
-
 }

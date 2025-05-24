@@ -1,22 +1,23 @@
 using Microsoft.EntityFrameworkCore;
 using PracticeGamestore.DataAccess.Entities;
 
-namespace PracticeGamestore.DataAccess.Repositories;
+namespace PracticeGamestore.DataAccess.Repositories.Game;
 
 public class GameRepository(GamestoreDbContext context) : IGameRepository
 {
-    private readonly IQueryable<Game> _gamesNoTracking = context.Games.AsNoTracking()
+    private readonly IQueryable<Entities.Game> _gamesNoTracking = context.Games.AsNoTracking()
+        .Include(g => g.Publisher)
         .Include(g => g.GamePlatforms)
         .ThenInclude(gp => gp.Platform)
         .Include(g => g.GameGenres)
         .ThenInclude(gg => gg.Genre);
 
-    public async Task<IEnumerable<Game>> GetAllAsync()
+    public async Task<IEnumerable<Entities.Game>> GetAllAsync()
     {
         return await _gamesNoTracking.ToListAsync();
     }
 
-    public async Task<Game?> GetByIdAsync(Guid id)
+    public async Task<Entities.Game?> GetByIdAsync(Guid id)
     {
         return await _gamesNoTracking.FirstOrDefaultAsync(g => g.Id == id);
     }
@@ -27,7 +28,7 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         if (game != null) context.Games.Remove(game);
     }
 
-    public async Task<Guid> CreateAsync(Game game, List<Guid> genreIds, List<Guid> platformIds)
+    public async Task<Guid> CreateAsync(Entities.Game game, List<Guid> genreIds, List<Guid> platformIds)
     {
         var newGame = await context.Games.AddAsync(game);
         var gameId = newGame.Entity.Id;
@@ -36,7 +37,7 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         return gameId;
     }
 
-    public async Task UpdateAsync(Game game, List<Guid> genreIds, List<Guid> platformIds)
+    public async Task UpdateAsync(Entities.Game game, List<Guid> genreIds, List<Guid> platformIds)
     {
         context.Games.Update(game);
         await UpdateGenreIdsAsync(game.Id, genreIds);
