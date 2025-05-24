@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace PracticeGamestore.DataAccess.Configurations;
 
-public class GamePlatform: IEntityTypeConfiguration<Entities.GamePlatform>
+public class GamePlatform : IEntityTypeConfiguration<Entities.GamePlatform>
 {
     public void Configure(EntityTypeBuilder<Entities.GamePlatform> builder)
     {

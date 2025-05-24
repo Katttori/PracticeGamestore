@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PracticeGamestore.DataAccess.Enums;
+
 namespace PracticeGamestore.DataAccess.Configurations;
 
-public class Country: IEntityTypeConfiguration<Entities.Country>
+public class Country : IEntityTypeConfiguration<Entities.Country>
 {
     public void Configure(EntityTypeBuilder<Entities.Country> builder)
     {

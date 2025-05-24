@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PracticeGamestore.DataAccess.Enums;
+
 namespace PracticeGamestore.DataAccess.Configurations;
 
-public class Order: IEntityTypeConfiguration<Entities.Order>
+public class Order : IEntityTypeConfiguration<Entities.Order>
 {
     public void Configure(EntityTypeBuilder<Entities.Order> builder)
     {

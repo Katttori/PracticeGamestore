@@ -1,0 +1,188 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using NUnit.Framework;
+using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Services.Publisher;
+using PracticeGamestore.Controllers;
+using PracticeGamestore.Mappers;
+using PracticeGamestore.Models.Publisher;
+
+namespace PracticeGamestore.API.Tests.Unit.Publisher;
+
+[TestFixture]
+public class PublisherControllerTests
+{
+    private Mock<IPublisherService> _publisherService;
+    private PublisherController _publisherController;
+
+    private PublisherRequestModel CreatePublisherRequestModel()
+    {
+        return new()
+        {
+            Name = "Electronic Arts",
+            Description = "American video game company",
+            PageUrl = "https://www.ea.com"
+        };
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        _publisherService = new Mock<IPublisherService>();
+        _publisherController = new PublisherController(_publisherService.Object);
+    }
+
+    [Test]
+    public async Task GetAll_ReturnsOkWithPublishers()
+    {
+        //Arrange
+        var publisherDtos = new List<PublisherDto>()
+        {
+            new(Guid.NewGuid(), "Electronic Arts", "American video game company", "https://www.ea.com"),
+            new(Guid.NewGuid(), "Ubisoft", "French video game company", "https://www.ubisoft.com"),
+            new(Guid.NewGuid(), "Activision Blizzard", "American video game holding company", "https://www.activisionblizzard.com")
+        };
+        
+        _publisherService.Setup(x => x.GetAllAsync())
+            .ReturnsAsync(publisherDtos);
+        var expected = publisherDtos.Select(dto => dto.MapToPublisherModel()).ToList();
+
+        //Act
+        var result = await _publisherController.GetAll();
+
+        //Assert
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        var response = (okResult.Value as IEnumerable<PublisherResponseModel> ?? []).ToList();
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response.Count, Is.EqualTo(expected.Count));
+        var elementsAreTheSame = response.Zip(expected, (r, e) =>
+            e.Id == r.Id &&
+            e.Description == r.Description &&
+            e.PageUrl == r.PageUrl &&
+            e.Name == r.Name).All(equal => equal);
+        Assert.That(elementsAreTheSame, Is.True);
+    }
+
+    [Test]
+    public async Task GetPublisherById_ShouldReturnOkResult_WhenPublisherExists()
+    {
+        //Arrange
+        var id = new Guid();
+        var publisherDto =  new PublisherDto(id, "Electronic Arts", "American video game company", "https://www.ea.com");
+        _publisherService.Setup(x => x.GetByIdAsync(id))
+            .ReturnsAsync(publisherDto);
+        var expected = publisherDto.MapToPublisherModel();
+
+        //Act
+        var result = await _publisherController.GetById(id);
+
+        //Assert
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        var response = okResult.Value as PublisherResponseModel;
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response, Has.Property("Id").EqualTo(expected.Id)
+            .And.Property("Name").EqualTo(expected.Name)
+            .And.Property("Description").EqualTo(expected.Description)
+            .And.Property("PageUrl").EqualTo(expected.PageUrl));
+    }
+
+    [Test]
+    public async Task GetPublisherById_ShouldReturnNotFound_WhenPublisherDoesNotExist()
+    {
+        //Arrange
+        _publisherService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(null as PublisherDto);
+
+        //Act
+        var result = await _publisherController.GetById(new Guid());
+
+        //Assert
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+    }
+
+    [Test]
+    public async Task CreatePublisher_ShouldReturnCreatedResult_WhenPublisherIsCreated()
+    {
+        //Arrange
+        var id = new Guid();
+        var publisherRequestModel = CreatePublisherRequestModel();
+        _publisherService.Setup(x => x.CreateAsync(It.IsAny<PublisherDto>()))
+            .ReturnsAsync(id);
+
+        //Act
+        var result = await _publisherController.Create(publisherRequestModel);
+
+        //Assert
+        var createdResult = result as CreatedAtActionResult;
+        Assert.That(createdResult, Is.Not.Null);
+        Assert.That(createdResult!.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
+        Assert.That(createdResult.Value, Is.EqualTo(id));
+        Assert.That(createdResult.ActionName, Is.EqualTo(nameof(PublisherController.GetById)));
+        Assert.That(createdResult.RouteValues, Is.Not.Null);
+        Assert.That(createdResult.RouteValues!["id"], Is.EqualTo(id));
+    }
+
+    [Test]
+    public async Task CreatePublisher_ShouldReturnBadRequest_WhenCreationFails()
+    {
+        //Arrange
+        var publisherRequestModel = CreatePublisherRequestModel();
+        _publisherService.Setup(x => x.CreateAsync(It.IsAny<PublisherDto>()))
+            .ReturnsAsync(null as Guid?);
+
+        //Act
+        var result = await _publisherController.Create(publisherRequestModel);
+        
+        //Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [Test]
+    public async Task Update_ShouldReturnNoContent_WhenPublisherIsUpdated()
+    {
+        //Arrange
+        var publisherRequestModel = CreatePublisherRequestModel();
+        _publisherService.Setup(x => x.UpdateAsync(It.IsAny<PublisherDto>()))
+            .ReturnsAsync(true);
+
+        //Act
+        var result = await _publisherController.Update(Guid.NewGuid(), publisherRequestModel);
+        
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
+    }
+
+    [Test]
+    public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
+    {
+        //Arrange
+        var publisherRequestModel = CreatePublisherRequestModel();
+        _publisherService.Setup(x => x.UpdateAsync(It.IsAny<PublisherDto>()))
+            .ReturnsAsync(false);
+
+        //Act
+        var result = await _publisherController.Update(Guid.NewGuid(), publisherRequestModel);
+        
+        //Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [Test]
+    public async Task Delete_ShouldReturnNoContent_WhenPublisherIsDeleted()
+    {
+        //Arrange
+        _publisherService.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
+        
+        //Act
+        var result = await _publisherController.Delete(Guid.NewGuid());
+        
+        //Assert
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
+    }
+
+
+}

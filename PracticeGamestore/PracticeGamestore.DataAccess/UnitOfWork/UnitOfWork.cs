@@ -1,6 +1,6 @@
 namespace PracticeGamestore.DataAccess.UnitOfWork;
 
-public class UnitOfWork: IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
     private GamestoreDbContext _dbContext;
     
