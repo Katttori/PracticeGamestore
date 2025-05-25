@@ -9,7 +9,7 @@ public class PublisherDto
 
     public PublisherDto(Guid? id, string name, string description, string pageUrl)
     {
-        Id = id ?? new Guid();
+        Id = id ?? Guid.NewGuid();
         Name = name;
         Description = description;
         PageUrl = pageUrl;

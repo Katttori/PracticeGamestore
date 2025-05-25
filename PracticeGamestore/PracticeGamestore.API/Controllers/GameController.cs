@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Mappers;
-using PracticeGamestore.Models;
+using PracticeGamestore.Models.Game;
 
 namespace PracticeGamestore.Controllers;
 
@@ -30,7 +30,7 @@ public class GameController(IGameService gameService) : ControllerBase
         var id = await gameService.CreateAsync(model.MapToGameDto());
         return id is null
             ? BadRequest("Failed to create game.")
-            : CreatedAtAction(nameof(GetById), new {id}, model);
+            : CreatedAtAction(nameof(GetById), new {id}, id);
 
     }
 

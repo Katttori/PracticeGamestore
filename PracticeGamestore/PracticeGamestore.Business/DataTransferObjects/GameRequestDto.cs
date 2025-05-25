@@ -1,4 +1,4 @@
-using PracticeGamestore.Enums;
+using AgeRating = PracticeGamestore.DataAccess.Enums.AgeRating;
 
 namespace PracticeGamestore.Business.DataTransferObjects;
 
@@ -31,7 +31,7 @@ public class GameRequestDto
         List<Guid> genreIds,
         List<Guid> platformIds)
     {
-        Id = id ?? new Guid();
+        Id = id ?? Guid.NewGuid();
         Name = name;
         Key = key;
         Price = price;

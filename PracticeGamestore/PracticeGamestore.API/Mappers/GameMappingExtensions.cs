@@ -1,5 +1,6 @@
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Models;
+using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.Models.Game;
 
 namespace PracticeGamestore.Mappers;
 
@@ -15,7 +16,7 @@ public static class GameMappingExtensions
             model.Picture,
             model.Description,
             model.Rating,
-            model.AgeRating,
+            (AgeRating)model.AgeRating,
             model.ReleaseDate,
             model.PublisherId,
             model.GenreIds,
@@ -33,6 +34,8 @@ public static class GameMappingExtensions
             AgeRating = responseDto.AgeRating,
             Price = responseDto.Price,
             Description = responseDto.Description,
+            Rating = responseDto.Rating,
+            ReleaseDate = responseDto.ReleaseDate,  
             Picture = responseDto.Picture,
             Publisher = responseDto.Publisher.MapToPublisherModel(),
             Genres = responseDto.Genres.Select(g => g.MapToGenreModel()).ToList(),

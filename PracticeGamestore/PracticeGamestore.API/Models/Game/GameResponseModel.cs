@@ -3,7 +3,7 @@ using PracticeGamestore.Models.Genre;
 using PracticeGamestore.Models.Platform;
 using PracticeGamestore.Models.Publisher;
 
-namespace PracticeGamestore.Models;
+namespace PracticeGamestore.Models.Game;
 
 public class GameResponseModel
 {
@@ -19,5 +19,4 @@ public class GameResponseModel
     public required PublisherResponseModel Publisher { get; set; }
     public required List<GenreResponseModel> Genres { get; set; }
     public required List<PlatformResponseModel> Platforms { get; set; }
-
 }

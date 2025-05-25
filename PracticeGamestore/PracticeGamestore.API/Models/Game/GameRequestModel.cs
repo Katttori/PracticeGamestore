@@ -1,5 +1,6 @@
 using PracticeGamestore.Enums;
-namespace PracticeGamestore.Models;
+
+namespace PracticeGamestore.Models.Game;
 
 public class GameRequestModel
 {

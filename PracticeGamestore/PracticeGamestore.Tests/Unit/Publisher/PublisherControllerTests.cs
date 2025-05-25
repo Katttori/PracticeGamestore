@@ -99,7 +99,7 @@ public class PublisherControllerTests
             .ReturnsAsync(null as PublisherDto);
 
         //Act
-        var result = await _publisherController.GetById(new Guid());
+        var result = await _publisherController.GetById(Guid.NewGuid());
 
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -183,6 +183,4 @@ public class PublisherControllerTests
         //Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
-
-
 }

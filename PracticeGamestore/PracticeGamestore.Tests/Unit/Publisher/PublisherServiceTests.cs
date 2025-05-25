@@ -64,7 +64,7 @@ public class PublisherServiceTests
     public async Task GetByIdAsync_WhenPublisherExists_ReturnsPublisherDto()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var publisher = CreatePublisher(id);
         _publisherRepository.Setup(x => x.GetByIdAsync(id))
             .ReturnsAsync(publisher);
@@ -99,7 +99,7 @@ public class PublisherServiceTests
     public async Task UpdateAsync_WhenPublisherExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var publisher = CreatePublisher(id);
         _publisherRepository.Setup(x => x.GetByIdAsync(id))
             .ReturnsAsync(publisher);
@@ -151,7 +151,7 @@ public class PublisherServiceTests
     public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var publisher = CreatePublisher(id);
         _publisherRepository.Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Publisher>()))
             .ReturnsAsync(publisher.Id); 
@@ -169,7 +169,7 @@ public class PublisherServiceTests
     public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         _publisherRepository.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .Returns(Task.CompletedTask);
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
