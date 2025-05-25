@@ -1,8 +1,11 @@
+using PracticeGamestore.DataAccess.Filtering;
+
 namespace PracticeGamestore.DataAccess.Repositories.Game;
 
 public interface IGameRepository
 {
     Task<IEnumerable<Entities.Game>> GetAllAsync();
+    Task<IEnumerable<Entities.Game>> GetFiltered(GameFilter filter);
     Task<Entities.Game?> GetByIdAsync(Guid id);
     Task DeleteAsync(Guid id);
     Task<Guid> CreateAsync(Entities.Game game, List<Guid> genreIds, List<Guid> platformIds);

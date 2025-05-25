@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Filtering;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.DataAccess.Enums;
@@ -69,6 +70,132 @@ public class GameControllerTests
                 new(Guid.NewGuid(), "Activision Blizzard", "American video game holding company", "https://www.activisionblizzard.com"),
                 [new(Guid.NewGuid(), "PS5", "PlayStation 5")],
                 [new(Guid.NewGuid(), "Action"), new(Guid.NewGuid(), "FPS")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "Dragon's Legacy",
+                "dragon-legacy-2024",
+                69.99m,
+                [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0B],
+                "An epic fantasy RPG where you embark on a quest to save the realm from an ancient dragon threat.",
+                4.8,
+                AgeRating.SixteenPlus,
+                new DateTime(2024, 5, 12),
+                new(Guid.NewGuid(), "CD Projekt", "Polish video game developer", "https://www.cdprojekt.com"),
+                [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "PS5", "PlayStation 5"), new(Guid.NewGuid(), "Xbox Series X", "Microsoft Xbox Series X")],
+                [new(Guid.NewGuid(), "RPG"), new(Guid.NewGuid(), "Adventure")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "Street Racer Ultimate",
+                "street-racer-ultimate",
+                49.99m,
+                null,
+                "High-octane street racing with customizable cars and underground tournaments.",
+                4.3,
+                AgeRating.TwelvePlus,
+                new DateTime(2024, 2, 14),
+                new(Guid.NewGuid(), "Electronic Arts", "American video game company", "https://www.ea.com"),
+                [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "Xbox Series X", "Microsoft Xbox Series X")],
+                [new(Guid.NewGuid(), "Racing")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "FIFA Champions 2025",
+                "fifa-champions-2025",
+                59.99m,
+                [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0C],
+                "The ultimate football simulation with realistic gameplay and all your favorite teams.",
+                4.1,
+                AgeRating.ThreePlus,
+                new DateTime(2024, 9, 22),
+                new(Guid.NewGuid(), "Electronic Arts", "American video game company", "https://www.ea.com"),
+                [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "PS5", "PlayStation 5"), new(Guid.NewGuid(), "Xbox Series X", "Microsoft Xbox Series X")],
+                [new(Guid.NewGuid(), "Sports")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "City Architect Simulator",
+                "city-architect-sim",
+                34.99m,
+                null,
+                "Design and build the city of your dreams with advanced urban planning tools.",
+                4.6,
+                AgeRating.SevenPlus,
+                new DateTime(2024, 4, 18),
+                new(Guid.NewGuid(), "Ubisoft", "French video game company", "https://www.ubisoft.com"),
+                [new(Guid.NewGuid(), "PC", "Personal Computer")],
+                [new(Guid.NewGuid(), "Strategy"), new(Guid.NewGuid(), "Simulation")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "Haunted Mansion Mystery",
+                "haunted-mansion-mystery",
+                24.99m,
+                [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0D],
+                "Explore a cursed mansion and uncover dark secrets in this spine-chilling horror adventure.",
+                4.0,
+                AgeRating.EighteenPlus,
+                new DateTime(2024, 10, 31),
+                new(Guid.NewGuid(), "Bethesda Game Studios", "American video game developer", "https://bethesdagamestudios.com"),
+                [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "Steam Deck", "Valve Steam Deck")],
+                [new(Guid.NewGuid(), "Horror"), new(Guid.NewGuid(), "Adventure")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "Puzzle Master Collection",
+                "puzzle-master-collection",
+                19.99m,
+                null,
+                "A collection of challenging puzzles that will test your logical thinking and problem-solving skills.",
+                4.4,
+                AgeRating.ThreePlus,
+                new DateTime(2024, 6, 5),
+                new(Guid.NewGuid(), "Nintendo", "Japanese multinational video game company", "https://www.nintendo.com"),
+                [new(Guid.NewGuid(), "Nintendo Switch", "Nintendo Switch Console"), new(Guid.NewGuid(), "PC", "Personal Computer")],
+                [new(Guid.NewGuid(), "Puzzle")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "Galactic Warfare",
+                "galactic-warfare-2024",
+                54.99m,
+                [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0E],
+                "Command vast space fleets in epic battles across the galaxy in this real-time strategy masterpiece.",
+                4.7,
+                AgeRating.TwelvePlus,
+                new DateTime(2024, 7, 20),
+                new(Guid.NewGuid(), "Activision Blizzard", "American video game holding company", "https://www.activisionblizzard.com"),
+                [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "Steam Deck", "Valve Steam Deck")],
+                [new(Guid.NewGuid(), "Strategy"), new(Guid.NewGuid(), "Action")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "Wild West Outlaws",
+                "wild-west-outlaws",
+                59.99m,
+                null,
+                "Live the life of an outlaw in the American frontier with horse riding, gunfights, and moral choices.",
+                4.9,
+                AgeRating.EighteenPlus,
+                new DateTime(2024, 8, 15),
+                new(Guid.NewGuid(), "Rockstar Games", "American video game publisher", "https://www.rockstargames.com"),
+                [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "PS5", "PlayStation 5"), new(Guid.NewGuid(), "Xbox Series X", "Microsoft Xbox Series X")],
+                [new(Guid.NewGuid(), "Action"), new(Guid.NewGuid(), "Adventure")]
+            ),
+            new (
+                Guid.NewGuid(),
+                "Cyber Shooter Arena",
+                "cyber-shooter-arena",
+                29.99m,
+                [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0F],
+                "Fast-paced multiplayer FPS set in a neon-lit cyberpunk world with advanced weaponry.",
+                4.2,
+                AgeRating.SixteenPlus,
+                new DateTime(2024, 12, 1),
+                new(Guid.NewGuid(), "Valve Corporation", "American video game developer", "https://www.valvesoftware.com"),
+                [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "Steam Deck", "Valve Steam Deck")],
+                [new(Guid.NewGuid(), "FPS"), new(Guid.NewGuid(), "Action")]
             )
         };
         return gameResponseDtos;
@@ -131,6 +258,23 @@ public class GameControllerTests
                dto1.Genres.All(eg => dto2.Genres.Any(rg => rg.Id == eg.Id && rg.Name == eg.Name && rg.Description == eg.Description && rg.ParentId == eg.ParentId));
     }
 
+    private OkObjectResult AssetThatStatusCodeIsOk(IActionResult result)
+    {
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        return okResult;
+    }
+    
+    private static void AssertThatResultListOfGamesIsEqualToExpectedList(OkObjectResult okResult, List<GameResponseModel> expected)
+    {
+        var response = (okResult.Value as IEnumerable<GameResponseModel> ?? []).ToList();
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response, Is.Not.Empty);
+        Assert.That(response.Count, Is.EqualTo(expected.Count));
+        var elementsAreTheSame = expected.Zip(response, GameResponseModelsAreTheSame).All(equal => equal);
+        Assert.That(elementsAreTheSame, Is.True);
+    }
     
     [Test]
     public async Task GetAll_ReturnsOkWithGames()
@@ -145,14 +289,8 @@ public class GameControllerTests
         var result = await _gameController.GetAll();
 
         //Assert
-        var okResult = result as OkObjectResult;
-        Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        var response = (okResult.Value as IEnumerable<GameResponseModel> ?? []).ToList();
-        Assert.That(response, Is.Not.Null);
-        Assert.That(response.Count, Is.EqualTo(expected.Count));
-        var elementsAreTheSame = response.Zip(expected, GameResponseModelsAreTheSame).All(equal => equal);
-        Assert.That(elementsAreTheSame, Is.True);
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
     }
 
     [Test]
@@ -169,9 +307,7 @@ public class GameControllerTests
         var result = await _gameController.GetById(id);
 
         //Assert
-        var okResult = result as OkObjectResult;
-        Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        var okResult = AssetThatStatusCodeIsOk(result);
         var response = okResult.Value as GameResponseModel;
         Assert.That(response, Is.Not.Null);
         Assert.That(GameResponseModelsAreTheSame(response!, expected), Is.True);
@@ -299,5 +435,284 @@ public class GameControllerTests
         
         //Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
+    }
+    
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkWithFilteredGames_WhenValidFilterProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter 
+        { 
+            MinPrice = 30,
+            MaxPrice = 60,
+            Name = "cyber"
+        };
+        var gameDtos = GenerateGameResponseDtos().Where(g => g.Price is >= 30 and <= 60 && g.Name.Contains("cyber", StringComparison.InvariantCultureIgnoreCase)).ToList();
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkWithEmptyList_WhenNoGamesMatchFilter()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { MinPrice = 1000000 };
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync([]);
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        var response = (okResult.Value as IEnumerable<GameResponseModel> ?? []).ToList();
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response, Is.Empty);
+    }
+
+    [TestCase(-10, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMinPriceIsNegative")]
+    [TestCase(null, -5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMaxPriceIsNegative")]
+    [TestCase(100, 50, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMinPriceIsGreaterThanMaxPrice")]
+    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidPriceRange(decimal? minPrice, decimal? maxPrice)
+    {
+        // Arrange
+        var gameFilter = new GameFilter { MinPrice = minPrice, MaxPrice = maxPrice};
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [TestCase(-1, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingFromIsNegative")]
+    [TestCase(6, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingFromIsGreaterThanFive")]
+    [TestCase(null, -0.5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingToIsNegative")]
+    [TestCase(null, 7.5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingToIsGreaterThanFive")]
+    [TestCase(4.5, 3.0, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingFromIsGreaterThanRatingTo")]
+    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidRatingRange(double? ratingFrom, double? ratingTo)
+    {
+        // Arrange
+        var gameFilter = new GameFilter { RatingFrom = ratingFrom, RatingTo = ratingTo};
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [TestCase("2024-12-31", "2024-01-01", TestName = "GetFiltered_ShouldReturnBadRequest_WhenStartDateAfterEndDate")]
+    [TestCase("2025-01-01", "2024-12-31", TestName = "GetFiltered_ShouldReturnBadRequest_WhenStartDateInFuture")]
+    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidDateRange(string startDateStr, string endDateStr)
+    {
+        // Arrange
+        var gameFilter = new GameFilter 
+        { 
+            ReleaseDateStart = DateTime.Parse(startDateStr),
+            ReleaseDateEnd =  DateTime.Parse(endDateStr)
+        };
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidOrderDirectionProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { Order = "invalid" };
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidOrderByFields()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { OrderBy = ["invalid-field"] };
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [Test]
+    public async Task CreateGame_ShouldReturnBadRequest_WhenInvalidAgeRating()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { Age = [(AgeRating)999] };
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [TestCase(-1, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenPageIsNegative")]
+    [TestCase(null, -5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenPageSizeIsNegative")]
+    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidPagination(int? page, int? pageSize)
+    { 
+        // Arrange
+        var gameFilter = new GameFilter { Page = page, PageSize = pageSize };
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkAndGames_WhenValidOrderDirectionProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { Order = "desc" };
+        var gameDtos = GenerateGameResponseDtos().OrderBy(g => g.Name).Take(10).ToList();
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidOrderByFieldsProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { OrderBy = ["price", "rating"] };
+        var gameDtos = GenerateGameResponseDtos().OrderByDescending(g => g.Rating).Take(10).ToList();
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidAgeRatingsProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { Age = [AgeRating.TwelvePlus, AgeRating.SixteenPlus] };
+        var gameDtos = GenerateGameResponseDtos().Where(g => g.AgeRating is AgeRating.TwelvePlus or AgeRating.SixteenPlus).ToList();
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOk_WhenValidDateRangeProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter 
+        { 
+            ReleaseDateStart = new DateTime(2024, 1, 1),
+            ReleaseDateEnd = new DateTime(2024, 12, 31)
+        };
+        var gameDtos = GenerateGameResponseDtos().Where(g => g.ReleaseDate >= new DateTime(2024, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31)).ToList();
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOk_WhenValidPaginationProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { Page = 2, PageSize = 5 };
+        var gameDtos = GenerateGameResponseDtos().Skip(5).Take(5).ToList();
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOk_WhenComplexValidFilterProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter 
+        { 
+            Name = "cyber",
+            MinPrice = 20,
+            MaxPrice = 70,
+            RatingFrom = 4.0,
+            RatingTo = 5.0,
+            Age = [AgeRating.SixteenPlus, AgeRating.EighteenPlus],
+            ReleaseDateStart = new DateTime(2023, 1, 1),
+            ReleaseDateEnd = new DateTime(2024, 12, 31),
+            OrderBy = ["rating", "price"],
+            Order = "desc",
+            Page = 1,
+            PageSize = 10
+        };
+        var gameDtos = GenerateGameResponseDtos()
+            .Where(g => g.Name.Contains("cyber", StringComparison.InvariantCultureIgnoreCase) && 
+                        g.Price is >= 20 and <= 70 && 
+                        g.Rating is >= 4.0 and <= 5.0 &&
+                        g.AgeRating is AgeRating.SixteenPlus or AgeRating.EighteenPlus &&
+                        g.ReleaseDate >= new DateTime(2023, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31))
+            .OrderByDescending(g => g.Rating)
+            .ThenByDescending(g => g.Price)
+            .Take(10)
+            .ToList();
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
     }
 }

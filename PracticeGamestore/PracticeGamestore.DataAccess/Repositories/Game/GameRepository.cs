@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PracticeGamestore.DataAccess.Entities;
+using PracticeGamestore.DataAccess.Filtering;
 
 namespace PracticeGamestore.DataAccess.Repositories.Game;
 
@@ -17,6 +18,15 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         return await _gamesNoTracking.ToListAsync();
     }
 
+    public async Task<IEnumerable<Entities.Game>> GetFiltered(GameFilter filter)
+    {
+        var query = _gamesNoTracking.AsQueryable();
+        query = ApplyFiltering(query, filter);
+        query = ApplyOrdering(query, filter.OrderByFields, filter.OrderType);
+        var skip = (filter.Page - 1) * filter.PageSize;
+        return await query.Skip(skip).Take(filter.PageSize).ToListAsync();
+    }
+   
     public async Task<Entities.Game?> GetByIdAsync(Guid id)
     {
         return await _gamesNoTracking.FirstOrDefaultAsync(g => g.Id == id);
@@ -42,6 +52,62 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         context.Games.Update(game);
         await UpdateGenreIdsAsync(game.Id, genreIds);
         await UpdatePlatformIdsAsync(game.Id, platformIds);
+    }
+    
+    private static IQueryable<Entities.Game> ApplyFiltering(IQueryable<Entities.Game> query, GameFilter filter)
+    {
+        if (filter.Name is not null)
+            query = query.Where(g => g.Name.ToLower().Contains(filter.Name));
+        if (filter.MinPrice is not null)
+            query = query.Where(g => g.Price >= filter.MinPrice.Value);
+        if (filter.MaxPrice.HasValue)
+            query = query.Where(g => g.Price <= filter.MaxPrice.Value);
+        if (filter.ReleaseDateStart.HasValue)
+            query = query.Where(g => g.ReleaseDate >= filter.ReleaseDateStart.Value);
+        if (filter.ReleaseDateEnd.HasValue)
+            query = query.Where(g => g.ReleaseDate <= filter.ReleaseDateEnd.Value);
+        if (filter.Age != null && filter.Age.Count != 0)
+            query = query.Where(g => filter.Age.Contains(g.AgeRating));
+        if (filter.RatingFrom.HasValue)
+            query = query.Where(g => g.Rating >= filter.RatingFrom.Value);
+        if (filter.RatingTo.HasValue)
+            query = query.Where(g => g.Rating <= filter.RatingTo.Value);
+        return query;
+    }
+
+    private static IQueryable<Entities.Game> ApplyOrdering(IQueryable<Entities.Game> query, List<string> orderByFields, string order)
+    {
+        var descending = order == "desc";
+        var orderedQuery = ApplyPrimaryOrdering(query, orderByFields[0], descending);
+        for (var i = 1; i < orderByFields.Count; i++)
+        {
+            orderedQuery = ApplySecondaryOrdering(orderedQuery, orderByFields[i], descending);
+        }
+        return orderedQuery;
+    }
+    
+    private static IOrderedQueryable<Entities.Game> ApplyPrimaryOrdering(IQueryable<Entities.Game> query, string propertyName, bool descending)
+    {
+        return propertyName switch
+        {
+            "price" => descending ? query.OrderByDescending(g => g.Price) : query.OrderBy(g => g.Price),
+            "rating" => descending ? query.OrderByDescending(g => g.Rating) : query.OrderBy(g => g.Rating),
+            "age" => descending ? query.OrderByDescending(g => g.AgeRating) : query.OrderBy(g => g.AgeRating),
+            "release-date" => descending ? query.OrderByDescending(g => g.ReleaseDate) : query.OrderBy(g => g.ReleaseDate),
+            _ => descending ? query.OrderByDescending(g => g.Name) : query.OrderBy(g => g.Name)
+        };
+    } 
+    
+    private static IOrderedQueryable<Entities.Game> ApplySecondaryOrdering(IOrderedQueryable<Entities.Game> query, string propertyName, bool descending)
+    {
+        return propertyName switch
+        {
+            "price" => descending ? query.ThenByDescending(g => g.Price) : query.ThenBy(g => g.Price),
+            "rating" => descending ? query.ThenByDescending(g => g.Rating) : query.ThenBy(g => g.Rating),
+            "age" => descending ? query.ThenByDescending(g => g.AgeRating) : query.ThenBy(g => g.AgeRating),
+            "release-date" => descending ? query.ThenByDescending(g => g.ReleaseDate) : query.ThenBy(g => g.ReleaseDate),
+            _ => descending ? query.ThenByDescending(g => g.Name) : query.ThenBy(g => g.Name)
+        };
     }
     
     private async Task AddPlatformsAsync(Guid gameId, IEnumerable<Guid> platformIds)

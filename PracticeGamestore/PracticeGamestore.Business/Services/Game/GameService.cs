@@ -1,4 +1,5 @@
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Filtering;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
@@ -12,7 +13,13 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
 {
     public async Task<IEnumerable<GameResponseDto>> GetAllAsync()
     {
-        var entities =  await gameRepository.GetAllAsync();
+        var entities = await gameRepository.GetAllAsync();
+        return entities.Select(e => e.MapToGameDto());
+    }
+
+    public async Task<IEnumerable<GameResponseDto>> GetFilteredAsync(GameFilter filter)
+    {
+        var entities = await gameRepository.GetFiltered(filter.MapToDataAccessGameFilter());
         return entities.Select(e => e.MapToGameDto());
     }
 

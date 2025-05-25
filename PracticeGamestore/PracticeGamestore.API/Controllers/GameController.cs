@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Mappers;
+using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Filtering;
+using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Models.Game;
 
 namespace PracticeGamestore.Controllers;
@@ -12,8 +13,16 @@ public class GameController(IGameService gameService) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-       var games =  await gameService.GetAllAsync();
-       return Ok(games.Select(g => g.MapToGameModel()));
+        var games = await gameService.GetAllAsync();
+        return Ok(games.Select(g => g.MapToGameModel()));
+    }
+
+    [HttpGet("/filter")]
+    public async Task<IActionResult> GetFiltered([FromQuery] GameFilter filter)
+    {
+        if (!ModelState.IsValid || filter.IsInvalid()) return BadRequest("Invalid query parameters!");
+        var games = await gameService.GetFilteredAsync(filter);
+        return Ok(games.Select(g => g.MapToGameModel()));
     }
 
     [HttpGet("{id:guid}")]
