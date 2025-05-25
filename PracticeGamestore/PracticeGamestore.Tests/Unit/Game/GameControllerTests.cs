@@ -5,7 +5,6 @@ using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Controllers;
-using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Game;
 
@@ -22,92 +21,6 @@ public class GameControllerTests
     {
         _gameService = new Mock<IGameService>();
         _gameController = new GameController(_gameService.Object);
-    }
-
-    private static List<GameResponseDto> GenerateGameResponseDtos()
-    {
-        var gameResponseDtos = new List<GameResponseDto>
-        {
-            new (
-                Guid.NewGuid(),
-                "Cyber Warriors 2077",
-                "4uiru78rh6x84",
-                59.99m,
-                [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
-                "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
-                4.5,
-                AgeRating.EighteenPlus,
-                new DateTime(2023, 11, 15),
-                new(Guid.NewGuid(), "Electronic Arts", "American video game company", "https://www.ea.com"),
-                [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "PS5", "PlayStation 5")],
-                [new(Guid.NewGuid(), "Action")]
-            ),
-            new (
-                Guid.NewGuid(),
-                "Mystic Forest Adventure",
-                "kuy32fe7367636872ey",
-                29.99m,
-                null,
-                "A magical journey through enchanted forests where you solve puzzles and befriend mystical creatures.",
-                4.2,
-                AgeRating.ThreePlus,
-                new DateTime(2024, 3, 8),
-                new(Guid.NewGuid(), "Ubisoft", "French video game company", "https://www.ubisoft.com"),
-                [new(Guid.NewGuid(), "PC", "Personal Computer")],
-                [new(Guid.NewGuid(), "FPS")]
-            ),
-            new (
-                Guid.NewGuid(),
-                "Space Colony Builder",
-                "35467568467987809807",
-                39.99m,
-                null,
-                "Build and manage your own space colony on distant planets while dealing with resource management and alien threats.",
-                4.7,
-                AgeRating.TwelvePlus,
-                new DateTime(2024, 1, 22),
-                new(Guid.NewGuid(), "Activision Blizzard", "American video game holding company", "https://www.activisionblizzard.com"),
-                [new(Guid.NewGuid(), "PS5", "PlayStation 5")],
-                [new(Guid.NewGuid(), "Action"), new(Guid.NewGuid(), "FPS")]
-            )
-        };
-        return gameResponseDtos;
-    }
-    
-    private static GameResponseDto GenerateSingleGameResponseDto()
-    {
-        return new(
-            Guid.NewGuid(),
-            "Cyber Warriors 2077",
-            "4uiru78rh6x84",
-            59.99m,
-            [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
-            "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
-            4.5,
-            AgeRating.EighteenPlus,
-            new DateTime(2023, 11, 15),
-            new(Guid.NewGuid(), "Electronic Arts", "American video game company", "https://www.ea.com"),
-            [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "PS5", "PlayStation 5")],
-            [new(Guid.NewGuid(), "Action")]
-        );
-    }
-    
-    private static GameRequestModel GenerateSingleGameRequestModel()
-    {
-        return new()
-        {
-            Name = "Cyber Warriors 2077",
-            Key = "4uiru78rh6x84",
-            Price = 59.99m,
-            Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
-            Description = "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
-            Rating = 4.5,
-            AgeRating = 18,
-            ReleaseDate = new DateTime(2023, 11, 15),
-            PublisherId = Guid.NewGuid(),
-            GenreIds = [Guid.NewGuid()],
-            PlatformIds = [Guid.NewGuid(), Guid.NewGuid()]
-        };
     }
     
     private static bool GameResponseModelsAreTheSame(GameResponseModel dto1, GameResponseModel dto2)
@@ -136,7 +49,7 @@ public class GameControllerTests
     public async Task GetAll_ReturnsOkWithGames()
     {
         //Arrange
-        var gameDtos = GenerateGameResponseDtos();
+        var gameDtos = TestData.Game.GenerateGameResponseDtos();
         _gameService.Setup(x => x.GetAllAsync())
             .ReturnsAsync(gameDtos);
         var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
@@ -160,7 +73,7 @@ public class GameControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var gameResponseDto = GenerateSingleGameResponseDto();
+        var gameResponseDto = TestData.Game.GenerateGameResponseDto();
         _gameService.Setup(x => x.GetByIdAsync(id))
             .ReturnsAsync(gameResponseDto);
         var expected = gameResponseDto.MapToGameModel();
@@ -195,9 +108,9 @@ public class GameControllerTests
     public async Task CreateGame_ShouldReturnCreatedResult_WhenPublisherIsCreated()
     {
         //Arrange
-        var gameRequestModel = GenerateSingleGameRequestModel();
+        var gameRequestModel = TestData.Game.GenerateGameRequestModel();
         var id = Guid.NewGuid();
-        _gameService.Setup(x => x.CreateAsync(It.IsAny<GameRequestDto>()))
+      _gameService.Setup(x => x.CreateAsync(It.IsAny<GameRequestDto>()))
             .ReturnsAsync(id);
 
         //Act
@@ -217,7 +130,7 @@ public class GameControllerTests
     public async Task CreateGame_ShouldReturnBadRequest_WhenCreationFails()
     {
         //Arrange
-        var gameRequestModel = GenerateSingleGameRequestModel();
+        var gameRequestModel = TestData.Game.GenerateGameRequestModel();
         _gameService.Setup(x => x.CreateAsync(It.IsAny<GameRequestDto>()))
             .ReturnsAsync(null as Guid?);
 
@@ -232,7 +145,7 @@ public class GameControllerTests
     public async Task CreateGame_ShouldReturnBadRequest_WhenProvidedAgeRatingIsIncorrect()
     {
         //Arrange
-        var gameRequestModel = GenerateSingleGameRequestModel();
+        var gameRequestModel = TestData.Game.GenerateGameRequestModel();
         gameRequestModel.AgeRating = 88;
 
         //Act
@@ -247,7 +160,7 @@ public class GameControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var gameRequestModel = GenerateSingleGameRequestModel();
+        var gameRequestModel = TestData.Game.GenerateGameRequestModel();
         _gameService.Setup(x => x.UpdateAsync(id, It.IsAny<GameRequestDto>()))
             .ReturnsAsync(true);
 
@@ -263,7 +176,7 @@ public class GameControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var gameRequestModel = GenerateSingleGameRequestModel();
+        var gameRequestModel = TestData.Game.GenerateGameRequestModel();
         _gameService.Setup(x => x.UpdateAsync(id, It.IsAny<GameRequestDto>()))
             .ReturnsAsync(false);
 
@@ -278,7 +191,7 @@ public class GameControllerTests
     public async Task Update_ShouldReturnBadRequest_WhenProvidedAgeRatingIsIncorrect()
     {
         //Arrange
-        var gameRequestModel = GenerateSingleGameRequestModel();
+        var gameRequestModel = TestData.Game.GenerateGameRequestModel();
         gameRequestModel.AgeRating = 88;
         
         //Act

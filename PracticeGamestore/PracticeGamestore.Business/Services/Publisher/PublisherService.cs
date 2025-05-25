@@ -1,27 +1,28 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Publisher;
 
-public class PublisherService(IPublisherRepository repository, IUnitOfWork unitOfWork) : IPublisherService
+public class PublisherService(IPublisherRepository publisherRepository, IGameRepository gameRepository, IUnitOfWork unitOfWork) : IPublisherService
 {
     public async Task<IEnumerable<PublisherDto>> GetAllAsync()
     {
-        var publishers = await repository.GetAllAsync();
+        var publishers = await publisherRepository.GetAllAsync();
         return publishers.Select(p => p.MapToPublisherDto());
     }
 
     public async Task<PublisherDto?> GetByIdAsync(Guid id)
     {
-        var publisher = await repository.GetByIdAsync(id);
+        var publisher = await publisherRepository.GetByIdAsync(id);
         return publisher?.MapToPublisherDto();
     }
 
     public async Task<Guid?> CreateAsync(PublisherDto dto)
     {
-        var id = await repository.CreateAsync(dto.MapToPublisherEntity());
+        var id = await publisherRepository.CreateAsync(dto.MapToPublisherEntity());
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0 ? id : null;
     }
@@ -32,14 +33,21 @@ public class PublisherService(IPublisherRepository repository, IUnitOfWork unitO
         if (existingPublisher is null) return false;
         var updatedPublisher = dto.MapToPublisherEntity();
         updatedPublisher.Id = id;
-        repository.Update(updatedPublisher);
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0;
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        await repository.DeleteAsync(id);
+        await publisherRepository.DeleteAsync(id);
         await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<GameResponseDto>?> GetGamesAsync(Guid id)
+    {
+        var publisher = await publisherRepository.GetByIdAsync(id);
+        if (publisher is null) return null;
+        var games = await gameRepository.GetByPublisherIdAsync(id);
+        return games.Select(g => g.MapToGameDto());
     }
 }

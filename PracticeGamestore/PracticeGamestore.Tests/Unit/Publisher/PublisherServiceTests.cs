@@ -2,8 +2,10 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Publisher;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.UnitOfWork;
+using PracticeGamestore.Tests.TestData;
 
 namespace PracticeGamestore.Tests.Unit.Publisher;
 
@@ -13,34 +15,22 @@ public class PublisherServiceTests
     private Mock<IPublisherRepository> _publisherRepository;
     private Mock<IUnitOfWork> _unitOfWork;
     private IPublisherService _publisherService;
-
-    private static DataAccess.Entities.Publisher CreatePublisher(Guid id = new Guid())
-    {
-        return new()
-        {
-            Id = id, Name = "Electronic Arts", Description = "American video game company",
-            PageUrl = "https://www.ea.com"
-        };
-    }
+    private Mock<IGameRepository> _gameRepository;
 
     [SetUp]
     public void Setup()
     {
         _publisherRepository = new Mock<IPublisherRepository>();
         _unitOfWork = new Mock<IUnitOfWork>();
-        _publisherService = new PublisherService(_publisherRepository.Object, _unitOfWork.Object);
+        _gameRepository = new Mock<IGameRepository>();
+        _publisherService = new PublisherService(_publisherRepository.Object, _gameRepository.Object, _unitOfWork.Object);
     }
 
     [Test]
     public async Task GetAllAsync_ShouldReturnAllPublishers()
     {
         //Arrange
-        var publishers = new List<DataAccess.Entities.Publisher>()
-        {
-            new() { Id = Guid.NewGuid(), Name = "Electronic Arts", Description = "American video game company", PageUrl = "https://www.ea.com" },
-            new() { Id = Guid.NewGuid(), Name = "Ubisoft", Description = "French video game company", PageUrl = "https://www.ubisoft.com" },
-            new() { Id = Guid.NewGuid(), Name = "Activision Blizzard", Description = "American video game holding company", PageUrl = "https://www.activisionblizzard.com" },
-        };
+        var publishers = TestData.Publisher.GeneratePublisherEntities();
         _publisherRepository.Setup(x => x.GetAllAsync()).ReturnsAsync(publishers);
         var expected = publishers.Select(p => p.MapToPublisherDto()).ToList();
         
@@ -63,14 +53,13 @@ public class PublisherServiceTests
     public async Task GetByIdAsync_WhenPublisherExists_ReturnsPublisherDto()
     {
         //Arrange
-        var id = Guid.NewGuid();
-        var publisher = CreatePublisher(id);
-        _publisherRepository.Setup(x => x.GetByIdAsync(id))
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
+        _publisherRepository.Setup(x => x.GetByIdAsync(publisher.Id))
             .ReturnsAsync(publisher);
         var expected = publisher.MapToPublisherDto();
 
         //Act
-        var result = await _publisherService.GetByIdAsync(id);
+        var result = await _publisherService.GetByIdAsync(publisher.Id);
 
         //Assert
         Assert.That(result, Is.Not.Null);
@@ -98,15 +87,14 @@ public class PublisherServiceTests
     public async Task UpdateAsync_WhenPublisherExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
         //Arrange
-        var id = Guid.NewGuid();
-        var publisher = CreatePublisher(id);
-        _publisherRepository.Setup(x => x.GetByIdAsync(id))
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
+        _publisherRepository.Setup(x => x.GetByIdAsync(publisher.Id))
             .ReturnsAsync(publisher);
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         //Act
-        var result = await _publisherService.UpdateAsync(id, publisher.MapToPublisherDto());
+        var result = await _publisherService.UpdateAsync(publisher.Id, publisher.MapToPublisherDto());
         
         //Assert
         Assert.That(result, Is.True);
@@ -117,8 +105,8 @@ public class PublisherServiceTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var publisher = CreatePublisher();
-        _publisherRepository.Setup(x => x.GetByIdAsync(id))
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
+        _publisherRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Publisher);
 
         //Act
@@ -132,8 +120,7 @@ public class PublisherServiceTests
     public async Task CreateAsync_ShouldAddPublisher_WhenChangesSavedSuccessfully()
     {
         //Arrange
-        var id = new Guid();
-        var publisher = CreatePublisher(id);
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
         _publisherRepository.Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Publisher>()))
             .ReturnsAsync(publisher.Id);
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -144,15 +131,14 @@ public class PublisherServiceTests
         
         //Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.EqualTo(id));
+        Assert.That(result, Is.EqualTo(publisher.Id));
     }
 
     [Test]
     public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
     {
         //Arrange
-        var id = Guid.NewGuid();
-        var publisher = CreatePublisher(id);
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
         _publisherRepository.Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Publisher>()))
             .ReturnsAsync(publisher.Id); 
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -181,5 +167,41 @@ public class PublisherServiceTests
         //Assert
         _publisherRepository.Verify(x => x.DeleteAsync(id), Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Test]
+    public async Task GetGamesAsync_ShouldReturnPublisherGames_WhenPublisherExist()
+    {
+        //Arrange
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
+        var games = TestData.Game.GenerateGameEntities().Where(g => g.PublisherId == publisher.Id).ToList();
+        _publisherRepository.Setup(x => x.GetByIdAsync(publisher.Id))
+            .ReturnsAsync(publisher);
+        _gameRepository.Setup(x => x.GetByPublisherIdAsync(publisher.Id))
+            .ReturnsAsync(games);
+        
+        //Act
+        var result = await _publisherService.GetGamesAsync(publisher.Id);
+        
+        //Assert
+        Assert.That(result, Is.Not.Null);
+        var gameResponseDtos = result!.ToList();
+        Assert.That(gameResponseDtos.Count, Is.EqualTo(games.Count));
+        Assert.That(gameResponseDtos.All(dto => dto.Publisher.Id == publisher.Id), Is.True);
+    }
+    
+    [Test]
+    public async Task GetGamesAsync_ShouldReturnNull_WhenPublisherDoesNotExist()
+    {
+        //Arrange
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
+        _publisherRepository.Setup(x => x.GetByIdAsync(publisher.Id))
+            .ReturnsAsync(null as DataAccess.Entities.Publisher); 
+        
+        //Act
+        var result = await _publisherService.GetGamesAsync(publisher.Id);
+        
+        //Assert
+        Assert.That(result, Is.Null);
     }
 }
