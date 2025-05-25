@@ -13,12 +13,18 @@ public static class OrderMappingExtensions
             Status = dto.Status,
             UserEmail = dto.UserEmail,
             Total = dto.Total,
-            GameOrders = dto.GameOrders
+            GameOrders = dto.GameOrders.Select(go => go.MapToGameOrderEntity()).ToList()
         };
     }
 
     public static OrderDto MapToOrderDto(this Order entity)
     {
-        return new(entity.Id, entity.Status, entity.UserEmail, entity.Total, entity.GameOrders);
+        return new(
+            entity.Id, 
+            entity.Status, 
+            entity.UserEmail, 
+            entity.Total, 
+            entity.GameOrders.Select(go => go.MapToGameOrderDto()).ToList()
+        );
     }
 }

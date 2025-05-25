@@ -34,7 +34,7 @@ public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWo
         entity.Status = dto.Status;
         entity.UserEmail = dto.UserEmail;
         entity.Total = dto.Total;
-        entity.GameOrders = dto.GameOrders;
+        entity.GameOrders = dto.GameOrders.Select(go => go.MapToGameOrderEntity()).ToList();
 
         orderRepository.Update(entity);
         var changes = await unitOfWork.SaveChangesAsync();
