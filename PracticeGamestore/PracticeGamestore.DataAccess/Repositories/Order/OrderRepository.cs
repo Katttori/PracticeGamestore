@@ -4,19 +4,18 @@ namespace PracticeGamestore.DataAccess.Repositories.Order;
 
 public class OrderRepository(GamestoreDbContext context) : IOrderRepository
 {
-    private readonly IQueryable<Entities.Order> _ordersNoTracking = context.Orders
+    private readonly IQueryable<Entities.Order> _ordersWithGamesIncluded = context.Orders
         .Include(o => o.GameOrders)
-        .ThenInclude(go => go.Game)
-        .AsNoTracking();
+        .ThenInclude(go => go.Game);
     
     public async Task<IEnumerable<Entities.Order>> GetAllAsync()
     {
-        return await _ordersNoTracking.ToListAsync();
+        return await _ordersWithGamesIncluded.AsNoTracking().ToListAsync();
     }
 
     public async Task<Entities.Order?> GetByIdAsync(Guid id)
     {
-        return await _ordersNoTracking.FirstOrDefaultAsync(g => g.Id == id);
+        return await _ordersWithGamesIncluded.FirstOrDefaultAsync(g => g.Id == id);
     }
 
     public async Task<Guid> CreateAsync(Entities.Order order)
