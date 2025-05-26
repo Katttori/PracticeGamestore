@@ -10,7 +10,6 @@ public class BlacklistDto
 
     public BlacklistDto(Guid? id, string userEmail, Guid? countryId = null)
     {
-        Id = id ?? Guid.NewGuid();
         UserEmail = userEmail;
         CountryId = countryId;
     }
