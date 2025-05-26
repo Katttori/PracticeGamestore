@@ -14,7 +14,7 @@ public static class PublisherMappingExtensions
     {
         return new ()
         {
-            Id = publisherDto.Id,
+            Id = publisherDto.Id!.Value,
             Name = publisherDto.Name,
             PageUrl = publisherDto.PageUrl,
             Description = publisherDto.Description

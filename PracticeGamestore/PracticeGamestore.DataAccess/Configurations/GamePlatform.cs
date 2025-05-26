@@ -28,6 +28,5 @@ public class GamePlatform : IEntityTypeConfiguration<Entities.GamePlatform>
             .WithMany(p => p.GamePlatforms)
             .HasForeignKey(gp => gp.PlatformId)    
             .OnDelete(DeleteBehavior.Cascade);
-
     }
 }

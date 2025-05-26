@@ -1,6 +1,5 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
-using PracticeGamestore.DataAccess.Repositories;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.Repositories.Platform;
@@ -19,9 +18,13 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
 
     public async Task<bool> UpdateAsync(GameRequestDto gameRequestDto)
     {
-        var existingGame = await gameRepository.GetByIdAsync(gameRequestDto.Id);
+        if (gameRequestDto.Id is null) return false;
+        var existingGame = await gameRepository.GetByIdAsync(gameRequestDto.Id.Value);
         if (existingGame is null) return false;
-        if (! await AllSpecifiedRelationshipsAreCorrect(gameRequestDto)) return false;
+        if (!await AreSpecifiedRelationshipsValid(gameRequestDto))
+        {
+            return false;
+        }
         var (game, genreIds, platformIds) = gameRequestDto.MapToGameEntityWithRelations();
         await gameRepository.UpdateAsync(game, genreIds, platformIds);
         var updated = await unitOfWork.SaveChangesAsync();
@@ -30,7 +33,10 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
 
     public async Task<Guid?> CreateAsync(GameRequestDto gameRequestDto)
     {
-        if (! await AllSpecifiedRelationshipsAreCorrect(gameRequestDto)) return null;
+        if (!await AreSpecifiedRelationshipsValid(gameRequestDto))
+        {
+            return null;
+        }
         var (game, genreIds, platformIds) = gameRequestDto.MapToGameEntityWithRelations();
         var id = await gameRepository.CreateAsync(game, genreIds, platformIds);
         var created = await unitOfWork.SaveChangesAsync();
@@ -49,7 +55,7 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         await unitOfWork.SaveChangesAsync();
     }
     
-    private async Task<bool> AllSpecifiedRelationshipsAreCorrect(GameRequestDto gameRequestDto)
+    private async Task<bool> AreSpecifiedRelationshipsValid(GameRequestDto gameRequestDto)
     {
         var platformTask = AllSpecifiedPlatformIdsExist(gameRequestDto.PlatformIds);
         var genreTask = AllSpecifiedGenreIdsExist(gameRequestDto.GenreIds);

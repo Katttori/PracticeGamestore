@@ -51,6 +51,7 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
             GameId = gameId,
             PlatformId = id
         }).ToList();
+        
         await context.GamePlatforms.AddRangeAsync(gamePlatforms);
     }
 
@@ -61,6 +62,7 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
             GameId = gameId,
             GenreId = id
         }).ToList();
+        
         await context.GameGenres.AddRangeAsync(gameGenres);
     }
     

@@ -239,6 +239,7 @@ public class GameControllerTests
         //Act
         var result = await _gameController.Update(Guid.NewGuid(), publisherRequestModel);
         
+        //Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
 

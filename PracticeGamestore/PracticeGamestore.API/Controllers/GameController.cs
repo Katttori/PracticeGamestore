@@ -31,7 +31,6 @@ public class GameController(IGameService gameService) : ControllerBase
         return id is null
             ? BadRequest("Failed to create game.")
             : CreatedAtAction(nameof(GetById), new {id}, id);
-
     }
 
     [HttpPut("{id:guid}")]

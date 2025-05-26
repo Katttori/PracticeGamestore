@@ -28,7 +28,8 @@ public class PublisherService(IPublisherRepository repository, IUnitOfWork unitO
 
     public async Task<bool> UpdateAsync(PublisherDto dto)
     {
-        var existingPublisher = await GetByIdAsync(dto.Id);
+        if (dto.Id is null) return false;
+        var existingPublisher = await GetByIdAsync(dto.Id.Value);
         if (existingPublisher is null) return false;
         repository.Update(dto.MapToPublisherEntity());
         var changes = await unitOfWork.SaveChangesAsync();

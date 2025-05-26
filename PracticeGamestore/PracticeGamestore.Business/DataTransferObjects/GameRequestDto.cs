@@ -4,7 +4,7 @@ namespace PracticeGamestore.Business.DataTransferObjects;
 
 public class GameRequestDto
 {
-    public Guid Id { get; set; }
+    public Guid? Id { get; set; }
     public string Name { get; set; }
     public string Key { get; set; }
     public decimal Price { get; set; }
@@ -31,7 +31,7 @@ public class GameRequestDto
         List<Guid> genreIds,
         List<Guid> platformIds)
     {
-        Id = id ?? Guid.NewGuid();
+        Id = id;
         Name = name;
         Key = key;
         Price = price;
