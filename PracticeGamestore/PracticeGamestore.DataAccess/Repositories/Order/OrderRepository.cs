@@ -4,7 +4,10 @@ namespace PracticeGamestore.DataAccess.Repositories.Order;
 
 public class OrderRepository(GamestoreDbContext context) : IOrderRepository
 {
-    private readonly IQueryable<Entities.Order> _ordersNoTracking = context.Orders.AsNoTracking();
+    private readonly IQueryable<Entities.Order> _ordersNoTracking = context.Orders
+        .Include(o => o.GameOrders)
+        .ThenInclude(go => go.Game)
+        .AsNoTracking();
     
     public async Task<IEnumerable<Entities.Order>> GetAllAsync()
     {
