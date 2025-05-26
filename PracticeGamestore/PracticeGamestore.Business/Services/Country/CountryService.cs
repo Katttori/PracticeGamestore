@@ -33,7 +33,7 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
         if (entity == null) return false;
 
         entity.Name = country.Name;
-        entity.CountryStatus = country.CountryStatus;
+        entity.CountryStatus = country.Status;
         
         countryRepository.Update(entity);
         var changes = await unitOfWork.SaveChangesAsync();

@@ -5,8 +5,6 @@ namespace PracticeGamestore.API.Models;
 public class CountryResponseModel
 {
     public Guid Id { get; set; }
-    
     public string Name { get; set; }
-    
-    public CountryStatus countryStatus { get; set; } = 0;
+    public CountryStatus Status { get; set; } = 0;
 }

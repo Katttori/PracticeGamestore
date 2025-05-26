@@ -16,7 +16,7 @@ public static class CountryMappingExtensions
         {
             Id = countryDto.Id,
             Name = countryDto.Name,
-            CountryStatus = countryDto.CountryStatus
+            CountryStatus = countryDto.Status
         };
     }
 }

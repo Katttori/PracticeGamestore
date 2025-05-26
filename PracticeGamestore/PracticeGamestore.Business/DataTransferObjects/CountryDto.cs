@@ -6,12 +6,12 @@ public class CountryDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public CountryStatus CountryStatus { get; set; }
+    public CountryStatus Status { get; set; }
     
-    public CountryDto(Guid id, string name, CountryStatus countryStatus)
+    public CountryDto(Guid id, string name, CountryStatus status)
     {
         Id = id;
         Name = name;
-        CountryStatus = countryStatus;
+        Status = status;
     }
 }

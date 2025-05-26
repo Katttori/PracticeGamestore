@@ -137,7 +137,7 @@ public class CountryServiceTests
         {
             Id = countryDto.Id,
             Name = countryDto.Name,
-            CountryStatus = countryDto.CountryStatus
+            CountryStatus = countryDto.Status
         };
         
         _countryRepository
@@ -181,7 +181,7 @@ public class CountryServiceTests
         {
             Id = countryDto.Id,
             Name = countryDto.Name,
-            CountryStatus = countryDto.CountryStatus
+            CountryStatus = countryDto.Status
         };
         
         _countryRepository
