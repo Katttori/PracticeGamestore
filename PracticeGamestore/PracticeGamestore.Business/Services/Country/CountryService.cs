@@ -10,18 +10,18 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
     public async Task<IEnumerable<CountryDto>> GetAllAsync()
     {
         var countries = await countryRepository.GetAllAsync();
-        return countries.Select(c => c.ToDto());
+        return countries.Select(c => c.MapToCountryDto());
     }
 
     public async Task<CountryDto?> GetByIdAsync(Guid id)
     {
         var country = await countryRepository.GetByIdAsync(id);
-        return country?.ToDto();
+        return country?.MapToCountryDto();
     }
     
     public async Task<Guid?> CreateAsync(CountryDto country)
     {
-        var entity = country.ToEntity();
+        var entity = country.MapToCountryEntity();
         var id = await countryRepository.CreateAsync(entity);
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0 ? entity.Id : null;

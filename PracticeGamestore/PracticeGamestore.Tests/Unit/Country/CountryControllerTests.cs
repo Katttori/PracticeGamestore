@@ -142,7 +142,7 @@ public class CountryControllerTests
         
         // Assert
         var noContent = result as NoContentResult;
-        Assert.That(noContent, Is.Not.Null);
+        Assert.That(noContent, Is.InstanceOf<NoContentResult>());
     }
 
     [Test]
