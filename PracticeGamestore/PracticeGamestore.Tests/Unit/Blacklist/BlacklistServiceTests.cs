@@ -92,7 +92,7 @@ public class BlacklistServiceTests
         var result = await _service.CreateAsync(dto);
         
         // Assert
-        Assert.That(result, Is.EqualTo(dto.Id));
+        Assert.That(result, Is.EqualTo(dto.MapToBlacklistEntity().Id));
     }
     
     [Test]
@@ -119,19 +119,26 @@ public class BlacklistServiceTests
     public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
         //Arrange
-        var id = Guid.NewGuid();
-        var dto = new BlacklistDto(id, "Action");
-        var entity = new DataAccess.Entities.Blacklist { Id = id, UserEmail = "user@example.com", CountryId = Guid.NewGuid()};
+        var blacklistDto = new BlacklistDto(Guid.NewGuid(),
+            "user2@example.com",
+            Guid.NewGuid());
+        var blacklist = new DataAccess.Entities.Blacklist
+        {
+            Id = blacklistDto.MapToBlacklistEntity().Id,
+            UserEmail = blacklistDto.UserEmail,
+            CountryId = blacklistDto.CountryId
+        };
         
         _blacklistRepositoryMock
-            .Setup(x => x.GetByIdAsync(entity.Id))
-            .ReturnsAsync(entity);
+            .Setup(b => b.GetByIdAsync(blacklist.Id))
+            .ReturnsAsync(blacklist);
+        
         _unitOfWorkMock
-            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // Act
-        var result = await _service.UpdateAsync(dto);
+        var result = await _service.UpdateAsync(blacklistDto);
         
         // Assert
         Assert.That(result, Is.True);
