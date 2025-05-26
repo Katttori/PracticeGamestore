@@ -1,5 +1,6 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.DataAccess.Entities;
 using PracticeGamestore.DataAccess.Repositories.Order;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
@@ -21,22 +22,33 @@ public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWo
 
     public async Task<Guid?> CreateAsync(OrderDto dto)
     {
-        var createdId = await orderRepository.CreateAsync(dto.MapToOrderEntity());
+        var order = dto.MapToOrderEntity();
+        order.GameOrders = dto.GameIds!.Select(gameId => new GameOrder
+        {
+            GameId = gameId,
+            Order = order
+        }).ToList();
+        
+        var createdId = await orderRepository.CreateAsync(order);
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0 ? createdId : null;
     }
 
     public async Task<bool> UpdateAsync(OrderDto dto)
     {
-        var entity = await orderRepository.GetByIdAsync(dto.Id);
-        if (entity is null) return false;
+        var order = await orderRepository.GetByIdAsync(dto.Id!.Value);
+        if (order is null) return false;
 
-        entity.Status = dto.Status;
-        entity.UserEmail = dto.UserEmail;
-        entity.Total = dto.Total;
-        entity.GameOrders = dto.GameOrders.Select(go => go.MapToGameOrderEntity()).ToList();
+        order.Status = dto.Status;
+        order.UserEmail = dto.UserEmail;
+        order.Total = dto.Total;
+        order.GameOrders = dto.GameIds!.Select(gameId => new GameOrder
+        {
+            GameId = gameId,
+            OrderId = order.Id,
+        }).ToList();
 
-        orderRepository.Update(entity);
+        orderRepository.Update(order);
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0;
     }

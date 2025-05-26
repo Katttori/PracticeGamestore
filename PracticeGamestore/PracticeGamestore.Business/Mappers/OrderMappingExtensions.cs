@@ -9,22 +9,22 @@ public static class OrderMappingExtensions
     {
         return new()
         {
-            Id = dto.Id,
             Status = dto.Status,
             UserEmail = dto.UserEmail,
             Total = dto.Total,
-            GameOrders = dto.GameOrders.Select(go => go.MapToGameOrderEntity()).ToList()
         };
     }
 
     public static OrderDto MapToOrderDto(this Order entity)
     {
+        var games = entity.GameOrders.Select(go => go.Game.MapToGameDto()).ToList();            
+        
         return new(
             entity.Id, 
             entity.Status, 
             entity.UserEmail, 
             entity.Total, 
-            entity.GameOrders.Select(go => go.MapToGameOrderDto()).ToList()
+            games
         );
     }
 }

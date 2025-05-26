@@ -1,5 +1,3 @@
-using PracticeGamestore.Models.GameOrder;
-
 namespace PracticeGamestore.Models.Order;
 
 public class OrderResponseModel
@@ -8,5 +6,5 @@ public class OrderResponseModel
     public required string Status { get; set; }
     public required string UserEmail { get; set; }
     public decimal Total { get; set; }
-    public List<GameOrderModel> GameOrders { get; set; } = [];
+    public List<GameResponseModel> Games { get; set; } = [];
 }

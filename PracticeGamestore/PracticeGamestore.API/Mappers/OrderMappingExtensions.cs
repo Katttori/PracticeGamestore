@@ -18,11 +18,11 @@ public static class OrderMappingExtensions
     {
         return new()
         {
-            Id = dto.Id,
+            Id = dto.Id!.Value,
             Status = dto.Status.ToString(),
             UserEmail = dto.UserEmail,
             Total = dto.Total,
-            GameOrders = dto.GameOrders.Select(go => go.MapToGameOrderModel()).ToList()
+            Games = dto.Games!.Select(g => g.MapToGameModel()).ToList()
         };
     }
 }
