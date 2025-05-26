@@ -28,10 +28,9 @@ public class BlacklistService(IBlacklistRepository blacklistRepository, IUnitOfW
 
     public async Task<bool> UpdateAsync(BlacklistDto dto)
     {
-        var entity = await blacklistRepository.GetByIdAsync(dto.Id);
+        var entity = await blacklistRepository.GetByIdAsync(dto.MapToBlacklistEntity().Id);
         if (entity is null) return false;
         
-        entity.Id = dto.Id;
         entity.UserEmail = dto.UserEmail;
         entity.CountryId = dto.CountryId;
         

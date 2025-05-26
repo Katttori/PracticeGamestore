@@ -1,6 +1,7 @@
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -82,7 +83,7 @@ public class BlacklistServiceTests
         
         _blacklistRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Blacklist>()))
-            .ReturnsAsync(dto.Id);
+            .ReturnsAsync(dto.MapToBlacklistEntity().Id);
         _unitOfWorkMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
@@ -102,7 +103,7 @@ public class BlacklistServiceTests
         
         _blacklistRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Blacklist>()))
-            .ReturnsAsync(dto.Id);
+            .ReturnsAsync(dto.MapToBlacklistEntity().Id);
         _unitOfWorkMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);

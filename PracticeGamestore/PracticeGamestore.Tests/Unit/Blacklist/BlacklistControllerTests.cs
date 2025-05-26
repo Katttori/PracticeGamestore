@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Blacklist;
@@ -64,10 +65,10 @@ public class BlacklistControllerTests
         //Arrange
         var blacklistDto = new BlacklistDto(Guid.NewGuid(), "user@example.com", Guid.NewGuid());
         
-        _blacklistServiceMock.Setup(x => x.GetByIdAsync(blacklistDto.Id)).ReturnsAsync(blacklistDto);
+        _blacklistServiceMock.Setup(x => x.GetByIdAsync(blacklistDto.MapToBlacklistEntity().Id)).ReturnsAsync(blacklistDto);
         
         // Act
-        var result = await _blacklistController.GetById(blacklistDto.Id);
+        var result = await _blacklistController.GetById(blacklistDto.MapToBlacklistEntity().Id);
         
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());

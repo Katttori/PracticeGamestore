@@ -8,7 +8,6 @@ public static class PlatformMappingExtensions
     {
         return new Platform
         {
-            Id = dto.Id,
             Name = dto.Name,
             Description = dto.Description
         };

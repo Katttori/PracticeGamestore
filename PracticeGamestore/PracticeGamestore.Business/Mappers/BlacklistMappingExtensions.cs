@@ -7,9 +7,8 @@ public static class BlacklistMappingExtensions
 {
     public static Blacklist MapToBlacklistEntity(this BlacklistDto dto)
     {
-        return new()
+        return new Blacklist()
         {
-            Id = dto.Id,
             UserEmail = dto.UserEmail,
             CountryId = dto.CountryId,
         };
