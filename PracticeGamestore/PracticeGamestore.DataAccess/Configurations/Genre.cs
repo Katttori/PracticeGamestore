@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace PracticeGamestore.DataAccess.Configurations;
 
-public class Genre: IEntityTypeConfiguration<Entities.Genre>
+public class Genre : IEntityTypeConfiguration<Entities.Genre>
 {
     public void Configure(EntityTypeBuilder<Entities.Genre> builder)
     {
