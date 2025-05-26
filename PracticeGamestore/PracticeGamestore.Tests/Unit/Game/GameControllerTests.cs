@@ -196,9 +196,9 @@ public class GameControllerTests
     {
         //Arrange
         var gameRequestModel = GenerateSingleGameRequestModel();
-        var gameRequestDto = gameRequestModel.MapToGameDto();
+        var id = Guid.NewGuid();
         _gameService.Setup(x => x.CreateAsync(It.IsAny<GameRequestDto>()))
-            .ReturnsAsync(gameRequestDto.Id);
+            .ReturnsAsync(id);
 
         //Act
         var result = await _gameController.Create(gameRequestModel);
@@ -207,10 +207,10 @@ public class GameControllerTests
         var createdResult = result as CreatedAtActionResult;
         Assert.That(createdResult, Is.Not.Null);
         Assert.That(createdResult!.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.That(createdResult.Value, Is.EqualTo(gameRequestDto.Id));
+        Assert.That(createdResult.Value, Is.EqualTo(id));
         Assert.That(createdResult.ActionName, Is.EqualTo(nameof(GameController.GetById)));
         Assert.That(createdResult.RouteValues, Is.Not.Null);
-        Assert.That(createdResult.RouteValues!["id"], Is.EqualTo(gameRequestDto.Id));
+        Assert.That(createdResult.RouteValues!["id"], Is.EqualTo(id));
     }
 
     [Test]
