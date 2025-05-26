@@ -57,12 +57,14 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
     
     private async Task<bool> AreSpecifiedRelationshipsValid(GameRequestDto gameRequestDto)
     {
-        var platformTask = AllSpecifiedPlatformIdsExist(gameRequestDto.PlatformIds);
-        var genreTask = AllSpecifiedGenreIdsExist(gameRequestDto.GenreIds);
-        var publisherTask = SpecifiedPublisherIdExist(gameRequestDto.PublisherId);
+        var platformsValid = await AllSpecifiedPlatformIdsExist(gameRequestDto.PlatformIds);
+        if (!platformsValid) return false;
     
-        var results = await Task.WhenAll(platformTask, genreTask, publisherTask);
-        return results.All(result => result);
+        var genresValid = await AllSpecifiedGenreIdsExist(gameRequestDto.GenreIds);
+        if (!genresValid) return false;
+    
+        var publisherValid = await SpecifiedPublisherIdExist(gameRequestDto.PublisherId);
+        return publisherValid;
     }
 
     private async Task<bool> AllSpecifiedPlatformIdsExist(IEnumerable<Guid> ids)
