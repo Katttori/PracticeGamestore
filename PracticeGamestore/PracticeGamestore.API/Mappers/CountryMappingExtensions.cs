@@ -6,7 +6,7 @@ namespace PracticeGamestore.API.Mappers;
 
 public static class CountryMappingExtensions
 {
-    public static CountryDto MapToDto(this CountryRequestModel countryRequestModel)
+    public static CountryDto MapToCountryDto(this CountryRequestModel countryRequestModel)
     {
         return new(Guid.Empty, countryRequestModel.Name, CountryStatus.Allowed);
     }

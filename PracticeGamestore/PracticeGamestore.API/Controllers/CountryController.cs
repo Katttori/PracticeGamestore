@@ -8,7 +8,6 @@ namespace PracticeGamestore.API.Controllers;
 [ApiController, Route("countries")]
 public class CountryController(ICountryService countryService) : ControllerBase
 {
-    
     [HttpGet]
     public async Task<IActionResult> GetAllCountries()
     {
@@ -28,7 +27,7 @@ public class CountryController(ICountryService countryService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateCountry([FromBody] CountryRequestModel countryRequestModel)
     {
-        var countryDto = countryRequestModel.MapToDto();
+        var countryDto = countryRequestModel.MapToCountryDto();
         var id = await countryService.CreateAsync(countryDto);
         return id == null 
             ? BadRequest("Failed to create country") 
@@ -38,7 +37,7 @@ public class CountryController(ICountryService countryService) : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateCountry(Guid id, [FromBody] CountryRequestModel countryRequestModel)
     {
-        var countryDto = countryRequestModel.MapToDto();
+        var countryDto = countryRequestModel.MapToCountryDto();
         countryDto.Id = id;
         var updated = await countryService.UpdateAsync(countryDto);
         return !updated 
