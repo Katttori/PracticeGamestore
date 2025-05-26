@@ -1,6 +1,7 @@
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.DataAccess.Repositories.Country;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -96,7 +97,7 @@ public class CountryServiceTests
         var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
 
         _countryRepository.Setup(c => c.CreateAsync(It.IsAny<DataAccess.Entities.Country>()))
-            .ReturnsAsync(countryDto.Id);
+            .ReturnsAsync(countryDto.MapToCountryEntity().Id);
         _unitOfWork.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
         
         // Act
@@ -104,7 +105,7 @@ public class CountryServiceTests
         
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.EqualTo(countryDto.Id));
+        Assert.That(result, Is.EqualTo(countryDto.MapToCountryEntity().Id));
     }
 
     [Test]
@@ -115,7 +116,7 @@ public class CountryServiceTests
 
         _countryRepository
             .Setup(c => c.CreateAsync(It.IsAny<DataAccess.Entities.Country>()))
-            .ReturnsAsync(countryDto.Id);
+            .ReturnsAsync(countryDto.MapToCountryEntity().Id);
         
         _unitOfWork
             .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -135,7 +136,7 @@ public class CountryServiceTests
         var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
         var country = new DataAccess.Entities.Country
         {
-            Id = countryDto.Id,
+            Id = countryDto.MapToCountryEntity().Id,
             Name = countryDto.Name,
             CountryStatus = countryDto.Status
         };
@@ -162,7 +163,7 @@ public class CountryServiceTests
         var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
         
         _countryRepository
-            .Setup(c => c.GetByIdAsync(countryDto.Id))
+            .Setup(c => c.GetByIdAsync(countryDto.MapToCountryEntity().Id))
             .ReturnsAsync(null as DataAccess.Entities.Country);
         
         // Act
@@ -179,7 +180,7 @@ public class CountryServiceTests
         var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
         var country = new DataAccess.Entities.Country
         {
-            Id = countryDto.Id,
+            Id = countryDto.MapToCountryEntity().Id,
             Name = countryDto.Name,
             CountryStatus = countryDto.Status
         };

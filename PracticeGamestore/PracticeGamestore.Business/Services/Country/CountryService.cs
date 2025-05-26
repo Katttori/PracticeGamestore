@@ -29,7 +29,7 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
     
     public async Task<bool> UpdateAsync(CountryDto country)
     {
-        var entity = await countryRepository.GetByIdAsync(country.Id);
+        var entity = await countryRepository.GetByIdAsync(country.MapToCountryEntity().Id);
         if (entity == null) return false;
 
         entity.Name = country.Name;

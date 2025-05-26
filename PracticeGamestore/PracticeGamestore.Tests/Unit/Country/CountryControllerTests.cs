@@ -4,6 +4,7 @@ using NUnit.Framework;
 using PracticeGamestore.API.Controllers;
 using PracticeGamestore.API.Models;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Country;
@@ -56,10 +57,10 @@ public class CountryControllerTests
         // Arrange
         var country = new CountryDto(Guid.NewGuid(), "Canada", CountryStatus.Allowed);
         
-        _countryService.Setup(service => service.GetByIdAsync(country.Id)).ReturnsAsync(country);
+        _countryService.Setup(service => service.GetByIdAsync(country.MapToCountryEntity().Id)).ReturnsAsync(country);
         
         // Act
-        var result = await _countryController.GetCountryById(country.Id);
+        var result = await _countryController.GetCountryById(country.MapToCountryEntity().Id);
         
         // Assert
         var okResult = result as OkObjectResult;
