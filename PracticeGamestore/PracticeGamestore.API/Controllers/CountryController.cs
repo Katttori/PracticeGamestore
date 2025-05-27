@@ -29,9 +29,14 @@ public class CountryController(ICountryService countryService) : ControllerBase
     {
         var countryDto = countryRequestModel.MapToCountryDto();
         var id = await countryService.CreateAsync(countryDto);
-        return id == null 
-            ? BadRequest("Failed to create country") 
-            : CreatedAtAction(nameof(GetCountryById), new { id }, countryDto.MapToCountryModel());
+        if (id is null)
+            return BadRequest("Failed to create country");
+
+        countryDto.Id = id.Value;
+        var res = countryDto.MapToCountryModel();
+        return CreatedAtAction(nameof(GetCountryById),
+            new { id = countryDto.Id },
+            res);
     }
     
     [HttpPut("{id:guid}")]

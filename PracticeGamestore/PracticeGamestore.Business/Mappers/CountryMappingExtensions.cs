@@ -12,6 +12,15 @@ public static class CountryMappingExtensions
     
     public static Country MapToCountryEntity(this CountryDto countryDto)
     {
+        if (countryDto.Id.HasValue)
+        {
+            return new Country
+            {
+                Id = countryDto.Id.Value,
+                Name = countryDto.Name,
+                CountryStatus = countryDto.Status
+            };
+        }
         return new Country
         {
             Name = countryDto.Name,
