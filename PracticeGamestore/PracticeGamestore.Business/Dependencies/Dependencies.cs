@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.DataAccess;
 using PracticeGamestore.DataAccess.Repositories;
 using PracticeGamestore.Business.Services.Publisher;
@@ -37,5 +38,6 @@ public static class Dependencies
         services.AddScoped<IPublisherService, PublisherService>();
         services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IPlatformService, PlatformService>();
+        services.AddScoped<IBlacklistService, BlacklistService>();
     }
 }

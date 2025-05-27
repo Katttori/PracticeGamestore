@@ -26,6 +26,6 @@ public static class BlacklistMappingExtensions
     
     public static BlacklistDto MapToBlacklistDto(this Blacklist entity)
     {
-        return new (entity.Id, entity.UserEmail, entity.CountryId, entity.Country?.Name!);
+        return new (entity.Id, entity.UserEmail, entity.CountryId);
     }
 }
