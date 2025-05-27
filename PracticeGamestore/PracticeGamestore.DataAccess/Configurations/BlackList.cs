@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PracticeGamestore.DataAccess.Entities;
+
 namespace PracticeGamestore.DataAccess.Configurations;
 
-public class BlackList: IEntityTypeConfiguration<Blacklist>
+public class BlackList : IEntityTypeConfiguration<Blacklist>
 {
     public void Configure(EntityTypeBuilder<Blacklist> builder)
     {

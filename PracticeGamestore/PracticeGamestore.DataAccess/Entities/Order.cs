@@ -1,5 +1,6 @@
 namespace PracticeGamestore.DataAccess.Entities;
-using PracticeGamestore.DataAccess.Enums;
+
+using Enums;
 
 public class Order
 {

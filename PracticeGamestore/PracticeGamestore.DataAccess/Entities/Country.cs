@@ -1,4 +1,5 @@
 using PracticeGamestore.DataAccess.Enums;
+
 namespace PracticeGamestore.DataAccess.Entities;
 
 public class Country
