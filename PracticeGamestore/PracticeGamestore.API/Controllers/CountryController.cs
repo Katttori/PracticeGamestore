@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.API.Mappers;
 using PracticeGamestore.API.Models;
+using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Country;
+using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.API.Controllers;
 
@@ -27,16 +29,16 @@ public class CountryController(ICountryService countryService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateCountry([FromBody] CountryRequestModel countryRequestModel)
     {
-        var countryDto = countryRequestModel.MapToCountryDto();
+        var countryDto = new CountryDto(null, countryRequestModel.Name, CountryStatus.Allowed);
         var id = await countryService.CreateAsync(countryDto);
+        
         if (id is null)
-            return BadRequest("Failed to create country");
-
+        {
+            return BadRequest("Failed to create country.");
+        }
+        
         countryDto.Id = id.Value;
-        var res = countryDto.MapToCountryModel();
-        return CreatedAtAction(nameof(GetCountryById),
-            new { id = countryDto.Id },
-            res);
+        return CreatedAtAction(nameof(GetCountryById), new { id = countryDto.Id }, countryDto.MapToCountryModel());
     }
     
     [HttpPut("{id:guid}")]
@@ -44,6 +46,7 @@ public class CountryController(ICountryService countryService) : ControllerBase
     {
         var countryDto = countryRequestModel.MapToCountryDto();
         countryDto.Id = id;
+        
         var updated = await countryService.UpdateAsync(countryDto);
         return !updated 
             ? BadRequest($"Country with id {id} not found")

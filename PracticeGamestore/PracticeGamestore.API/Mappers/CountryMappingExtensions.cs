@@ -8,7 +8,7 @@ public static class CountryMappingExtensions
 {
     public static CountryDto MapToCountryDto(this CountryRequestModel countryRequestModel)
     {
-        return new CountryDto(null, countryRequestModel.Name, CountryStatus.Allowed);
+        return new CountryDto(null, countryRequestModel.Name, countryRequestModel.Status);
     }
     
     public static CountryResponseModel MapToCountryModel(this CountryDto countryDto)
