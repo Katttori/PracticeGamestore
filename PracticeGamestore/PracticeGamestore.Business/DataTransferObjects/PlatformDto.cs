@@ -8,7 +8,7 @@ public class PlatformDto
     
     public PlatformDto(Guid? id, string name, string description)
     {
-        Id = id ?? Guid.NewGuid();
+        Id = id;
         Name = name;
         Description = description;
     }

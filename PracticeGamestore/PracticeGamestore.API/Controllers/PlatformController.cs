@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Platform;
-
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("platforms")]
@@ -14,35 +13,36 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
         var platforms = await platformService.GetAllAsync();
         return Ok(platforms.Select(p => p.MapToPlatformModel()));
     }
-    
+
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetPlatformById(Guid id)
     {
         var platform = await platformService.GetByIdAsync(id);
-        return platform is null ? NotFound($"Platform with id: {id} was not found.") : Ok(platform.MapToPlatformModel());
+        return platform is null
+            ? NotFound($"Platform with id: {id} was not found.")
+            : Ok(platform.MapToPlatformModel());
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CreatePlatform([FromBody] PlatformRequestModel platform)
     {
         var platformDto = platform.MapToPlatformDto();
         var id = await platformService.CreateAsync(platformDto);
         if (id is null) return BadRequest("Failed to create platform");
-        
         platformDto.Id = id.Value;
         var response = platformDto.MapToPlatformModel();
-        return CreatedAtAction(nameof(GetPlatformById), new { id = platformDto.Id },  response);
+        return CreatedAtAction(nameof(GetPlatformById), new { id = platformDto.Id }, response);
     }
-    
+
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformRequestModel platform)
     {
         var dto = platform.MapToPlatformDto();
         dto.Id = id;
-        
+
         var isUpdated = await platformService.UpdateAsync(dto);
-        return isUpdated 
-            ? NoContent() 
+        return isUpdated
+            ? NoContent()
             : BadRequest($"Error while trying to update the platform");
     }
     
@@ -53,3 +53,4 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
         return NoContent();
     }
 }
+    
