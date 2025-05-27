@@ -45,7 +45,6 @@ public class Game : IEntityTypeConfiguration<Entities.Game>
 
         builder.Property(g => g.AgeRating)
             .HasColumnName("age_rating")
-            .HasConversion<int>()
             .IsRequired();
 
         builder.Property(g => g.ReleaseDate)

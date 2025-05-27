@@ -1,6 +1,6 @@
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.DataAccess.Entities;
-using AgeRating = PracticeGamestore.DataAccess.Enums.AgeRating;
 
 namespace PracticeGamestore.Business.Mappers;
 
@@ -35,7 +35,7 @@ public static class GameMappingExtensions
             Picture = requestDto.Picture,
             Description = requestDto.Description,
             Rating = requestDto.Rating,
-            AgeRating = (AgeRating)requestDto.AgeRating,
+            AgeRating = (int)requestDto.AgeRating,
             ReleaseDate = requestDto.ReleaseDate,
             PublisherId = requestDto.PublisherId
         };

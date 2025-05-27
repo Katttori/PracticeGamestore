@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Game;
-using AgeRating = PracticeGamestore.DataAccess.Enums.AgeRating;
 
 namespace PracticeGamestore.Tests.Unit.Game;
 
@@ -102,7 +102,7 @@ public class GameControllerTests
             Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
             Description = "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
             Rating = 4.5,
-            AgeRating = (Business.Enums.AgeRating)AgeRating.EighteenPlus,
+            AgeRating = AgeRating.EighteenPlus,
             ReleaseDate = new DateTime(2023, 11, 15),
             PublisherId = Guid.NewGuid(),
             GenreIds = [Guid.NewGuid()],
