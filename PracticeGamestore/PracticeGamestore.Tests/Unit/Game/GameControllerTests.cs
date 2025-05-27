@@ -227,6 +227,20 @@ public class GameControllerTests
         //Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
+    
+    [Test]
+    public async Task CreateGame_ShouldReturnBadRequest_WhenProvidedAgeRatingIsIncorrect()
+    {
+        //Arrange
+        var gameRequestModel = GenerateSingleGameRequestModel();
+        gameRequestModel.AgeRating = 88;
+
+        //Act
+        var result = await _gameController.Create(gameRequestModel);
+        
+        //Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
 
     [Test]
     public async Task Update_ShouldReturnNoContent_WhenGameIsUpdated()
@@ -247,12 +261,26 @@ public class GameControllerTests
     public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
     {
         //Arrange
-        var publisherRequestModel = GenerateSingleGameRequestModel();
+        var gameRequestModel = GenerateSingleGameRequestModel();
         _gameService.Setup(x => x.UpdateAsync(It.IsAny<GameRequestDto>()))
             .ReturnsAsync(false);
 
         //Act
-        var result = await _gameController.Update(Guid.NewGuid(), publisherRequestModel);
+        var result = await _gameController.Update(Guid.NewGuid(), gameRequestModel);
+        
+        //Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+    
+    [Test]
+    public async Task Update_ShouldReturnBadRequest_WhenProvidedAgeRatingIsIncorrect()
+    {
+        //Arrange
+        var gameRequestModel = GenerateSingleGameRequestModel();
+        gameRequestModel.AgeRating = 88;
+        
+        //Act
+        var result = await _gameController.Update(Guid.NewGuid(), gameRequestModel);
         
         //Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
