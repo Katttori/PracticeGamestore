@@ -6,9 +6,18 @@ public static class PlatformMappingExtensions
 {
     public static Platform MapToEntity(this PlatformDto dto)
     {
+        if (dto.Id.HasValue)
+        {
+            return new Platform
+            {
+                Id = dto.Id.Value,
+                Name = dto.Name,
+                Description = dto.Description
+            };
+        }
+        
         return new Platform
         {
-            Id = dto.Id,
             Name = dto.Name,
             Description = dto.Description
         };

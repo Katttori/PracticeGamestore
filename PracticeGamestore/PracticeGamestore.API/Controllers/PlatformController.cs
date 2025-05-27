@@ -37,8 +37,13 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformRequestModel platform)
     {
-        var isUpdated = await platformService.UpdateAsync(platform.MapToPlatformDto());
-        return isUpdated ? NoContent() : BadRequest($"Error while trying to update the platform");
+        var dto = platform.MapToPlatformDto();
+        dto.Id = id;
+        
+        var isUpdated = await platformService.UpdateAsync(dto);
+        return isUpdated 
+            ? NoContent() 
+            : BadRequest($"Error while trying to update the platform");
     }
     
     [HttpDelete("{id:guid}")]
