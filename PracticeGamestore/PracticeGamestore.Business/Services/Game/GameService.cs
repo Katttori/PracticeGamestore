@@ -21,10 +21,12 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         if (gameRequestDto.Id is null) return false;
         var existingGame = await gameRepository.GetByIdAsync(gameRequestDto.Id.Value);
         if (existingGame is null) return false;
+        
         if (!await AreSpecifiedRelationshipsValid(gameRequestDto))
         {
             return false;
         }
+        
         var (game, genreIds, platformIds) = gameRequestDto.MapToGameEntityWithRelations();
         await gameRepository.UpdateAsync(game, genreIds, platformIds);
         var updated = await unitOfWork.SaveChangesAsync();
@@ -37,6 +39,7 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         {
             return null;
         }
+        
         var (game, genreIds, platformIds) = gameRequestDto.MapToGameEntityWithRelations();
         var id = await gameRepository.CreateAsync(game, genreIds, platformIds);
         var created = await unitOfWork.SaveChangesAsync();
