@@ -1,5 +1,5 @@
 using PracticeGamestore.Business.Dependencies;
-using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
