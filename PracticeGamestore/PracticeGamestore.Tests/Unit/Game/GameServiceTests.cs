@@ -41,28 +41,62 @@ public class GameServiceTests
             new() { Id = Guid.NewGuid(), Name = "Electronic Arts", Description = "American video game company", PageUrl = "https://www.ea.com" },
             new() { Id = Guid.NewGuid(), Name = "Ubisoft", Description = "French video game company", PageUrl = "https://www.ubisoft.com" },
             new() { Id = Guid.NewGuid(), Name = "Activision Blizzard", Description = "American video game holding company", PageUrl = "https://www.activisionblizzard.com" },
+            new() { Id = Guid.NewGuid(), Name = "CD Projekt", Description = "Polish video game developer", PageUrl = "https://www.cdprojekt.com" },
+            new() { Id = Guid.NewGuid(), Name = "Rockstar Games", Description = "American video game publisher", PageUrl = "https://www.rockstargames.com" },
+            new() { Id = Guid.NewGuid(), Name = "Nintendo", Description = "Japanese multinational video game company", PageUrl = "https://www.nintendo.com" },
+            new() { Id = Guid.NewGuid(), Name = "Valve Corporation", Description = "American video game developer", PageUrl = "https://www.valvesoftware.com" },
+            new() { Id = Guid.NewGuid(), Name = "Bethesda Game Studios", Description = "American video game developer", PageUrl = "https://bethesdagamestudios.com" }
         };
+        
         var genres = new List<DataAccess.Entities.Genre>
         {
             new() { Id = Guid.NewGuid(), Name = "Action" },
             new() { Id = Guid.NewGuid(), Name = "FPS" },
+            new() { Id = Guid.NewGuid(), Name = "RPG" },
+            new() { Id = Guid.NewGuid(), Name = "Strategy" },
+            new() { Id = Guid.NewGuid(), Name = "Adventure" },
+            new() { Id = Guid.NewGuid(), Name = "Racing" },
+            new() { Id = Guid.NewGuid(), Name = "Sports" },
+            new() { Id = Guid.NewGuid(), Name = "Simulation" },
+            new() { Id = Guid.NewGuid(), Name = "Horror" },
+            new() { Id = Guid.NewGuid(), Name = "Puzzle" }
         };
+        
         var platforms = new List<Platform>
         {
             new() {Id = Guid.NewGuid(), Name = "PC", Description = "Personal Computer"},
-            new() {Id = Guid.NewGuid(), Name = "PS5", Description = "PlayStation 5"}
+            new() {Id = Guid.NewGuid(), Name = "PS5", Description = "PlayStation 5"},
+            new() {Id = Guid.NewGuid(), Name = "Xbox Series X", Description = "Microsoft Xbox Series X"},
+            new() {Id = Guid.NewGuid(), Name = "Nintendo Switch", Description = "Nintendo Switch Console"},
+            new() {Id = Guid.NewGuid(), Name = "Steam Deck", Description = "Valve Steam Deck"}
         };
+        
         return (publishers, genres, platforms);
     }
 
     private static List<DataAccess.Entities.Game> GenerateGameEntities()
     {
         var (publishers, genres, platforms) = GenerateRelations();
+        
+        var cyberWarriorsId = Guid.NewGuid();
+        var mysticForestId = Guid.NewGuid();
+        var spaceColonyId = Guid.NewGuid();
+        var dragonsLegacyId = Guid.NewGuid();
+        var streetRacerId = Guid.NewGuid();
+        var fifaChampionsId = Guid.NewGuid();
+        var cityArchitectId = Guid.NewGuid();
+        var hauntedMansionId = Guid.NewGuid();
+        var puzzleMasterId = Guid.NewGuid();
+        var galacticWarfareId = Guid.NewGuid();
+        var wildWestId = Guid.NewGuid();
+        var cyberShooterId = Guid.NewGuid();
+        
         var games = new List<DataAccess.Entities.Game>
         {
+            #region Original Games
             new ()
             {
-                Id = Guid.NewGuid(),
+                Id = cyberWarriorsId,
                 Name = "Cyber Warriors 2077",
                 Key = "4uiru78rh6x84",
                 Price = 59.99m,
@@ -75,14 +109,14 @@ public class GameServiceTests
                 Publisher = publishers[0], 
                 GamePlatforms =
                 [
-                    new() { GameId = Guid.NewGuid(), PlatformId = platforms[0].Id, Platform = platforms[0] },
-                    new() { GameId = Guid.NewGuid(), PlatformId = platforms[1].Id, Platform = platforms[1] }
+                    new() { GameId = cyberWarriorsId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                    new() { GameId = cyberWarriorsId, PlatformId = platforms[1].Id, Platform = platforms[1] }
                 ],
-                GameGenres = [new() { GameId = Guid.NewGuid(), GenreId = genres[0].Id, Genre = genres[0] }]
+                GameGenres = [new() { GameId = cyberWarriorsId, GenreId = genres[0].Id, Genre = genres[0] }]
             },
             new ()
             {
-                Id = Guid.NewGuid(),
+                Id = mysticForestId,
                 Name = "Mystic Forest Adventure",
                 Key = "kuy32fe7367636872ey",
                 Price = 29.99m,
@@ -92,12 +126,12 @@ public class GameServiceTests
                 ReleaseDate = new DateTime(2024, 3, 8),
                 PublisherId = publishers[1].Id,
                 Publisher = publishers[1],
-                GamePlatforms = [new() { GameId = Guid.NewGuid(), PlatformId = platforms[0].Id, Platform = platforms[0] }],
-                GameGenres = [new() { GameId = Guid.NewGuid(), GenreId = genres[1].Id, Genre = genres[1] }]
+                GamePlatforms = [new() { GameId = mysticForestId, PlatformId = platforms[0].Id, Platform = platforms[0] }],
+                GameGenres = [new() { GameId = mysticForestId, GenreId = genres[1].Id, Genre = genres[1] }]
             },
             new ()
             {
-                Id = Guid.NewGuid(),
+                Id = spaceColonyId,
                 Name = "Space Colony Builder",
                 Key = "35467568467987809807",
                 Price = 39.99m,
@@ -107,22 +141,234 @@ public class GameServiceTests
                 ReleaseDate = new DateTime(2024, 1, 22),
                 PublisherId = publishers[2].Id,
                 Publisher = publishers[2],
-                GamePlatforms = [new() { GameId = Guid.NewGuid(), PlatformId = platforms[1].Id, Platform = platforms[1] }],
+                GamePlatforms = [new() { GameId = spaceColonyId, PlatformId = platforms[1].Id, Platform = platforms[1] }],
                 GameGenres =
                 [
-                    new() { GameId = Guid.NewGuid(), GenreId = genres[0].Id, Genre = genres[0] },
-                    new() { GameId = Guid.NewGuid(), GenreId = genres[1].Id, Genre = genres[1] }
+                    new() { GameId = spaceColonyId, GenreId = genres[0].Id, Genre = genres[0] },
+                    new() { GameId = spaceColonyId, GenreId = genres[1].Id, Genre = genres[1] }
+                ]
+            },
+            #endregion
+
+            #region New Games
+            new ()
+            {
+                Id = dragonsLegacyId,
+                Name = "Dragon's Legacy",
+                Key = "dragon-legacy-2024",
+                Price = 69.99m,
+                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0B],
+                Description = "An epic fantasy RPG where you embark on a quest to save the realm from an ancient dragon threat.",
+                Rating = 4.8,
+                AgeRating = AgeRating.SixteenPlus,
+                ReleaseDate = new DateTime(2024, 5, 12),
+                PublisherId = publishers[3].Id,
+                Publisher = publishers[3],
+                GamePlatforms =
+                [
+                    new() { GameId = dragonsLegacyId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                    new() { GameId = dragonsLegacyId, PlatformId = platforms[1].Id, Platform = platforms[1] },
+                    new() { GameId = dragonsLegacyId, PlatformId = platforms[2].Id, Platform = platforms[2] }
+                ],
+                GameGenres = 
+                [
+                    new() { GameId = dragonsLegacyId, GenreId = genres[2].Id, Genre = genres[2] },
+                    new() { GameId = dragonsLegacyId, GenreId = genres[4].Id, Genre = genres[4] }
+                ]
+            },
+            
+            new ()
+            {
+                Id = streetRacerId,
+                Name = "Street Racer Ultimate",
+                Key = "street-racer-ultimate",
+                Price = 49.99m,
+                Description = "High-octane street racing with customizable cars and underground tournaments.",
+                Rating = 4.3,
+                AgeRating = AgeRating.TwelvePlus,
+                ReleaseDate = new DateTime(2024, 2, 14),
+                PublisherId = publishers[0].Id,
+                Publisher = publishers[0],
+                GamePlatforms =
+                [
+                    new() { GameId = streetRacerId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                    new() { GameId = streetRacerId, PlatformId = platforms[2].Id, Platform = platforms[2] }
+                ],
+                GameGenres = [new() { GameId = streetRacerId, GenreId = genres[5].Id, Genre = genres[5] }]
+            },
+
+            new ()
+            {
+                Id = fifaChampionsId,
+                Name = "FIFA Champions 2025",
+                Key = "fifa-champions-2025",
+                Price = 59.99m,
+                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0C],
+                Description = "The ultimate football simulation with realistic gameplay and all your favorite teams.",
+                Rating = 4.1,
+                AgeRating = AgeRating.ThreePlus,
+                ReleaseDate = new DateTime(2024, 9, 22),
+                PublisherId = publishers[0].Id,
+                Publisher = publishers[0],
+                GamePlatforms =
+                [
+                    new() { GameId = fifaChampionsId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                    new() { GameId = fifaChampionsId, PlatformId = platforms[1].Id, Platform = platforms[1] },
+                    new() { GameId = fifaChampionsId, PlatformId = platforms[2].Id, Platform = platforms[2] }
+                ],
+                GameGenres = [new() { GameId = fifaChampionsId, GenreId = genres[6].Id, Genre = genres[6] }]
+            },
+
+            new ()
+            {
+                Id = cityArchitectId,
+                Name = "City Architect Simulator",
+                Key = "city-architect-sim",
+                Price = 34.99m,
+                Description = "Design and build the city of your dreams with advanced urban planning tools.",
+                Rating = 4.6,
+                AgeRating = AgeRating.SevenPlus,
+                ReleaseDate = new DateTime(2024, 4, 18),
+                PublisherId = publishers[1].Id,
+                Publisher = publishers[1],
+                GamePlatforms = [new() { GameId = cityArchitectId, PlatformId = platforms[0].Id, Platform = platforms[0] }],
+                GameGenres = 
+                [
+                    new() { GameId = cityArchitectId, GenreId = genres[3].Id, Genre = genres[3] },
+                    new() { GameId = cityArchitectId, GenreId = genres[7].Id, Genre = genres[7] }
+                ]
+            },
+
+            new ()
+            {
+                Id = hauntedMansionId,
+                Name = "Haunted Mansion Mystery",
+                Key = "haunted-mansion-mystery",
+                Price = 24.99m,
+                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0D],
+                Description = "Explore a cursed mansion and uncover dark secrets in this spine-chilling horror adventure.",
+                Rating = 4.0,
+                AgeRating = AgeRating.EighteenPlus,
+                ReleaseDate = new DateTime(2024, 10, 31),
+                PublisherId = publishers[7].Id,
+                Publisher = publishers[7],
+                GamePlatforms =
+                [
+                    new() { GameId = hauntedMansionId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                    new() { GameId = hauntedMansionId, PlatformId = platforms[4].Id, Platform = platforms[4] }
+                ],
+                GameGenres = 
+                [
+                    new() { GameId = hauntedMansionId, GenreId = genres[8].Id, Genre = genres[8] },
+                    new() { GameId = hauntedMansionId, GenreId = genres[4].Id, Genre = genres[4] }
+                ]
+            },
+
+            new ()
+            {
+                Id = puzzleMasterId,
+                Name = "Puzzle Master Collection",
+                Key = "puzzle-master-collection",
+                Price = 19.99m,
+                Description = "A collection of challenging puzzles that will test your logical thinking and problem-solving skills.",
+                Rating = 4.4,
+                AgeRating = AgeRating.ThreePlus,
+                ReleaseDate = new DateTime(2024, 6, 5),
+                PublisherId = publishers[5].Id,
+                Publisher = publishers[5],
+                GamePlatforms =
+                [
+                    new() { GameId = puzzleMasterId, PlatformId = platforms[3].Id, Platform = platforms[3] },
+                    new() { GameId = puzzleMasterId, PlatformId = platforms[0].Id, Platform = platforms[0] }
+                ],
+                GameGenres = [new() { GameId = puzzleMasterId, GenreId = genres[9].Id, Genre = genres[9] }]
+            },
+
+            new ()
+            {
+                Id = galacticWarfareId,
+                Name = "Galactic Warfare",
+                Key = "galactic-warfare-2024",
+                Price = 54.99m,
+                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0E],
+                Description = "Command vast space fleets in epic battles across the galaxy in this real-time strategy masterpiece.",
+                Rating = 4.7,
+                AgeRating = AgeRating.TwelvePlus,
+                ReleaseDate = new DateTime(2024, 7, 20),
+                PublisherId = publishers[2].Id,
+                Publisher = publishers[2],
+                GamePlatforms =
+                [
+                    new() { GameId = galacticWarfareId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                    new() { GameId = galacticWarfareId, PlatformId = platforms[4].Id, Platform = platforms[4] }
+                ],
+                GameGenres = 
+                [
+                    new() { GameId = galacticWarfareId, GenreId = genres[3].Id, Genre = genres[3] },
+                    new() { GameId = galacticWarfareId, GenreId = genres[0].Id, Genre = genres[0] }
+                ]
+            },
+
+            new ()
+            {
+                Id = wildWestId,
+                Name = "Wild West Outlaws",
+                Key = "wild-west-outlaws",
+                Price = 59.99m,
+                Description = "Live the life of an outlaw in the American frontier with horse riding, gunfights, and moral choices.",
+                Rating = 4.9,
+                AgeRating = AgeRating.EighteenPlus,
+                ReleaseDate = new DateTime(2024, 8, 15),
+                PublisherId = publishers[4].Id,
+                Publisher = publishers[4],
+                GamePlatforms =
+                [
+                    new() { GameId = wildWestId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                    new() { GameId = wildWestId, PlatformId = platforms[1].Id, Platform = platforms[1] },
+                    new() { GameId = wildWestId, PlatformId = platforms[2].Id, Platform = platforms[2] }
+                ],
+                GameGenres = 
+                [
+                    new() { GameId = wildWestId, GenreId = genres[0].Id, Genre = genres[0] },
+                    new() { GameId = wildWestId, GenreId = genres[4].Id, Genre = genres[4] }
+                ]
+            },
+
+            new ()
+            {
+                Id = cyberShooterId,
+                Name = "Cyber Shooter Arena",
+                Key = "cyber-shooter-arena",
+                Price = 29.99m,
+                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0F],
+                Description = "Fast-paced multiplayer FPS set in a neon-lit cyberpunk world with advanced weaponry.",
+                Rating = 4.2,
+                AgeRating = AgeRating.SixteenPlus,
+                ReleaseDate = new DateTime(2024, 12, 1),
+                PublisherId = publishers[6].Id,
+                Publisher = publishers[6],
+                GamePlatforms =
+                [
+                    new() { GameId = cyberShooterId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                    new() { GameId = cyberShooterId, PlatformId = platforms[4].Id, Platform = platforms[4] }
+                ],
+                GameGenres = 
+                [
+                    new() { GameId = cyberShooterId, GenreId = genres[1].Id, Genre = genres[1] },
+                    new() { GameId = cyberShooterId, GenreId = genres[0].Id, Genre = genres[0] }
                 ]
             }
+            #endregion
         };
         return games;
     }
 
     private static DataAccess.Entities.Game GenerateSingleGameEntity(List<Publisher> publishers, List<DataAccess.Entities.Genre> genres, List<Platform> platforms, Guid? id = null)
-    { 
+    {
+        var realId = id ?? Guid.NewGuid();
         return new()
         {
-            Id = id ?? Guid.NewGuid(),
+            Id = realId,
             Name = "Cyber Warriors 2077",
             Key = "4uiru78rh6x84",
             Price = 59.99m,
@@ -136,10 +382,10 @@ public class GameServiceTests
             Publisher = publishers[0],
             GamePlatforms =
             [
-                new() { GameId = Guid.NewGuid(), PlatformId = platforms[0].Id, Platform = platforms[0] },
-                new() { GameId = Guid.NewGuid(), PlatformId = platforms[1].Id, Platform = platforms[1] }
+                new() { GameId = realId, PlatformId = platforms[0].Id, Platform = platforms[0] },
+                new() { GameId = realId, PlatformId = platforms[1].Id, Platform = platforms[1] }
             ],
-            GameGenres = [new() { GameId = Guid.NewGuid(), GenreId = genres[0].Id, Genre = genres[0] }]
+            GameGenres = [new() { GameId = realId, GenreId = genres[0].Id, Genre = genres[0] }]
         };
     }
     
