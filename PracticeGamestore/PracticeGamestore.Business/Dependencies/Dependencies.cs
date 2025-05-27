@@ -7,6 +7,7 @@ using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.DataAccess.Repositories.Genre;
+using PracticeGamestore.DataAccess.Repositories.Platform;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Dependencies;
@@ -18,7 +19,7 @@ public static class Dependencies
         services.AddScoped<IUnitOfWork, UnitOfWork>(); 
         services.AddScoped<IPublisherRepository, PublisherRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
-        services.AddScoped<IPlatformService, PlatformService>();
+        services.AddScoped<IPlatformRepository, PlatformRepository>();
     }
 
     private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -33,6 +34,6 @@ public static class Dependencies
         services.AddDataAccessServices();
         services.AddScoped<IPublisherService, PublisherService>();
         services.AddScoped<IGenreService, GenreService>();
-        services.AddScoped<IPlatformService, PlatformService>();
+        services.AddScoped<IPlatformService, PlatformService>(); 
     }
 }
