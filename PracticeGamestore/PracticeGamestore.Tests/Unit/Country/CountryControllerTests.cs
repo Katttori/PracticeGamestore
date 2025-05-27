@@ -174,8 +174,6 @@ public class CountryControllerTests
         var result = await _countryController.DeleteCountry(countryId);
         
         // Assert
-        var noContentResult = result as NoContentResult;
-        
-        Assert.That(noContentResult, Is.Not.Null);
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
 }
