@@ -82,7 +82,7 @@ public class GenreServiceTests
         
         _genreRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
-            .ReturnsAsync(dto.Id);
+            .ReturnsAsync(dto.Id!.Value);
         _unitOfWorkMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
@@ -102,7 +102,7 @@ public class GenreServiceTests
         
         _genreRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
-            .ReturnsAsync(dto.Id);
+            .ReturnsAsync(dto.Id!.Value);
         _unitOfWorkMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);
@@ -130,7 +130,7 @@ public class GenreServiceTests
             .ReturnsAsync(1);
         
         // Act
-        var result = await _service.UpdateAsync(dto);
+        var result = await _service.UpdateAsync(id, dto);
         
         // Assert
         Assert.That(result, Is.True);
@@ -140,14 +140,15 @@ public class GenreServiceTests
     public async Task UpdateAsync_WhenEntityDoesNotExist_ReturnsFalse()
     {
         //Arrange
-        var dto = new GenreDto(Guid.NewGuid(), "Action");
+        var id = Guid.NewGuid();
+        var dto = new GenreDto(id, "Action");
         
         _genreRepositoryMock
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Genre);
         
         // Act
-        var result = await _service.UpdateAsync(dto);
+        var result = await _service.UpdateAsync(id, dto);
         
         // Assert
         Assert.That(result, Is.False);
