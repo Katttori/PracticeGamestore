@@ -18,7 +18,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             context.Response.ContentType = "application/json";
             
             var response = new { message = "something happened?" };
-            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            await context.Response.WriteAsJsonAsync(response);
         }
     }
 }
