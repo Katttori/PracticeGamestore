@@ -21,7 +21,7 @@ public static class Dependencies
         services.AddScoped<IUnitOfWork, UnitOfWork>(); 
         services.AddScoped<IPublisherRepository, PublisherRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
-        services.AddScoped<IPlatformService, PlatformService>();
+        services.AddScoped<IPlatformRepository, PlatformRepository>();
         services.AddScoped<IBlacklistRepository, BlacklistRepository>();
     }
 
