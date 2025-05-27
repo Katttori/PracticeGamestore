@@ -106,10 +106,8 @@ public class CountryControllerTests
         var result = await _countryController.CreateCountry(countryRequest);
         
         // Assert
-        var createdResult = result as CreatedAtActionResult;
-        
-        Assert.That(createdResult, Is.Not.Null);
-        Assert.That(createdResult?.StatusCode, Is.EqualTo(201));
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
     }
     
     [Test]
@@ -142,8 +140,7 @@ public class CountryControllerTests
             .UpdateCountry(Guid.NewGuid(), new CountryRequestModel {Name = "UK"});
         
         // Assert
-        var noContent = result as NoContentResult;
-        Assert.That(noContent, Is.InstanceOf<NoContentResult>());
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
 
     [Test]
