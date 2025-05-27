@@ -1,7 +1,7 @@
-using PracticeGamestore.Enums;
 using PracticeGamestore.Models.Genre;
 using PracticeGamestore.Models.Platform;
 using PracticeGamestore.Models.Publisher;
+using AgeRating = PracticeGamestore.DataAccess.Enums.AgeRating;
 
 namespace PracticeGamestore.Models.Game;
 

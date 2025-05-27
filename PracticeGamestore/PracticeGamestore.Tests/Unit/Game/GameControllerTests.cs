@@ -5,9 +5,9 @@ using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Controllers;
-using PracticeGamestore.Enums;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Game;
+using AgeRating = PracticeGamestore.DataAccess.Enums.AgeRating;
 
 namespace PracticeGamestore.Tests.Unit.Game;
 
@@ -36,7 +36,7 @@ public class GameControllerTests
                 [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
                 "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
                 4.5,
-                Enums.AgeRating.EighteenPlus,
+                AgeRating.EighteenPlus,
                 new DateTime(2023, 11, 15),
                 new(Guid.NewGuid(), "Electronic Arts", "American video game company", "https://www.ea.com"),
                 [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "PS5", "PlayStation 5")],
@@ -50,7 +50,7 @@ public class GameControllerTests
                 null,
                 "A magical journey through enchanted forests where you solve puzzles and befriend mystical creatures.",
                 4.2,
-                Enums.AgeRating.ThreePlus,
+                AgeRating.ThreePlus,
                 new DateTime(2024, 3, 8),
                 new(Guid.NewGuid(), "Ubisoft", "French video game company", "https://www.ubisoft.com"),
                 [new(Guid.NewGuid(), "PC", "Personal Computer")],
@@ -84,7 +84,7 @@ public class GameControllerTests
             [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
             "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
             4.5,
-            Enums.AgeRating.EighteenPlus,
+            AgeRating.EighteenPlus,
             new DateTime(2023, 11, 15),
             new(Guid.NewGuid(), "Electronic Arts", "American video game company", "https://www.ea.com"),
             [new(Guid.NewGuid(), "PC", "Personal Computer"), new(Guid.NewGuid(), "PS5", "PlayStation 5")],
@@ -102,7 +102,7 @@ public class GameControllerTests
             Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
             Description = "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
             Rating = 4.5,
-            AgeRating = AgeRating.EighteenPlus,
+            AgeRating = (Business.Enums.AgeRating)AgeRating.EighteenPlus,
             ReleaseDate = new DateTime(2023, 11, 15),
             PublisherId = Guid.NewGuid(),
             GenreIds = [Guid.NewGuid()],

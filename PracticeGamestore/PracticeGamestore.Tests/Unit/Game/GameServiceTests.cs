@@ -153,7 +153,7 @@ public class GameServiceTests
             game.Picture,
             game.Description,
             game.Rating,
-            game.AgeRating,
+            (Business.Enums.AgeRating)game.AgeRating,
             game.ReleaseDate,
             game.PublisherId,
             game.GameGenres.Select(gg => gg.GenreId).ToList(),

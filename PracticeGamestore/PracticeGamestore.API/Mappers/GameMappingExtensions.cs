@@ -1,5 +1,4 @@
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Models.Game;
 
 namespace PracticeGamestore.Mappers;
@@ -16,7 +15,7 @@ public static class GameMappingExtensions
             model.Picture,
             model.Description,
             model.Rating,
-            (AgeRating)model.AgeRating,
+            model.AgeRating,
             model.ReleaseDate,
             model.PublisherId,
             model.GenreIds,

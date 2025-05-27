@@ -1,4 +1,4 @@
-using PracticeGamestore.Enums;
+using PracticeGamestore.Business.Enums;
 
 namespace PracticeGamestore.Models.Game;
 

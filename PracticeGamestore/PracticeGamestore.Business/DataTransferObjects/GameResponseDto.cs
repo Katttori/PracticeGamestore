@@ -1,4 +1,4 @@
-using PracticeGamestore.Enums;
+using AgeRating = PracticeGamestore.DataAccess.Enums.AgeRating;
 
 namespace PracticeGamestore.Business.DataTransferObjects;
 
