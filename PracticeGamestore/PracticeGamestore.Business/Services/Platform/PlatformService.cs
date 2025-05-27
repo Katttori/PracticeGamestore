@@ -32,9 +32,6 @@ public class PlatformService(IPlatformRepository repository, IUnitOfWork unitOfW
     public async Task<bool> UpdateAsync(PlatformDto platform)
     {
         var platformEntity = platform.MapToEntity();
-        platformEntity.Id = platform.Id ?? Guid.Empty;
-        if (platformEntity.Id == Guid.Empty) return false;
-        
         var updatedPlatform = await repository.GetByIdAsync(platformEntity.Id);
         if (updatedPlatform is null) return false;
         
