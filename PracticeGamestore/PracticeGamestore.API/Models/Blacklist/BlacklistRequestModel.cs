@@ -2,6 +2,10 @@ namespace PracticeGamestore.Models.Blacklist;
 
 public class BlacklistRequestModel
 {
-    public required string UserEmail { get; set; }
-    public Guid? CountryId { get; set; }
+    public string UserEmail { get; set; }
+    
+    public BlacklistRequestModel(string userEmail)
+    {
+        UserEmail = userEmail;
+    }
 }

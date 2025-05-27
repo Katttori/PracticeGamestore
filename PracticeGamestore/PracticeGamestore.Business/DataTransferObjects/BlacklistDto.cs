@@ -1,5 +1,3 @@
-using PracticeGamestore.DataAccess.Entities;
-
 namespace PracticeGamestore.Business.DataTransferObjects;
 
 public class BlacklistDto

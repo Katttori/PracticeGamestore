@@ -7,12 +7,12 @@ public static class BlacklistMappingExtensions
 {
     public static BlacklistDto MapToBlacklistDto(this BlacklistRequestModel dto)
     {
-        return new BlacklistDto(null, dto.UserEmail, null);
+        return new (null, dto.UserEmail, null);
     }
     
     public static BlacklistResponseModel MapToBlacklistModel(this BlacklistDto dto)
     {
-        return new BlacklistResponseModel
+        return new ()
         {
             Id = dto.Id,
             UserEmail = dto.UserEmail,

@@ -82,7 +82,7 @@ public class BlacklistControllerTests
     public async Task Create_WhenOperationFailed_ReturnsBadRequest()
     {
         //Arrange
-        var model = new BlacklistRequestModel { UserEmail = "user@example.com" };
+        var model = new BlacklistRequestModel("user@example.com");
         
         _blacklistServiceMock.Setup(x => x.CreateAsync(It.IsAny<BlacklistDto>())).ReturnsAsync(null as Guid?);
         
@@ -102,7 +102,7 @@ public class BlacklistControllerTests
         _blacklistServiceMock.Setup(x => x.CreateAsync(It.IsAny<BlacklistDto>())).ReturnsAsync(newId);
         
         // Act
-        var result = await _blacklistController.Create(new BlacklistRequestModel { UserEmail = "some@email" });
+        var result = await _blacklistController.Create(new BlacklistRequestModel("some@email"));
         
         // Assert
         Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
@@ -117,7 +117,7 @@ public class BlacklistControllerTests
         _blacklistServiceMock.Setup(x => x.UpdateAsync(It.IsAny<BlacklistDto>())).ReturnsAsync(true);
         
         // Act
-        var result = await _blacklistController.Update(Guid.NewGuid(), new BlacklistRequestModel { UserEmail = "some@email" });
+        var result = await _blacklistController.Update(Guid.NewGuid(), new BlacklistRequestModel("some@email"));
         
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
@@ -130,7 +130,7 @@ public class BlacklistControllerTests
         _blacklistServiceMock.Setup(x => x.UpdateAsync(It.IsAny<BlacklistDto>())).ReturnsAsync(false);
         
         // Act
-        var result = await _blacklistController.Update(Guid.NewGuid(), new BlacklistRequestModel { UserEmail = "some@email" });
+        var result = await _blacklistController.Update(Guid.NewGuid(), new BlacklistRequestModel("some@email"));
         
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
