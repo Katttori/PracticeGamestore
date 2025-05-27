@@ -27,9 +27,9 @@ public class CountryController(ICountryService countryService) : ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateCountry([FromBody] CountryRequestModel countryRequestModel)
+    public async Task<IActionResult> CreateCountry([FromBody] CountryCreateRequestModel countryCreateRequestModel)
     {
-        var countryDto = new CountryDto(null, countryRequestModel.Name, CountryStatus.Allowed);
+        var countryDto = new CountryDto(null, countryCreateRequestModel.Name, CountryStatus.Allowed);
         var id = await countryService.CreateAsync(countryDto);
         
         if (id is null)
@@ -42,9 +42,9 @@ public class CountryController(ICountryService countryService) : ControllerBase
     }
     
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateCountry(Guid id, [FromBody] CountryRequestModel countryRequestModel)
+    public async Task<IActionResult> UpdateCountry(Guid id, [FromBody] CountryUpdateRequestModel countryUpdateRequestModel)
     {
-        var countryDto = countryRequestModel.MapToCountryDto();
+        var countryDto = countryUpdateRequestModel.MapToCountryDto();
         countryDto.Id = id;
         
         var updated = await countryService.UpdateAsync(countryDto);

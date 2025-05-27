@@ -6,11 +6,15 @@ namespace PracticeGamestore.API.Mappers;
 
 public static class CountryMappingExtensions
 {
-    public static CountryDto MapToCountryDto(this CountryRequestModel countryRequestModel)
+    public static CountryDto MapToCountryDto(this CountryUpdateRequestModel countryUpdateRequestModel)
     {
-        return new CountryDto(null, countryRequestModel.Name, countryRequestModel.Status);
+        return new CountryDto(null, countryUpdateRequestModel.Name, countryUpdateRequestModel.Status);
     }
     
+    public static CountryDto MapToCountryDto(this CountryCreateRequestModel countryCreateRequestModel)
+    {
+        return new CountryDto(null, countryCreateRequestModel.Name, CountryStatus.Allowed);
+    }
     public static CountryResponseModel MapToCountryModel(this CountryDto countryDto)
     {
         return new()

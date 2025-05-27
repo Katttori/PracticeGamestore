@@ -92,7 +92,7 @@ public class CountryControllerTests
     public async Task CreateCountry_ShouldReturnCreatedResult_WhenCountryIsCreated()
     {
         // Arrange
-        var countryRequest = new CountryRequestModel
+        var countryRequest = new CountryCreateRequestModel
         {
             Name = "Canada"
         };
@@ -114,7 +114,7 @@ public class CountryControllerTests
     public async Task CreateCountry_ShouldReturnBadRequest_WhenCreationFails()
     {
         // Arrange
-        var countryRequest = new CountryRequestModel
+        var countryRequest = new CountryCreateRequestModel
         {
             Name = "USA"
         };
@@ -137,7 +137,7 @@ public class CountryControllerTests
         
         // Act
         var result = await _countryController
-            .UpdateCountry(Guid.NewGuid(), new CountryRequestModel {Name = "UK"});
+            .UpdateCountry(Guid.NewGuid(), new CountryUpdateRequestModel {Name = "UK", Status = CountryStatus.Banned});
         
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
@@ -151,7 +151,7 @@ public class CountryControllerTests
         
         // Act
         var result = await _countryController
-            .UpdateCountry(Guid.NewGuid(), new CountryRequestModel {Name = "UKR"});
+            .UpdateCountry(Guid.NewGuid(), new CountryUpdateRequestModel {Name = "UKR", Status = CountryStatus.Allowed});
         
         // Assert
         var badRequest = result as BadRequestObjectResult;
