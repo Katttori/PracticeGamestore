@@ -11,7 +11,7 @@ public class BlacklistRepository(GamestoreDbContext context) : IBlacklistReposit
         return await _blacklistsNoTracking.ToListAsync();
     }
 
-    public async Task<Entities.Blacklist?> GetByIdAsync(Guid id)
+    public async Task<Entities.Blacklist?> GetByIdAsync(Guid? id)
     {
         return await _blacklistsNoTracking.FirstOrDefaultAsync(b => b.Id == id);
     }
