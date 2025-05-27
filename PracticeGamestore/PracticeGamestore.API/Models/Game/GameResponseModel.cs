@@ -1,4 +1,3 @@
-using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Models.Genre;
 using PracticeGamestore.Models.Platform;
 using PracticeGamestore.Models.Publisher;
@@ -14,7 +13,7 @@ public class GameResponseModel
     public byte[]? Picture { get; set; }
     public string Description { get; set; } = string.Empty;
     public double Rating { get; set; }
-    public AgeRating AgeRating { get; set; }
+    public int AgeRating { get; set; }
     public DateTime ReleaseDate { get; set; }
     public required PublisherResponseModel Publisher { get; set; }
     public required List<GenreResponseModel> Genres { get; set; }

@@ -1,4 +1,4 @@
-using PracticeGamestore.Business.Enums;
+using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.Business.DataTransferObjects;
 
@@ -25,7 +25,7 @@ public class GameRequestDto
         byte[]? picture,
         string description,
         double rating,
-        AgeRating ageRating,
+        int ageRating,
         DateTime releaseDate,
         Guid publisherId,
         List<Guid> genreIds,
@@ -38,10 +38,17 @@ public class GameRequestDto
         Picture = picture;
         Description = description;
         Rating = rating;
-        AgeRating = ageRating;
+        AgeRating = ConvertToAgeRatingEnum(ageRating);
         ReleaseDate = releaseDate;
         PublisherId = publisherId;
         GenreIds = genreIds;
         PlatformIds = platformIds;
+    }
+
+    private static AgeRating ConvertToAgeRatingEnum(int age)
+    {
+        if (!Enum.IsDefined(typeof(AgeRating), age))
+            throw new ArgumentException($"Invalid age rating value was passed! {age}");
+        return (AgeRating)age;
     }
 }

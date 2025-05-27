@@ -1,4 +1,4 @@
-namespace PracticeGamestore.Business.Enums;
+namespace PracticeGamestore.DataAccess.Enums;
 
 public enum AgeRating
 {

@@ -1,5 +1,4 @@
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Enums;
 using PracticeGamestore.DataAccess.Entities;
 
 namespace PracticeGamestore.Business.Mappers;
@@ -16,7 +15,7 @@ public static class GameMappingExtensions
             game.Picture,
             game.Description,
             game.Rating,
-            (AgeRating)game.AgeRating,
+            game.AgeRating,
             game.ReleaseDate,
             game.Publisher.MapToPublisherDto(),
             game.GamePlatforms.Select(gp => gp.Platform.MapToPlatformDto()).ToList(),
@@ -35,7 +34,7 @@ public static class GameMappingExtensions
             Picture = requestDto.Picture,
             Description = requestDto.Description,
             Rating = requestDto.Rating,
-            AgeRating = (int)requestDto.AgeRating,
+            AgeRating = requestDto.AgeRating,
             ReleaseDate = requestDto.ReleaseDate,
             PublisherId = requestDto.PublisherId
         };

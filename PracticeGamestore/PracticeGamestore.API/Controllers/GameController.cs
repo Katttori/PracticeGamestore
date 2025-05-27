@@ -27,19 +27,34 @@ public class GameController(IGameService gameService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GameRequestModel model)
     {
-        var id = await gameService.CreateAsync(model.MapToGameDto());
-        return id is null
-            ? BadRequest("Failed to create game.")
-            : CreatedAtAction(nameof(GetById), new {id}, id);
+        try
+        {
+            var id = await gameService.CreateAsync(model.MapToGameDto());
+            return id is null
+                ? BadRequest("Failed to create game.")
+                : CreatedAtAction(nameof(GetById), new { id }, id);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GameRequestModel model)
     {
-        var updated = await gameService.UpdateAsync(model.MapToGameDto(id));
-        return updated
-            ? NoContent()
-            : BadRequest($"Failed to update the game.");
+        try
+        {
+            var updated = await gameService.UpdateAsync(model.MapToGameDto(id));
+            return updated
+                ? NoContent()
+                : BadRequest($"Failed to update the game.");
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpDelete("{id:guid}")]

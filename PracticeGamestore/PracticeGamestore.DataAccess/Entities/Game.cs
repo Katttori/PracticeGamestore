@@ -1,3 +1,5 @@
+using PracticeGamestore.DataAccess.Enums;
+
 namespace PracticeGamestore.DataAccess.Entities;
 
 public class Game
@@ -9,7 +11,7 @@ public class Game
     public byte[]? Picture { get; set; }
     public string Description { get; set; } = string.Empty;
     public double Rating { get; set; }
-    public int AgeRating { get; set; }
+    public AgeRating AgeRating { get; set; }
     public DateTime ReleaseDate { get; set; }
     public Guid PublisherId { get; set; }
     public Publisher Publisher { get; set; } = null!;

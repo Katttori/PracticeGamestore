@@ -1,10 +1,10 @@
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.DataAccess.Entities;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.Repositories.Platform;
@@ -69,7 +69,7 @@ public class GameServiceTests
                 Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
                 Description = "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
                 Rating = 4.5,
-                AgeRating = (int)AgeRating.EighteenPlus,
+                AgeRating = AgeRating.EighteenPlus,
                 ReleaseDate = new DateTime(2023, 11, 15),
                 PublisherId = publishers[0].Id,
                 Publisher = publishers[0], 
@@ -88,7 +88,7 @@ public class GameServiceTests
                 Price = 29.99m,
                 Description = "A magical journey through enchanted forests where you solve puzzles and befriend mystical creatures.",
                 Rating = 4.2,
-                AgeRating = (int)AgeRating.ThreePlus,
+                AgeRating = AgeRating.ThreePlus,
                 ReleaseDate = new DateTime(2024, 3, 8),
                 PublisherId = publishers[1].Id,
                 Publisher = publishers[1],
@@ -103,7 +103,7 @@ public class GameServiceTests
                 Price = 39.99m,
                 Description = "Build and manage your own space colony on distant planets while dealing with resource management and alien threats.",
                 Rating = 4.7,
-                AgeRating = (int)AgeRating.TwelvePlus,
+                AgeRating = AgeRating.TwelvePlus,
                 ReleaseDate = new DateTime(2024, 1, 22),
                 PublisherId = publishers[2].Id,
                 Publisher = publishers[2],
@@ -130,7 +130,7 @@ public class GameServiceTests
             Description =
                 "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
             Rating = 4.5,
-            AgeRating = (int)AgeRating.EighteenPlus,
+            AgeRating = AgeRating.EighteenPlus,
             ReleaseDate = new DateTime(2023, 11, 15),
             PublisherId = publishers[0].Id,
             Publisher = publishers[0],
@@ -153,7 +153,7 @@ public class GameServiceTests
             game.Picture,
             game.Description,
             game.Rating,
-            (Business.Enums.AgeRating)game.AgeRating,
+            (int)game.AgeRating,
             game.ReleaseDate,
             game.PublisherId,
             game.GameGenres.Select(gg => gg.GenreId).ToList(),
