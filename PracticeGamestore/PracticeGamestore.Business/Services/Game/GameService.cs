@@ -51,6 +51,15 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         var game = await gameRepository.GetByIdAsync(id);
         return game?.MapToGameDto();
     }
+    
+    public async Task<IEnumerable<GameResponseDto>?> GetByPlatformAsync(Guid platformId)
+    {
+        var platformExists = await platformRepository.ExistsAsync(platformId);
+        if (!platformExists) return null;
+
+        var games = await gameRepository.GetByPlatformIdAsync(platformId);
+        return games.Select(g => g.MapToGameDto());
+    }
 
     public async Task DeleteAsync(Guid id)
     {
