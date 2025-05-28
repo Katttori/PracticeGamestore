@@ -8,5 +8,6 @@ public interface IGameService
     Task<bool> UpdateAsync(Guid id, GameRequestDto gameRequest);
     Task<Guid?> CreateAsync(GameRequestDto gameRequest);
     Task<GameResponseDto?> GetByIdAsync(Guid id);
+    Task<IEnumerable<GameResponseDto>?> GetByPlatformAsync(Guid platformId);
     Task DeleteAsync(Guid id);
 }
