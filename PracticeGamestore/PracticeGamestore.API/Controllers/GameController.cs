@@ -38,7 +38,6 @@ public class GameController(IGameService gameService) : ControllerBase
         {
             return BadRequest(e.Message);
         }
-        
     }
 
     [HttpPut("{id:guid}")]

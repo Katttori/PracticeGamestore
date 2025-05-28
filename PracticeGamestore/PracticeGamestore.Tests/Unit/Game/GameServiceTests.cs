@@ -3,7 +3,6 @@ using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Game;
-using PracticeGamestore.DataAccess.Entities;
 using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
@@ -34,9 +33,9 @@ public class GameServiceTests
         _gameService = new GameService(_gameRepository.Object, _publisherRepository.Object, _genreRepository.Object, _platformRepository.Object, _unitOfWork.Object);
     }
 
-    private static (List<Publisher>, List<DataAccess.Entities.Genre>, List<Platform>) GenerateRelations()
+    private static (List<DataAccess.Entities.Publisher>, List<DataAccess.Entities.Genre>, List<DataAccess.Entities.Platform>) GenerateRelations()
     {
-        var publishers = new List<Publisher>
+        var publishers = new List<DataAccess.Entities.Publisher>
         {
             new() { Id = Guid.NewGuid(), Name = "Electronic Arts", Description = "American video game company", PageUrl = "https://www.ea.com" },
             new() { Id = Guid.NewGuid(), Name = "Ubisoft", Description = "French video game company", PageUrl = "https://www.ubisoft.com" },
@@ -62,7 +61,7 @@ public class GameServiceTests
             new() { Id = Guid.NewGuid(), Name = "Puzzle" }
         };
         
-        var platforms = new List<Platform>
+        var platforms = new List<DataAccess.Entities.Platform>
         {
             new() {Id = Guid.NewGuid(), Name = "PC", Description = "Personal Computer"},
             new() {Id = Guid.NewGuid(), Name = "PS5", Description = "PlayStation 5"},
@@ -93,7 +92,6 @@ public class GameServiceTests
         
         var games = new List<DataAccess.Entities.Game>
         {
-            #region Original Games
             new ()
             {
                 Id = cyberWarriorsId,
@@ -148,9 +146,6 @@ public class GameServiceTests
                     new() { GameId = spaceColonyId, GenreId = genres[1].Id, Genre = genres[1] }
                 ]
             },
-            #endregion
-
-            #region New Games
             new ()
             {
                 Id = dragonsLegacyId,
@@ -176,7 +171,6 @@ public class GameServiceTests
                     new() { GameId = dragonsLegacyId, GenreId = genres[4].Id, Genre = genres[4] }
                 ]
             },
-            
             new ()
             {
                 Id = streetRacerId,
@@ -196,7 +190,6 @@ public class GameServiceTests
                 ],
                 GameGenres = [new() { GameId = streetRacerId, GenreId = genres[5].Id, Genre = genres[5] }]
             },
-
             new ()
             {
                 Id = fifaChampionsId,
@@ -218,7 +211,6 @@ public class GameServiceTests
                 ],
                 GameGenres = [new() { GameId = fifaChampionsId, GenreId = genres[6].Id, Genre = genres[6] }]
             },
-
             new ()
             {
                 Id = cityArchitectId,
@@ -238,7 +230,6 @@ public class GameServiceTests
                     new() { GameId = cityArchitectId, GenreId = genres[7].Id, Genre = genres[7] }
                 ]
             },
-
             new ()
             {
                 Id = hauntedMansionId,
@@ -263,7 +254,6 @@ public class GameServiceTests
                     new() { GameId = hauntedMansionId, GenreId = genres[4].Id, Genre = genres[4] }
                 ]
             },
-
             new ()
             {
                 Id = puzzleMasterId,
@@ -308,7 +298,6 @@ public class GameServiceTests
                     new() { GameId = galacticWarfareId, GenreId = genres[0].Id, Genre = genres[0] }
                 ]
             },
-
             new ()
             {
                 Id = wildWestId,
@@ -333,7 +322,6 @@ public class GameServiceTests
                     new() { GameId = wildWestId, GenreId = genres[4].Id, Genre = genres[4] }
                 ]
             },
-
             new ()
             {
                 Id = cyberShooterId,
@@ -358,12 +346,11 @@ public class GameServiceTests
                     new() { GameId = cyberShooterId, GenreId = genres[0].Id, Genre = genres[0] }
                 ]
             }
-            #endregion
         };
         return games;
     }
 
-    private static DataAccess.Entities.Game GenerateSingleGameEntity(List<Publisher> publishers, List<DataAccess.Entities.Genre> genres, List<Platform> platforms, Guid? id = null)
+    private static DataAccess.Entities.Game GenerateSingleGameEntity(List<DataAccess.Entities.Publisher> publishers, List<DataAccess.Entities.Genre> genres, List<DataAccess.Entities.Platform> platforms, Guid? id = null)
     {
         var realId = id ?? Guid.NewGuid();
         return new()
@@ -407,7 +394,7 @@ public class GameServiceTests
         );
     }
 
-    private void SetUpDefaultMocks(IEnumerable<DataAccess.Entities.Genre> genres, IEnumerable<Platform> platforms, DataAccess.Entities.Game game)
+    private void SetUpDefaultMocks(IEnumerable<DataAccess.Entities.Genre> genres, IEnumerable<DataAccess.Entities.Platform> platforms, DataAccess.Entities.Game game)
     {
         _publisherRepository.Setup(x => x.GetByIdAsync(game.PublisherId))
             .ReturnsAsync(game.Publisher);
@@ -417,10 +404,10 @@ public class GameServiceTests
             .ReturnsAsync(platforms);
     }
     
-    private void SetUpMocksWhenPublisherDoesNotExist(IEnumerable<DataAccess.Entities.Genre> genres, IEnumerable<Platform> platforms, Guid publisherId)
+    private void SetUpMocksWhenPublisherDoesNotExist(IEnumerable<DataAccess.Entities.Genre> genres, IEnumerable<DataAccess.Entities.Platform> platforms, Guid publisherId)
     {
         _publisherRepository.Setup(x => x.GetByIdAsync(publisherId))
-            .ReturnsAsync(null as Publisher);
+            .ReturnsAsync(null as DataAccess.Entities.Publisher);
         _genreRepository.Setup(x => x.GetAllAsync())
             .ReturnsAsync(genres);
         _platformRepository.Setup(x => x.GetAllAsync())

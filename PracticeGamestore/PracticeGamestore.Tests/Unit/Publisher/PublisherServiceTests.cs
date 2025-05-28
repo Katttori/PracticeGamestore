@@ -2,11 +2,10 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Publisher;
-using PracticeGamestore.DataAccess.Repositories;
 using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
-namespace PracticeGamestore.API.Tests.Unit.Publisher;
+namespace PracticeGamestore.Tests.Unit.Publisher;
 
 [TestFixture]
 public class PublisherServiceTests

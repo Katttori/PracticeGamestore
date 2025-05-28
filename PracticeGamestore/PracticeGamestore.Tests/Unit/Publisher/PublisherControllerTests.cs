@@ -8,7 +8,7 @@ using PracticeGamestore.Controllers;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Publisher;
 
-namespace PracticeGamestore.API.Tests.Unit.Publisher;
+namespace PracticeGamestore.Tests.Unit.Publisher;
 
 [TestFixture]
 public class PublisherControllerTests
