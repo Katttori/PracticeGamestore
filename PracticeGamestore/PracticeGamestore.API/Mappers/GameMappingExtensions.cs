@@ -5,10 +5,10 @@ namespace PracticeGamestore.Mappers;
 
 public static class GameMappingExtensions
 {
-    public static GameRequestDto MapToGameDto(this GameRequestModel model, Guid? id = null)
+    public static GameRequestDto MapToGameDto(this GameRequestModel model)
     {
         return new (
-            id,
+            null,
             model.Name,
             model.Key,
             model.Price,

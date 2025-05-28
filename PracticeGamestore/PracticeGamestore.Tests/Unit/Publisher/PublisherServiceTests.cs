@@ -106,7 +106,7 @@ public class PublisherServiceTests
             .ReturnsAsync(1);
         
         //Act
-        var result = await _publisherService.UpdateAsync(publisher.MapToPublisherDto());
+        var result = await _publisherService.UpdateAsync(id, publisher.MapToPublisherDto());
         
         //Assert
         Assert.That(result, Is.True);
@@ -116,12 +116,13 @@ public class PublisherServiceTests
     public async Task UpdateAsync_WhenPublisherDoesNotExist_ReturnsFalse()
     {
         //Arrange
+        var id = Guid.NewGuid();
         var publisher = CreatePublisher();
-        _publisherRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+        _publisherRepository.Setup(x => x.GetByIdAsync(id))
             .ReturnsAsync(null as DataAccess.Entities.Publisher);
 
         //Act
-        var result = await _publisherService.UpdateAsync(publisher.MapToPublisherDto());
+        var result = await _publisherService.UpdateAsync(id, publisher.MapToPublisherDto());
         
         //Assert
         Assert.That(result, Is.False);

@@ -45,7 +45,7 @@ public class GameController(IGameService gameService) : ControllerBase
     {
         try
         {
-            var updated = await gameService.UpdateAsync(model.MapToGameDto(id));
+            var updated = await gameService.UpdateAsync(id, model.MapToGameDto());
             return updated
                 ? NoContent()
                 : BadRequest($"Failed to update the game.");

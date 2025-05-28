@@ -499,7 +499,7 @@ public class GameServiceTests
             .ReturnsAsync(1);
         
         //Act
-        var result = await _gameService.UpdateAsync(GenerateGameRequestModel(game));
+        var result = await _gameService.UpdateAsync(game.Id, GenerateGameRequestModel(game));
         
         //Assert
         Assert.That(result, Is.True);
@@ -515,7 +515,7 @@ public class GameServiceTests
             .ReturnsAsync(null as DataAccess.Entities.Game);
 
         //Act
-        var result = await _gameService.UpdateAsync(GenerateGameRequestModel(game));
+        var result = await _gameService.UpdateAsync(game.Id, GenerateGameRequestModel(game));
         
         //Assert
         Assert.That(result, Is.False);
@@ -533,7 +533,7 @@ public class GameServiceTests
         SetUpMocksWhenPublisherDoesNotExist(genres, platforms, game.PublisherId);
 
         //Act
-        var result = await _gameService.UpdateAsync(GenerateGameRequestModel(game));
+        var result = await _gameService.UpdateAsync(game.Id, GenerateGameRequestModel(game));
         
         //Assert
         Assert.That(result, Is.False);
@@ -551,7 +551,7 @@ public class GameServiceTests
         SetUpDefaultMocks(genres, platforms, game);
 
         //Act
-        var result = await _gameService.UpdateAsync(GenerateGameRequestModel(game));
+        var result = await _gameService.UpdateAsync(game.Id, GenerateGameRequestModel(game));
         
         //Assert
         Assert.That(result, Is.False);
@@ -568,7 +568,7 @@ public class GameServiceTests
         SetUpDefaultMocks(genres, platforms, game);
         
         //Act
-        var result = await _gameService.UpdateAsync(GenerateGameRequestModel(game));
+        var result = await _gameService.UpdateAsync(game.Id, GenerateGameRequestModel(game));
         
         //Assert
         Assert.That(result, Is.False);
@@ -588,7 +588,7 @@ public class GameServiceTests
             .ReturnsAsync(0);
         
         // Act
-        var result = await _gameService.UpdateAsync(GenerateGameRequestModel(game));
+        var result = await _gameService.UpdateAsync(game.Id, GenerateGameRequestModel(game));
         
         // Assert
         Assert.That(result, Is.False);

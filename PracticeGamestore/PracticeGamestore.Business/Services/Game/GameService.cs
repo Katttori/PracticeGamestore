@@ -16,10 +16,9 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         return entities.Select(e => e.MapToGameDto());
     }
 
-    public async Task<bool> UpdateAsync(GameRequestDto gameRequestDto)
+    public async Task<bool> UpdateAsync(Guid id, GameRequestDto gameRequestDto)
     {
-        if (gameRequestDto.Id is null) return false;
-        var existingGame = await gameRepository.GetByIdAsync(gameRequestDto.Id.Value);
+        var existingGame = await gameRepository.GetByIdAsync(id);
         if (existingGame is null) return false;
         
         if (!await AreSpecifiedRelationshipsValid(gameRequestDto))
@@ -28,6 +27,7 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         }
         
         var (game, genreIds, platformIds) = gameRequestDto.MapToGameEntityWithRelations();
+        game.Id = id;
         await gameRepository.UpdateAsync(game, genreIds, platformIds);
         var updated = await unitOfWork.SaveChangesAsync();
         return updated > 0;

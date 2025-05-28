@@ -246,12 +246,13 @@ public class GameControllerTests
     public async Task Update_ShouldReturnNoContent_WhenGameIsUpdated()
     {
         //Arrange
-        var publisherRequestModel = GenerateSingleGameRequestModel();
-        _gameService.Setup(x => x.UpdateAsync(It.IsAny<GameRequestDto>()))
+        var id = Guid.NewGuid();
+        var gameRequestModel = GenerateSingleGameRequestModel();
+        _gameService.Setup(x => x.UpdateAsync(id, It.IsAny<GameRequestDto>()))
             .ReturnsAsync(true);
 
         //Act
-        var result = await _gameController.Update(Guid.NewGuid(), publisherRequestModel);
+        var result = await _gameController.Update(id, gameRequestModel);
         
         //Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
@@ -261,12 +262,13 @@ public class GameControllerTests
     public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
     {
         //Arrange
+        var id = Guid.NewGuid();
         var gameRequestModel = GenerateSingleGameRequestModel();
-        _gameService.Setup(x => x.UpdateAsync(It.IsAny<GameRequestDto>()))
+        _gameService.Setup(x => x.UpdateAsync(id, It.IsAny<GameRequestDto>()))
             .ReturnsAsync(false);
 
         //Act
-        var result = await _gameController.Update(Guid.NewGuid(), gameRequestModel);
+        var result = await _gameController.Update(id, gameRequestModel);
         
         //Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
