@@ -31,7 +31,7 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
         if (id is null) return BadRequest("Failed to create platform");
         platformDto.Id = id.Value;
         var response = platformDto.MapToPlatformModel();
-        return CreatedAtAction(nameof(GetPlatformById), new { id = platformDto.Id }, response);
+        return CreatedAtAction(nameof(GetPlatformById), new { id = platformDto.Id }, id);
     }
 
     [HttpPut("{id:guid}")]
