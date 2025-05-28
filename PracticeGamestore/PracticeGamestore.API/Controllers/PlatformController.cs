@@ -53,4 +53,3 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
         return NoContent();
     }
 }
-    

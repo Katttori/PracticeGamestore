@@ -34,6 +34,6 @@ public static class Dependencies
         services.AddDataAccessServices();
         services.AddScoped<IPublisherService, PublisherService>();
         services.AddScoped<IGenreService, GenreService>();
-        services.AddScoped<IPlatformService, PlatformService>(); 
+        services.AddScoped<IPlatformService, PlatformService>();
     }
 }
