@@ -31,10 +31,8 @@ public class BlacklistService(IBlacklistRepository blacklistRepository, IUnitOfW
         var entity = await blacklistRepository.GetByIdAsync(id);
         if (entity is null) return false;
         
-        entity.UserEmail = dto.UserEmail;
-        entity.CountryId = dto.CountryId;
-        
-        blacklistRepository.Update(entity);
+        dto.Id = id;
+        blacklistRepository.Update(dto.MapToBlacklistEntity());
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0;
     }
