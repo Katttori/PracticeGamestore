@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Game;
@@ -27,33 +28,23 @@ public class GameController(IGameService gameService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GameRequestModel model)
     {
-        try
-        {
-            var id = await gameService.CreateAsync(model.MapToGameDto());
-            return id is null
-                ? BadRequest("Failed to create game.")
-                : CreatedAtAction(nameof(GetById), new { id }, id);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(e.Message);
-        }
+        if (GameRequestDto.HasIncorrectAgeRatingEnum(model.AgeRating))
+            return BadRequest("Cannot convert provided age to the enum.");
+        var id = await gameService.CreateAsync(model.MapToGameDto());
+        return id is null
+            ? BadRequest("Failed to create game.")
+            : CreatedAtAction(nameof(GetById), new { id }, id);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GameRequestModel model)
     {
-        try
-        {
-            var updated = await gameService.UpdateAsync(id, model.MapToGameDto());
-            return updated
-                ? NoContent()
-                : BadRequest($"Failed to update the game.");
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(e.Message);
-        }
+        if (GameRequestDto.HasIncorrectAgeRatingEnum(model.AgeRating))
+            return BadRequest("Cannot convert provided age to the enum.");
+        var updated = await gameService.UpdateAsync(id, model.MapToGameDto());
+        return updated
+            ? NoContent()
+            : BadRequest($"Failed to update the game.");
     }
 
     [HttpDelete("{id:guid}")]

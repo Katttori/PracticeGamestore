@@ -38,17 +38,12 @@ public class GameRequestDto
         Picture = picture;
         Description = description;
         Rating = rating;
-        AgeRating = ConvertToAgeRatingEnum(ageRating);
+        AgeRating = (AgeRating)ageRating;
         ReleaseDate = releaseDate;
         PublisherId = publisherId;
         GenreIds = genreIds;
         PlatformIds = platformIds;
     }
 
-    private static AgeRating ConvertToAgeRatingEnum(int age)
-    {
-        if (!Enum.IsDefined(typeof(AgeRating), age))
-            throw new ArgumentException($"Invalid age rating value was passed! {age}");
-        return (AgeRating)age;
-    }
+    public static bool HasIncorrectAgeRatingEnum(int age) => !Enum.IsDefined(typeof(AgeRating), age);
 }
