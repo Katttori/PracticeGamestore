@@ -19,7 +19,7 @@ public static class CountryMappingExtensions
     {
         return new()
         {
-            Id = countryDto.Id,
+            Id = countryDto.Id ?? Guid.NewGuid(),
             Name = countryDto.Name,
             Status = countryDto.Status
         };
