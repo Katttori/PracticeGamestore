@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Platform;
+
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("platforms")]
@@ -30,8 +31,7 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
         var id = await platformService.CreateAsync(platformDto);
         if (id is null) return BadRequest("Failed to create platform");
         platformDto.Id = id.Value;
-        var response = platformDto.MapToPlatformModel();
-        return CreatedAtAction(nameof(GetPlatformById), new { id = platformDto.Id }, id);
+        return CreatedAtAction(nameof(GetPlatformById), new { id }, id);
     }
 
     [HttpPut("{id:guid}")]
