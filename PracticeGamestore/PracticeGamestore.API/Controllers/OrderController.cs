@@ -36,7 +36,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] OrderRequestModel model)
     {
-        var isUpdated = await orderService.UpdateAsync(model.MapToOrderDto());
+        var isUpdated = await orderService.UpdateAsync(id, model.MapToOrderDto());
         return isUpdated 
             ? NoContent() 
             : BadRequest($"Update failed. Order with id: {id} might not exist.");

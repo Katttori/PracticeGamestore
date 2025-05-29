@@ -1,3 +1,5 @@
+using PracticeGamestore.Models.Game;
+
 namespace PracticeGamestore.Models.Order;
 
 public class OrderResponseModel
