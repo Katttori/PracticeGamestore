@@ -14,7 +14,7 @@ public static class GenreMappingExtensions
     {
         return new()
         {
-            Id = dto.Id ?? Guid.Empty,
+            Id = dto.Id!.Value,
             Name = dto.Name,
             ParentId = dto.ParentId,
             Description = dto.Description
