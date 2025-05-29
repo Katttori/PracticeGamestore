@@ -1,6 +1,6 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
-using PracticeGamestore.DataAccess.Repositories;
+using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Publisher;
@@ -26,11 +26,13 @@ public class PublisherService(IPublisherRepository repository, IUnitOfWork unitO
         return changes > 0 ? id : null;
     }
 
-    public async Task<bool> UpdateAsync(PublisherDto dto)
+    public async Task<bool> UpdateAsync(Guid id, PublisherDto dto)
     {
-        var existingPublisher = await GetByIdAsync(dto.Id);
+        var existingPublisher = await GetByIdAsync(id);
         if (existingPublisher is null) return false;
-        repository.Update(dto.MapToPublisherEntity());
+        var updatedPublisher = dto.MapToPublisherEntity();
+        updatedPublisher.Id = id;
+        repository.Update(updatedPublisher);
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0;
     }

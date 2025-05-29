@@ -5,7 +5,7 @@ using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.DataAccess.Repositories.Platform;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
-namespace PracticeGamestore.API.Tests.Unit.Platform;
+namespace PracticeGamestore.Tests.Unit.Platform;
 
 public class PlatformServiceTests
 {
