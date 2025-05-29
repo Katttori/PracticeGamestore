@@ -1,12 +1,13 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Entities;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Order;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Order;
 
-public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork) : IOrderService
+public class OrderService(IOrderRepository orderRepository, IGameRepository gameRepository, IUnitOfWork unitOfWork) : IOrderService
 {
     public async Task<IEnumerable<OrderDto>> GetAllAsync()
     {
@@ -22,6 +23,9 @@ public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWo
 
     public async Task<Guid?> CreateAsync(OrderDto dto)
     {
+        if (dto.GameIds is null || !await AreAllGameIdsValid(dto.GameIds))
+            return null;
+        
         var order = dto.MapToOrderEntity();
         order.GameOrders = dto.GameIds!.Select(gameId => new GameOrder
         {
@@ -34,9 +38,12 @@ public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWo
         return changes > 0 ? createdId : null;
     }
 
-    public async Task<bool> UpdateAsync(OrderDto dto)
+    public async Task<bool> UpdateAsync(Guid id, OrderDto dto)
     {
-        var order = await orderRepository.GetByIdAsync(dto.Id!.Value);
+        if (dto.GameIds is null || !await AreAllGameIdsValid(dto.GameIds))
+            return false;
+        
+        var order = await orderRepository.GetByIdAsync(id);
         if (order is null) return false;
 
         order.Status = dto.Status;
@@ -57,5 +64,11 @@ public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWo
     {
         await orderRepository.DeleteAsync(id);
         await unitOfWork.SaveChangesAsync();
+    }
+    
+    private async Task<bool> AreAllGameIdsValid(List<Guid> gameIds)
+    {
+        var existingIds = await gameRepository.GetExistingIdsAsync(gameIds);
+        return existingIds.Count == gameIds.Count;
     }
 }

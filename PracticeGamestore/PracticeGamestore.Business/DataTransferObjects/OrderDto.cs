@@ -9,7 +9,7 @@ public class OrderDto
     public string UserEmail { get; set; }
     public decimal Total { get; set; }
     public List<Guid>? GameIds { get; set; }
-    public List<GameDto>? Games { get; set; }
+    public List<GameResponseDto>? Games { get; set; }
 
     public OrderDto(string userEmail, decimal total, List<Guid> gameIds)
     {
@@ -19,7 +19,7 @@ public class OrderDto
         GameIds = gameIds;
     }
     
-    public OrderDto(Guid id, OrderStatus status, string userEmail, decimal total, List<GameDto> games)
+    public OrderDto(Guid id, OrderStatus status, string userEmail, decimal total, List<GameResponseDto> games)
     {
         Id = id;
         Status = status;
