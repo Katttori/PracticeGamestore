@@ -5,7 +5,7 @@ using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.DataAccess.Enums;
 
-namespace PracticeGamestore.API.Controllers;
+namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("countries")]
 public class CountryController(ICountryService countryService) : ControllerBase

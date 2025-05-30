@@ -1,4 +1,5 @@
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Filtering;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
@@ -8,12 +9,20 @@ using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Game;
 
-public class GameService(IGameRepository gameRepository, IPublisherRepository publisherRepository, IGenreRepository genreRepository, IPlatformRepository platformRepository, IUnitOfWork unitOfWork) : IGameService
+public class GameService(IGameRepository gameRepository, IPublisherRepository publisherRepository,
+    IGenreRepository genreRepository, IPlatformRepository platformRepository, 
+    IUnitOfWork unitOfWork) : IGameService
 {
     public async Task<IEnumerable<GameResponseDto>> GetAllAsync()
     {
-        var entities =  await gameRepository.GetAllAsync();
+        var entities = await gameRepository.GetAllAsync();
         return entities.Select(e => e.MapToGameDto());
+    }
+
+    public async Task<(IEnumerable<GameResponseDto>, int)> GetFilteredAsync(GameFilter filter)
+    {
+        var (games, totalCount) = await gameRepository.GetFiltered(filter.MapToDataAccessGameFilter());
+        return (games.Select(e => e.MapToGameDto()), totalCount);
     }
 
     public async Task<bool> UpdateAsync(Guid id, GameRequestDto gameRequestDto)
