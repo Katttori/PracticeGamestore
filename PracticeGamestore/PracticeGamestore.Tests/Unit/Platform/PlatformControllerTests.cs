@@ -5,10 +5,9 @@ using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Controllers;
-using PracticeGamestore.DataAccess.Repositories.Platform;
 using PracticeGamestore.Models.Platform;
 
-namespace PracticeGamestore.API.Tests.Unit.Platform;
+namespace PracticeGamestore.Tests.Unit.Platform;
 
 public class PlatformControllerTests
 {

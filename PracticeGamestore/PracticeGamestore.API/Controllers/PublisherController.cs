@@ -36,7 +36,7 @@ public class PublisherController(IPublisherService publisherService) : Controlle
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] PublisherRequestModel model)
     {
-        var updated = await publisherService.UpdateAsync(model.MapToPublisherDto(id));
+        var updated = await publisherService.UpdateAsync(id, model.MapToPublisherDto());
         return updated ? NoContent() : BadRequest("Failed to update.");
     }
 
