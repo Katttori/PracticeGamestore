@@ -3,7 +3,9 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Blacklist;
+using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Controllers;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Models.Blacklist;
 
 namespace PracticeGamestore.Tests.Unit.Blacklist;
@@ -11,13 +13,15 @@ namespace PracticeGamestore.Tests.Unit.Blacklist;
 public class BlacklistControllerTests
 {
     private Mock<IBlacklistService> _blacklistServiceMock;
+    private Mock<ICountryService> _countryServiceMock;
     private BlacklistController _blacklistController;
 
     [SetUp]
     public void Setup()
     {
         _blacklistServiceMock = new Mock<IBlacklistService>();
-        _blacklistController = new BlacklistController(_blacklistServiceMock.Object);
+        _countryServiceMock = new Mock<ICountryService>();
+        _blacklistController = new BlacklistController(_blacklistServiceMock.Object, _countryServiceMock.Object);
     }
 
     [Test]
@@ -39,7 +43,7 @@ public class BlacklistControllerTests
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
         var responseModels = 
-            (okResult?.Value as IEnumerable<BlacklistResponseModel> ?? Array.Empty<BlacklistResponseModel>()).ToList();
+            (okResult?.Value as IEnumerable<BlacklistResponseModel> ?? []).ToList();
         Assert.That(responseModels.Count, Is.EqualTo(blacklistDtos.Count));
         Assert.That(responseModels.First().Id, Is.EqualTo(blacklistDtos.First().Id));
         Assert.That(responseModels.First().UserEmail, Is.EqualTo(blacklistDtos.First().UserEmail));
@@ -98,6 +102,8 @@ public class BlacklistControllerTests
         //Arrange
         var newId = Guid.NewGuid();
         
+        _countryServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Business.DataTransferObjects.CountryDto(Guid.NewGuid(), "CountryName", CountryStatus.Allowed));
         _blacklistServiceMock.Setup(x => x.CreateAsync(It.IsAny<BlacklistDto>())).ReturnsAsync(newId);
         
         // Act
@@ -113,6 +119,8 @@ public class BlacklistControllerTests
     public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
     {
         //Arrange
+        _countryServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Business.DataTransferObjects.CountryDto(Guid.NewGuid(), "CountryName", CountryStatus.Allowed));
         _blacklistServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<BlacklistDto>())).ReturnsAsync(true);
         
         // Act

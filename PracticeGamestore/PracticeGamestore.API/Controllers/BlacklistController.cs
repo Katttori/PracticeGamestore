@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Services.Blacklist;
+using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Blacklist;
 
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("blacklists")]
-public class BlacklistController(IBlacklistService blacklistService) : ControllerBase
+public class BlacklistController(IBlacklistService blacklistService, ICountryService countryService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -27,6 +28,11 @@ public class BlacklistController(IBlacklistService blacklistService) : Controlle
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] BlacklistRequestModel model)
     {
+        if (await countryService.GetByIdAsync(model.CountryId) is null)
+        {
+            return BadRequest($"Country with id: {model.CountryId} does not exist.");
+        }
+        
         var createdId = await blacklistService.CreateAsync(model.MapToBlacklistDto());
         return createdId is null 
             ? BadRequest("Failed to create blacklist.") 
@@ -36,6 +42,11 @@ public class BlacklistController(IBlacklistService blacklistService) : Controlle
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] BlacklistRequestModel model)
     {
+        if (await countryService.GetByIdAsync(model.CountryId) is null)
+        {
+            return BadRequest($"Country with id: {model.CountryId} does not exist.");
+        }
+        
         var isUpdated = await blacklistService.UpdateAsync(id, model.MapToBlacklistDto());
         return isUpdated 
             ? NoContent() 
