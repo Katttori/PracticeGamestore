@@ -24,6 +24,15 @@ public class PublisherController(IPublisherService publisherService) : Controlle
             : Ok(publisher.MapToPublisherModel());
     }
 
+    [HttpGet("{id:guid}/games")]
+    public async Task<IActionResult> GetPublisherGames([FromRoute] Guid id)
+    {
+         var games = await publisherService.GetGamesAsync(id);
+         return games is null
+             ? NotFound($"Publisher with id {id} was not found.")
+             : Ok(games);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] PublisherRequestModel model)
     {
