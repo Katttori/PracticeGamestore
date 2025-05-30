@@ -14,7 +14,7 @@ public static class PlatformMappingExtensions
         };
     }
     
-    public static PlatformDto MapToDto(this Platform entity)
+    public static PlatformDto MapToPlatformDto(this Platform entity)
     {
         return new PlatformDto(entity.Id, entity.Name, entity.Description);
     }

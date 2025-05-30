@@ -21,10 +21,12 @@ public class GameGenre : IEntityTypeConfiguration<Entities.GameGenre>
 
         builder.HasOne(gg => gg.Game)
             .WithMany(g => g.GameGenres)
-            .HasForeignKey(gg => gg.GameId);
+            .HasForeignKey(gg => gg.GameId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(gg => gg.Genre)
             .WithMany(g => g.GameGenres)
-            .HasForeignKey(gg => gg.GenreId);
+            .HasForeignKey(gg => gg.GenreId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

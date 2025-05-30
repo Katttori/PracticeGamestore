@@ -17,7 +17,6 @@ public static class PublisherMappingExtensions
             Name = publisherDto.Name,
             Description = publisherDto.Description,
             PageUrl = publisherDto.PageUrl,
-            Id = publisherDto.Id
         };
     }
 }

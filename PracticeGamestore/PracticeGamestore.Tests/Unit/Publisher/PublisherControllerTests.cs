@@ -8,7 +8,7 @@ using PracticeGamestore.Controllers;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Publisher;
 
-namespace PracticeGamestore.API.Tests.Unit.Publisher;
+namespace PracticeGamestore.Tests.Unit.Publisher;
 
 [TestFixture]
 public class PublisherControllerTests
@@ -99,7 +99,7 @@ public class PublisherControllerTests
             .ReturnsAsync(null as PublisherDto);
 
         //Act
-        var result = await _publisherController.GetById(new Guid());
+        var result = await _publisherController.GetById(Guid.NewGuid());
 
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -146,12 +146,13 @@ public class PublisherControllerTests
     public async Task Update_ShouldReturnNoContent_WhenPublisherIsUpdated()
     {
         //Arrange
+        var id = Guid.NewGuid();
         var publisherRequestModel = CreatePublisherRequestModel();
-        _publisherService.Setup(x => x.UpdateAsync(It.IsAny<PublisherDto>()))
+        _publisherService.Setup(x => x.UpdateAsync(id, It.IsAny<PublisherDto>()))
             .ReturnsAsync(true);
 
         //Act
-        var result = await _publisherController.Update(Guid.NewGuid(), publisherRequestModel);
+        var result = await _publisherController.Update(id, publisherRequestModel);
         
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
@@ -160,12 +161,13 @@ public class PublisherControllerTests
     public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
     {
         //Arrange
+        var id = Guid.NewGuid();
         var publisherRequestModel = CreatePublisherRequestModel();
-        _publisherService.Setup(x => x.UpdateAsync(It.IsAny<PublisherDto>()))
+        _publisherService.Setup(x => x.UpdateAsync(id, It.IsAny<PublisherDto>()))
             .ReturnsAsync(false);
 
         //Act
-        var result = await _publisherController.Update(Guid.NewGuid(), publisherRequestModel);
+        var result = await _publisherController.Update(id, publisherRequestModel);
         
         //Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -183,6 +185,4 @@ public class PublisherControllerTests
         //Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
-
-
 }
