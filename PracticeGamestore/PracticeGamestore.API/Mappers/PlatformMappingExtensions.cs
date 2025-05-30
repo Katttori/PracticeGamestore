@@ -14,7 +14,7 @@ public static class PlatformMappingExtensions
     {
         return new()
         {
-            Id = platform.Id,
+            Id = platform.Id!.Value,
             Name = platform.Name,
             Description = platform.Description
         };

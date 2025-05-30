@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Platform;
@@ -27,6 +28,11 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPost]
     public async Task<IActionResult> CreatePlatform([FromBody] PlatformRequestModel platform)
     {
+        if (platform.Name.Length == 0 || platform.Name.Length > 100 || platform.Name.IsNullOrEmpty())
+            return BadRequest("Platform name must be between 1 and 100 characters long.");
+        if (platform.Description.Length > 255 || platform.Description.IsNullOrEmpty())
+            return BadRequest("Platform description must be up to 255 characters long.");
+        
         var platformDto = platform.MapToPlatformDto();
         var id = await platformService.CreateAsync(platformDto);
         if (id is null) return BadRequest("Failed to create platform");
@@ -37,6 +43,11 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformRequestModel platform)
     {
+        if (platform.Name.Length == 0 || platform.Name.Length > 100 || platform.Name.IsNullOrEmpty())
+            return BadRequest("Platform name must be between 1 and 100 characters long.");
+        if (platform.Description.Length > 255 || platform.Description.IsNullOrEmpty())
+            return BadRequest("Platform description must be up to 255 characters long.");
+        
         var dto = platform.MapToPlatformDto();
         dto.Id = id;
 
