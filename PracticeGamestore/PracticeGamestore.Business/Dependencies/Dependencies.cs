@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.DataAccess;
@@ -8,6 +9,7 @@ using PracticeGamestore.DataAccess.Repositories;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Country;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
@@ -27,6 +29,7 @@ public static class Dependencies
         services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<IPlatformRepository, PlatformRepository>();
         services.AddScoped<ICountryRepository, CountryRepository>();
+        services.AddScoped<IBlacklistRepository, BlacklistRepository>();
     }
 
     private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -44,5 +47,6 @@ public static class Dependencies
         services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IPlatformService, PlatformService>();
         services.AddScoped<ICountryService, CountryService>();
+        services.AddScoped<IBlacklistService, BlacklistService>();
     }
 }
