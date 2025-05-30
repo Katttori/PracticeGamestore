@@ -64,10 +64,10 @@ public class GenreControllerTests
         //Arrange
         var genreDto = new GenreDto(Guid.NewGuid(), "FPS");
         
-        _genreServiceMock.Setup(x => x.GetByIdAsync(genreDto.Id)).ReturnsAsync(genreDto);
+        _genreServiceMock.Setup(x => x.GetByIdAsync(genreDto.Id!.Value)).ReturnsAsync(genreDto);
         
         // Act
-        var result = await _genreController.GetById(genreDto.Id);
+        var result = await _genreController.GetById(genreDto.Id!.Value);
         
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -113,7 +113,7 @@ public class GenreControllerTests
     public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
     {
         //Arrange
-        _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<GenreDto>())).ReturnsAsync(true);
+        _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(true);
         
         // Act
         var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
@@ -126,7 +126,7 @@ public class GenreControllerTests
     public async Task Update_WhenOperationFailed_ReturnsBadRequest()
     {
         //Arrange
-        _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<GenreDto>())).ReturnsAsync(false);
+        _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(false);
         
         // Act
         var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });

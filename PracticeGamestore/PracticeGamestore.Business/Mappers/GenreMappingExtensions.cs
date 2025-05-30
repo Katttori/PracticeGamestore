@@ -9,7 +9,6 @@ public static class GenreMappingExtensions
     {
         return new()
         {
-            Id = dto.Id,
             Name = dto.Name,
             ParentId = dto.ParentId,
             Description = dto.Description,

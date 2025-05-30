@@ -36,7 +36,7 @@ public class GenreController(IGenreService genreService) : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] GenreRequestModel model)
     {
-        var isUpdated = await genreService.UpdateAsync(model.MapToGenreDto());
+        var isUpdated = await genreService.UpdateAsync(id, model.MapToGenreDto());
         return isUpdated 
             ? NoContent() 
             : BadRequest($"Update failed. Genre with id: {id} might not exist.");
