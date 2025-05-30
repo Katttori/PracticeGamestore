@@ -87,7 +87,7 @@ public class PlatformServiceTests
         var platformDto = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
 
         _platformRepository.Setup(p => p.CreateAsync(It.IsAny<DataAccess.Entities.Platform>()))
-            .ReturnsAsync(platformDto.MapToEntity().Id);
+            .ReturnsAsync(platformDto.MapToPlatformEntity().Id);
         _unitOfWork.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
         
         // Act
@@ -95,7 +95,7 @@ public class PlatformServiceTests
         
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.EqualTo(platformDto.MapToEntity().Id));
+        Assert.That(result, Is.EqualTo(platformDto.MapToPlatformEntity().Id));
     }
 
     [Test]
@@ -106,7 +106,7 @@ public class PlatformServiceTests
 
         _platformRepository
             .Setup(p => p.CreateAsync(It.IsAny<DataAccess.Entities.Platform>()))
-            .ReturnsAsync(platformDto.MapToEntity().Id);
+            .ReturnsAsync(platformDto.MapToPlatformEntity().Id);
         
         _unitOfWork
             .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -126,7 +126,7 @@ public class PlatformServiceTests
         var platformDto = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
         var platform = new DataAccess.Entities.Platform
         {
-            Id = platformDto.MapToEntity().Id,
+            Id = platformDto.MapToPlatformEntity().Id,
             Name = platformDto.Name,
             Description = platformDto.Description
         };
@@ -153,7 +153,7 @@ public class PlatformServiceTests
         var platformDto = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
         
         _platformRepository
-            .Setup(p => p.GetByIdAsync(platformDto.MapToEntity().Id))
+            .Setup(p => p.GetByIdAsync(platformDto.MapToPlatformEntity().Id))
             .ReturnsAsync(null as DataAccess.Entities.Platform);
         
         // Act
@@ -170,7 +170,7 @@ public class PlatformServiceTests
         var platformDto = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
         var platform = new DataAccess.Entities.Platform
         {
-            Id = platformDto.MapToEntity().Id,
+            Id = platformDto.MapToPlatformEntity().Id,
             Name = platformDto.Name,
             Description = platformDto.Description
         };

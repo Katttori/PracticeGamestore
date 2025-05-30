@@ -4,7 +4,7 @@ namespace PracticeGamestore.Business.Mappers;
 
 public static class PlatformMappingExtensions
 {
-    public static Platform MapToEntity(this PlatformDto dto)
+    public static Platform MapToPlatformEntity(this PlatformDto dto)
     {
         // If Id is not null, set it; otherwise, let the database generate it
         if (dto.Id.HasValue)

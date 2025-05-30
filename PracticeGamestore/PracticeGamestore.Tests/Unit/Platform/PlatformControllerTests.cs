@@ -55,10 +55,10 @@ public class PlatformControllerTests
         // Arrange
         var platform = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
         
-        _platformService.Setup(service => service.GetByIdAsync(platform.MapToEntity().Id)).ReturnsAsync(platform);
+        _platformService.Setup(service => service.GetByIdAsync(platform.MapToPlatformEntity().Id)).ReturnsAsync(platform);
         
         // Act
-        var result = await _platformController.GetPlatformById(platform.MapToEntity().Id);
+        var result = await _platformController.GetPlatformById(platform.MapToPlatformEntity().Id);
         
         // Assert
         var okResult = result as OkObjectResult;
