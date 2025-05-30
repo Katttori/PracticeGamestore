@@ -2,10 +2,10 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Publisher;
-using PracticeGamestore.DataAccess.Repositories;
+using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
-namespace PracticeGamestore.API.Tests.Unit.Publisher;
+namespace PracticeGamestore.Tests.Unit.Publisher;
 
 [TestFixture]
 public class PublisherServiceTests
@@ -63,7 +63,7 @@ public class PublisherServiceTests
     public async Task GetByIdAsync_WhenPublisherExists_ReturnsPublisherDto()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var publisher = CreatePublisher(id);
         _publisherRepository.Setup(x => x.GetByIdAsync(id))
             .ReturnsAsync(publisher);
@@ -98,7 +98,7 @@ public class PublisherServiceTests
     public async Task UpdateAsync_WhenPublisherExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var publisher = CreatePublisher(id);
         _publisherRepository.Setup(x => x.GetByIdAsync(id))
             .ReturnsAsync(publisher);
@@ -106,7 +106,7 @@ public class PublisherServiceTests
             .ReturnsAsync(1);
         
         //Act
-        var result = await _publisherService.UpdateAsync(publisher.MapToPublisherDto());
+        var result = await _publisherService.UpdateAsync(id, publisher.MapToPublisherDto());
         
         //Assert
         Assert.That(result, Is.True);
@@ -116,12 +116,13 @@ public class PublisherServiceTests
     public async Task UpdateAsync_WhenPublisherDoesNotExist_ReturnsFalse()
     {
         //Arrange
+        var id = Guid.NewGuid();
         var publisher = CreatePublisher();
-        _publisherRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+        _publisherRepository.Setup(x => x.GetByIdAsync(id))
             .ReturnsAsync(null as DataAccess.Entities.Publisher);
 
         //Act
-        var result = await _publisherService.UpdateAsync(publisher.MapToPublisherDto());
+        var result = await _publisherService.UpdateAsync(id, publisher.MapToPublisherDto());
         
         //Assert
         Assert.That(result, Is.False);
@@ -150,7 +151,7 @@ public class PublisherServiceTests
     public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var publisher = CreatePublisher(id);
         _publisherRepository.Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Publisher>()))
             .ReturnsAsync(publisher.Id); 
@@ -168,7 +169,7 @@ public class PublisherServiceTests
     public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         _publisherRepository.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .Returns(Task.CompletedTask);
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))

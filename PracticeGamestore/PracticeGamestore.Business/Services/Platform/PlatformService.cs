@@ -11,13 +11,13 @@ public class PlatformService(IPlatformRepository repository, IUnitOfWork unitOfW
     public async Task<IEnumerable<PlatformDto>> GetAllAsync()
     {
         var platforms = await repository.GetAllAsync();
-        return platforms.Select(p => p.MapToDto());
+        return platforms.Select(p => p.MapToPlatformDto());
     }
     
     public async Task<PlatformDto?> GetByIdAsync(Guid id)
     {
         var platform = await repository.GetByIdAsync(id);
-        return platform?.MapToDto();
+        return platform?.MapToPlatformDto();
     }
     
     public async Task<Guid?> CreateAsync(PlatformDto platform)
