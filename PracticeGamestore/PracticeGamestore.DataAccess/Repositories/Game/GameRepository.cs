@@ -18,13 +18,15 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         return await _gamesNoTracking.ToListAsync();
     }
 
-    public async Task<IEnumerable<Entities.Game>> GetFiltered(GameFilter filter)
+    public async Task<(IEnumerable<Entities.Game>, int)> GetFiltered(GameFilter filter)
     {
         var query = _gamesNoTracking.AsQueryable();
         query = ApplyFiltering(query, filter);
         query = ApplyOrdering(query, filter.OrderByFields, filter.OrderType);
+        var totalCount = await query.CountAsync();
         var skip = (filter.Page - 1) * filter.PageSize;
-        return await query.Skip(skip).Take(filter.PageSize).ToListAsync();
+        var games =  await query.Skip(skip).Take(filter.PageSize).ToListAsync();
+        return (games, totalCount);
     }
    
     public async Task<Entities.Game?> GetByIdAsync(Guid id)

@@ -9,7 +9,9 @@ using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Game;
 
-public class GameService(IGameRepository gameRepository, IPublisherRepository publisherRepository, IGenreRepository genreRepository, IPlatformRepository platformRepository, IUnitOfWork unitOfWork) : IGameService
+public class GameService(IGameRepository gameRepository, IPublisherRepository publisherRepository,
+    IGenreRepository genreRepository, IPlatformRepository platformRepository, 
+    IUnitOfWork unitOfWork) : IGameService
 {
     public async Task<IEnumerable<GameResponseDto>> GetAllAsync()
     {
@@ -17,10 +19,10 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         return entities.Select(e => e.MapToGameDto());
     }
 
-    public async Task<IEnumerable<GameResponseDto>> GetFilteredAsync(GameFilter filter)
+    public async Task<(IEnumerable<GameResponseDto>, int)> GetFilteredAsync(GameFilter filter)
     {
-        var entities = await gameRepository.GetFiltered(filter.MapToDataAccessGameFilter());
-        return entities.Select(e => e.MapToGameDto());
+        var (games, totalCount) = await gameRepository.GetFiltered(filter.MapToDataAccessGameFilter());
+        return (games.Select(e => e.MapToGameDto()), totalCount);
     }
 
     public async Task<bool> UpdateAsync(Guid id, GameRequestDto gameRequestDto)

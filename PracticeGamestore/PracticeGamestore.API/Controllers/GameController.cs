@@ -21,8 +21,13 @@ public class GameController(IGameService gameService) : ControllerBase
     public async Task<IActionResult> GetFiltered([FromQuery] GameFilter filter)
     {
         if (!ModelState.IsValid || filter.IsInvalid()) return BadRequest("Invalid query parameters!");
-        var games = await gameService.GetFilteredAsync(filter);
-        return Ok(games.Select(g => g.MapToGameModel()));
+        var (games, totalCount) = await gameService.GetFilteredAsync(filter);
+        return Ok(new PaginatedGameListResponseModel {
+            Games = games.Select(g => g.MapToGameModel()).ToList(),
+            PageNumber = filter.Page ?? 1,
+            PageSize = filter.PageSize ?? 10,
+            Count = totalCount
+        });
     }
 
     [HttpGet("{id:guid}")]

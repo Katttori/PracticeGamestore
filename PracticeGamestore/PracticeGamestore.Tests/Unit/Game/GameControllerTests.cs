@@ -276,6 +276,27 @@ public class GameControllerTests
         Assert.That(elementsAreTheSame, Is.True);
     }
     
+    private static void AssertThatResultIsEqualToExpected(
+        OkObjectResult okResult, 
+        List<GameResponseModel> expectedGames,
+        int expectedPageNumber,
+        int expectedPageSize,
+        int expectedCount)
+    {
+        var response = okResult.Value as PaginatedGameListResponseModel;
+        Assert.That(response, Is.Not.Null);
+    
+        var games = response!.Games;
+    
+        Assert.That(games.Count, Is.EqualTo(expectedGames.Count));
+        Assert.That(response.PageNumber, Is.EqualTo(expectedPageNumber));
+        Assert.That(response.PageSize, Is.EqualTo(expectedPageSize));
+        Assert.That(response.Count, Is.EqualTo(expectedCount));
+    
+        var elementsAreTheSame = expectedGames.Zip(games, GameResponseModelsAreTheSame).All(equal => equal);
+        Assert.That(elementsAreTheSame, Is.True);
+    }
+    
     [Test]
     public async Task GetAll_ReturnsOkWithGames()
     {
@@ -447,17 +468,20 @@ public class GameControllerTests
             MaxPrice = 60,
             Name = "cyber"
         };
+        
         var gameDtos = GenerateGameResponseDtos().Where(g => g.Price is >= 30 and <= 60 && g.Name.Contains("cyber", StringComparison.InvariantCultureIgnoreCase)).ToList();
+        var paginated = gameDtos.Take(10).ToList(); 
         _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
-            .ReturnsAsync(gameDtos);
-        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+            .ReturnsAsync((paginated, gameDtos.Count));
+        
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
         var okResult = AssetThatStatusCodeIsOk(result);
-        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
     }
 
     [Test]
@@ -466,18 +490,158 @@ public class GameControllerTests
         // Arrange
         var gameFilter = new GameFilter { MinPrice = 1000000 };
         _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync(([], 0));
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
         var okResult = AssetThatStatusCodeIsOk(result);
-        var response = (okResult.Value as IEnumerable<GameResponseModel> ?? []).ToList();
-        Assert.That(response, Is.Not.Null);
-        Assert.That(response, Is.Empty);
+        AssertThatResultIsEqualToExpected(okResult, [], 1, 10, 0);
     }
 
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkAndGames_WhenValidOrderDirectionProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { Order = "desc" };
+        var gameDtos = GenerateGameResponseDtos().OrderBy(g => g.Name).ToList();
+        var paginated = gameDtos.Take(10).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync((paginated, gameDtos.Count));
+        
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidOrderByFieldsProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { OrderBy = ["price", "rating"] };
+        var gameDtos = GenerateGameResponseDtos().OrderByDescending(g => g.Rating).ToList();
+        var paginated = gameDtos.Take(10).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync((paginated, gameDtos.Count));
+        
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidAgeRatingsProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { Age = [AgeRating.TwelvePlus, AgeRating.SixteenPlus] };
+        var gameDtos = GenerateGameResponseDtos().Where(g => g.AgeRating is AgeRating.TwelvePlus or AgeRating.SixteenPlus).ToList();
+        var paginated = gameDtos.Take(10).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync((paginated, gameDtos.Count));
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOk_WhenValidDateRangeProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter 
+        { 
+            ReleaseDateStart = new DateTime(2024, 1, 1),
+            ReleaseDateEnd = new DateTime(2024, 12, 31)
+        };
+        var gameDtos = GenerateGameResponseDtos().Where(g => g.ReleaseDate >= new DateTime(2024, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31)).ToList();
+        var paginated = gameDtos.Take(10).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync((paginated, gameDtos.Count));
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOk_WhenValidPaginationProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter { Page = 2, PageSize = 5 };
+        var gameDtos = GenerateGameResponseDtos().ToList();
+        var paginated = gameDtos.Skip(5).Take(5).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync((paginated, gameDtos.Count));
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 2, 5, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOk_WhenComplexValidFilterProvided()
+    {
+        // Arrange
+        var gameFilter = new GameFilter 
+        { 
+            Name = "cyber",
+            MinPrice = 20,
+            MaxPrice = 70,
+            RatingFrom = 4.0,
+            RatingTo = 5.0,
+            Age = [AgeRating.SixteenPlus, AgeRating.EighteenPlus],
+            ReleaseDateStart = new DateTime(2023, 1, 1),
+            ReleaseDateEnd = new DateTime(2024, 12, 31),
+            OrderBy = ["rating", "price"],
+            Order = "desc",
+            Page = 1,
+            PageSize = 10
+        };
+        var gameDtos = GenerateGameResponseDtos()
+            .Where(g => g.Name.Contains("cyber", StringComparison.InvariantCultureIgnoreCase) && 
+                        g.Price is >= 20 and <= 70 && 
+                        g.Rating is >= 4.0 and <= 5.0 &&
+                        g.AgeRating is AgeRating.SixteenPlus or AgeRating.EighteenPlus &&
+                        g.ReleaseDate >= new DateTime(2023, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31))
+            .OrderByDescending(g => g.Rating)
+            .ThenByDescending(g => g.Price)
+            .ToList();
+        var paginated = gameDtos.Take(10).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+            .ReturnsAsync((paginated, gameDtos.Count));
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+        
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssetThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+        
     [TestCase(-10, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMinPriceIsNegative")]
     [TestCase(null, -5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMaxPriceIsNegative")]
     [TestCase(100, 50, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMinPriceIsGreaterThanMaxPrice")]
@@ -579,140 +743,5 @@ public class GameControllerTests
 
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [Test]
-    public async Task GetFiltered_ShouldReturnOkAndGames_WhenValidOrderDirectionProvided()
-    {
-        // Arrange
-        var gameFilter = new GameFilter { Order = "desc" };
-        var gameDtos = GenerateGameResponseDtos().OrderBy(g => g.Name).Take(10).ToList();
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
-            .ReturnsAsync(gameDtos);
-        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
-        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
-    }
-
-    [Test]
-    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidOrderByFieldsProvided()
-    {
-        // Arrange
-        var gameFilter = new GameFilter { OrderBy = ["price", "rating"] };
-        var gameDtos = GenerateGameResponseDtos().OrderByDescending(g => g.Rating).Take(10).ToList();
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
-            .ReturnsAsync(gameDtos);
-        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
-        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
-    }
-
-    [Test]
-    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidAgeRatingsProvided()
-    {
-        // Arrange
-        var gameFilter = new GameFilter { Age = [AgeRating.TwelvePlus, AgeRating.SixteenPlus] };
-        var gameDtos = GenerateGameResponseDtos().Where(g => g.AgeRating is AgeRating.TwelvePlus or AgeRating.SixteenPlus).ToList();
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
-            .ReturnsAsync(gameDtos);
-        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
-        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
-    }
-
-    [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenValidDateRangeProvided()
-    {
-        // Arrange
-        var gameFilter = new GameFilter 
-        { 
-            ReleaseDateStart = new DateTime(2024, 1, 1),
-            ReleaseDateEnd = new DateTime(2024, 12, 31)
-        };
-        var gameDtos = GenerateGameResponseDtos().Where(g => g.ReleaseDate >= new DateTime(2024, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31)).ToList();
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
-            .ReturnsAsync(gameDtos);
-        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
-        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
-    }
-
-    [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenValidPaginationProvided()
-    {
-        // Arrange
-        var gameFilter = new GameFilter { Page = 2, PageSize = 5 };
-        var gameDtos = GenerateGameResponseDtos().Skip(5).Take(5).ToList();
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
-            .ReturnsAsync(gameDtos);
-        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
-        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
-    }
-
-    [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenComplexValidFilterProvided()
-    {
-        // Arrange
-        var gameFilter = new GameFilter 
-        { 
-            Name = "cyber",
-            MinPrice = 20,
-            MaxPrice = 70,
-            RatingFrom = 4.0,
-            RatingTo = 5.0,
-            Age = [AgeRating.SixteenPlus, AgeRating.EighteenPlus],
-            ReleaseDateStart = new DateTime(2023, 1, 1),
-            ReleaseDateEnd = new DateTime(2024, 12, 31),
-            OrderBy = ["rating", "price"],
-            Order = "desc",
-            Page = 1,
-            PageSize = 10
-        };
-        var gameDtos = GenerateGameResponseDtos()
-            .Where(g => g.Name.Contains("cyber", StringComparison.InvariantCultureIgnoreCase) && 
-                        g.Price is >= 20 and <= 70 && 
-                        g.Rating is >= 4.0 and <= 5.0 &&
-                        g.AgeRating is AgeRating.SixteenPlus or AgeRating.EighteenPlus &&
-                        g.ReleaseDate >= new DateTime(2023, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31))
-            .OrderByDescending(g => g.Rating)
-            .ThenByDescending(g => g.Price)
-            .Take(10)
-            .ToList();
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
-            .ReturnsAsync(gameDtos);
-        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
-        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
     }
 }
