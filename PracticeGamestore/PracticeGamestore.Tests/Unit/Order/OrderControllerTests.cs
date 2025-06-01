@@ -17,35 +17,30 @@ public class OrderControllerTests
     private static readonly Guid FirstId = Guid.NewGuid();
     private static readonly Guid SecondId = Guid.NewGuid();
 
-    private readonly List<OrderDto> _orderDtos = new()
-    {
+    private readonly List<OrderDto> _orderDtos =
+    [
         new(
             FirstId,
             OrderStatus.Initiated,
             "test@test.com",
             100,
-            [
-                new() { GameId = FirstId },
-                new() { OrderId = FirstId }
-            ]
+            TestData.Game.GenerateGameResponseDtos()
         ),
+
         new(
             SecondId,
             OrderStatus.Created,
             "test2@test.com",
             200,
-            [
-                new() { GameId = SecondId },
-                new() { OrderId = SecondId }
-            ]
+            TestData.Game.GenerateGameResponseDtos()
         )
-    };
+    ];
     
     private readonly OrderRequestModel _orderRequestModel = new()
     {
         UserEmail = "test@test.com",
         Total = 100,
-        GameIds = [Guid.NewGuid(), Guid.NewGuid()]
+        GameIds = [FirstId, SecondId]
     };
 
     [SetUp]
@@ -75,7 +70,7 @@ public class OrderControllerTests
             Assert.That(responseModels[i].Status, Is.EqualTo(_orderDtos[i].Status.ToString()));
             Assert.That(responseModels[i].UserEmail, Is.EqualTo(_orderDtos[i].UserEmail));
             Assert.That(responseModels[i].Total, Is.EqualTo(_orderDtos[i].Total));
-            Assert.That(responseModels[i].GameOrders.Count, Is.EqualTo(_orderDtos[i].GameOrders.Count));
+            Assert.That(responseModels[i].Games.Count, Is.EqualTo(_orderDtos[i].Games!.Count));
         }
     }
     
@@ -96,10 +91,10 @@ public class OrderControllerTests
     public async Task GetById_WhenOrderFound_ReturnsOkWithOrder()
     {
         //Arrange
-        _orderServiceMock.Setup(x => x.GetByIdAsync(_orderDtos[0].Id)).ReturnsAsync(_orderDtos[0]);
+        _orderServiceMock.Setup(x => x.GetByIdAsync(_orderDtos[0].Id!.Value)).ReturnsAsync(_orderDtos[0]);
         
         // Act
-        var result = await _orderController.GetById(_orderDtos[0].Id);
+        var result = await _orderController.GetById(_orderDtos[0].Id!.Value);
         
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -109,7 +104,7 @@ public class OrderControllerTests
         Assert.That(receivedOrder, Has.Property("Status").EqualTo(_orderDtos[0].Status.ToString()));
         Assert.That(receivedOrder, Has.Property("UserEmail").EqualTo(_orderDtos[0].UserEmail));
         Assert.That(receivedOrder, Has.Property("Total").EqualTo(_orderDtos[0].Total));
-        Assert.That(receivedOrder, Has.Property("GameOrders").Count.EqualTo(_orderDtos[0].GameOrders.Count));
+        Assert.That(receivedOrder, Has.Property("GameOrders").Count.EqualTo(_orderDtos[0].Games!.Count));
     }
     
     [Test]
@@ -146,7 +141,9 @@ public class OrderControllerTests
     public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
     {
         //Arrange
-        _orderServiceMock.Setup(x => x.UpdateAsync(It.IsAny<OrderDto>())).ReturnsAsync(true);
+        _orderServiceMock
+            .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<OrderDto>()))
+            .ReturnsAsync(true);
         
         // Act
         var result = await _orderController.Update(Guid.NewGuid(), _orderRequestModel);
@@ -159,7 +156,9 @@ public class OrderControllerTests
     public async Task Update_WhenOperationFailed_ReturnsBadRequest()
     {
         //Arrange
-        _orderServiceMock.Setup(x => x.UpdateAsync(It.IsAny<OrderDto>())).ReturnsAsync(false);
+        _orderServiceMock
+            .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<OrderDto>()))
+            .ReturnsAsync(false);
         
         // Act
         var result = await _orderController.Update(Guid.NewGuid(), _orderRequestModel);

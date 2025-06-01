@@ -4,6 +4,7 @@ using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.DataAccess.Entities;
 using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Order;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
@@ -12,15 +13,17 @@ namespace PracticeGamestore.Tests.Unit.Order;
 public class OrderServiceTests
 {
     private Mock<IOrderRepository> _orderRepositoryMock;
+    private Mock<IGameRepository> _gameRepositoryMock;
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private OrderService _orderService;
     
     private static readonly Guid FirstId = Guid.NewGuid();
     private static readonly Guid SecondId = Guid.NewGuid();
+    private static readonly List<DataAccess.Entities.Game> GameEntities = TestData.Game.GenerateGameEntities();
     
-    private readonly List<DataAccess.Entities.Order> _orderEntities = new()
-    {
-        new DataAccess.Entities.Order
+    private readonly List<DataAccess.Entities.Order> _orderEntities =
+    [
+        new()
         {
             Id = FirstId,
             Status = OrderStatus.Created,
@@ -28,11 +31,12 @@ public class OrderServiceTests
             Total = 100,
             GameOrders =
             [
-                new GameOrder { GameId = FirstId, OrderId = FirstId },
-                new GameOrder { GameId = SecondId, OrderId = FirstId }
+                new GameOrder { GameId = FirstId, OrderId = FirstId, Game = GameEntities[0] },
+                new GameOrder { GameId = SecondId, OrderId = FirstId, Game = GameEntities[1] },
             ]
         },
-        new DataAccess.Entities.Order
+
+        new()
         {
             Id = SecondId,
             Status = OrderStatus.Paid,
@@ -40,29 +44,32 @@ public class OrderServiceTests
             Total = 200,
             GameOrders =
             [
-                new GameOrder { GameId = SecondId, OrderId = SecondId },
-                new GameOrder { GameId = FirstId, OrderId = SecondId }
+                new GameOrder { GameId = SecondId, OrderId = SecondId, Game = GameEntities[1] },
+                new GameOrder { GameId = FirstId, OrderId = SecondId, Game = GameEntities[0] }
             ]
         }
-    };
+    ];
     
-    private readonly OrderDto _orderDto = new(
+    private readonly OrderDto _orderRequestDto = new(
+        "test@test.com",
+        100,
+        [FirstId, SecondId]
+    );
+    private readonly OrderDto _orderResponseDto = new(
         FirstId,
         OrderStatus.Initiated,
         "test@test.com",
         100,
-        [
-            new() { GameId = FirstId },
-            new() { OrderId = FirstId }
-        ]
+        TestData.Game.GenerateGameResponseDtos()
     );
 
     [SetUp]
     public void Setup()
     {
         _orderRepositoryMock = new Mock<IOrderRepository>();
+        _gameRepositoryMock = new Mock<IGameRepository>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _orderService = new OrderService(_orderRepositoryMock.Object, _unitOfWorkMock.Object);
+        _orderService = new OrderService(_orderRepositoryMock.Object, _gameRepositoryMock.Object, _unitOfWorkMock.Object);
     }
 
     [Test]
@@ -82,7 +89,7 @@ public class OrderServiceTests
             Assert.That(result[i].Status, Is.EqualTo(_orderEntities[i].Status));
             Assert.That(result[i].UserEmail, Is.EqualTo(_orderEntities[i].UserEmail));
             Assert.That(result[i].Total, Is.EqualTo(_orderEntities[i].Total));
-            Assert.That(result[i].GameOrders.Count, Is.EqualTo(_orderEntities[i].GameOrders.Count));
+            Assert.That(result[i].Games!.Count, Is.EqualTo(_orderEntities[i].GameOrders.Count));
         }
     }
 
@@ -103,7 +110,7 @@ public class OrderServiceTests
         Assert.That(result, Has.Property("Status").EqualTo(_orderEntities[0].Status));
         Assert.That(result, Has.Property("UserEmail").EqualTo(_orderEntities[0].UserEmail));
         Assert.That(result, Has.Property("Total").EqualTo(_orderEntities[0].Total));
-        Assert.That(result, Has.Property("GameOrders").Count.EqualTo(_orderEntities[0].GameOrders.Count));
+        Assert.That(result, Has.Property("Games").Count.EqualTo(_orderEntities[0].GameOrders.Count));
     }
     
     [Test]
@@ -125,34 +132,57 @@ public class OrderServiceTests
     public async Task CreateAsync_WhenChangesSavedSuccessfully_ReturnsCreatedId()
     {
         //Arrange
+        _gameRepositoryMock
+            .Setup(x => x.GetExistingIdsAsync(It.IsAny<List<Guid>>()))
+            .ReturnsAsync((List<Guid> ids) => ids);
         _orderRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Order>()))
-            .ReturnsAsync(_orderDto.Id);
+            .ReturnsAsync(_orderResponseDto.Id!.Value);
         _unitOfWorkMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // Act
-        var result = await _orderService.CreateAsync(_orderDto);
+        var result = await _orderService.CreateAsync(_orderRequestDto);
         
         // Assert
-        Assert.That(result, Is.EqualTo(_orderDto.Id));
+        Assert.That(result, Is.EqualTo(_orderResponseDto.Id));
     }
     
     [Test]
     public async Task CreateAsync_WhenSaveChangesFailed_ReturnsNull()
     {
         //Arrange
+        _gameRepositoryMock
+            .Setup(x => x.GetExistingIdsAsync(It.IsAny<List<Guid>>()))
+            .ReturnsAsync((List<Guid> ids) => ids);
         _orderRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Order>()))
-            .ReturnsAsync(_orderDto.Id);
+            .ReturnsAsync(_orderResponseDto.Id!.Value);
         _unitOfWorkMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);
         
         // Act
-        var result = await _orderService.CreateAsync(_orderDto);
+        var result = await _orderService.CreateAsync(_orderRequestDto);
         
+        // Assert
+        Assert.That(result, Is.Null);
+    }
+    
+    [Test]
+    public async Task CreateAsync_WhenGameIdIsMissing_ReturnsNull()
+    {
+        // Arrange
+        var existingIds = _orderRequestDto.GameIds!.Take(1).ToList();
+
+        _gameRepositoryMock
+            .Setup(x => x.GetExistingIdsAsync(It.IsAny<List<Guid>>()))
+            .ReturnsAsync(existingIds);
+
+        // Act
+        var result = await _orderService.CreateAsync(_orderRequestDto);
+
         // Assert
         Assert.That(result, Is.Null);
     }
@@ -161,6 +191,9 @@ public class OrderServiceTests
     public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
         //Arrange
+        _gameRepositoryMock
+            .Setup(x => x.GetExistingIdsAsync(It.IsAny<List<Guid>>()))
+            .ReturnsAsync((List<Guid> ids) => ids);
         _orderRepositoryMock
             .Setup(x => x.GetByIdAsync(_orderEntities[0].Id))
             .ReturnsAsync(_orderEntities[0]);
@@ -169,7 +202,7 @@ public class OrderServiceTests
             .ReturnsAsync(1);
         
         // Act
-        var result = await _orderService.UpdateAsync(_orderDto);
+        var result = await _orderService.UpdateAsync(_orderEntities[0].Id, _orderRequestDto);
         
         // Assert
         Assert.That(result, Is.True);
@@ -179,12 +212,15 @@ public class OrderServiceTests
     public async Task UpdateAsync_WhenEntityDoesNotExist_ReturnsFalse()
     {
         //Arrange
+        _gameRepositoryMock
+            .Setup(x => x.GetExistingIdsAsync(It.IsAny<List<Guid>>()))
+            .ReturnsAsync((List<Guid> ids) => ids);
         _orderRepositoryMock
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Order);
         
         // Act
-        var result = await _orderService.UpdateAsync(_orderDto);
+        var result = await _orderService.UpdateAsync(It.IsAny<Guid>(), _orderRequestDto);
         
         // Assert
         Assert.That(result, Is.False);
