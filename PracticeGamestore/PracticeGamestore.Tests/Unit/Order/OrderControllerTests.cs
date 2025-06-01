@@ -104,7 +104,7 @@ public class OrderControllerTests
         Assert.That(receivedOrder, Has.Property("Status").EqualTo(_orderDtos[0].Status.ToString()));
         Assert.That(receivedOrder, Has.Property("UserEmail").EqualTo(_orderDtos[0].UserEmail));
         Assert.That(receivedOrder, Has.Property("Total").EqualTo(_orderDtos[0].Total));
-        Assert.That(receivedOrder, Has.Property("GameOrders").Count.EqualTo(_orderDtos[0].Games!.Count));
+        Assert.That(receivedOrder, Has.Property("Games").Count.EqualTo(_orderDtos[0].Games!.Count));
     }
     
     [Test]
