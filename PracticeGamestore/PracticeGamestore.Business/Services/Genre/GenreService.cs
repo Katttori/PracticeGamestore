@@ -26,9 +26,9 @@ public class GenreService(IGenreRepository genreRepository, IUnitOfWork unitOfWo
         return changes > 0 ? createdId : null;
     }
 
-    public async Task<bool> UpdateAsync(GenreDto dto)
+    public async Task<bool> UpdateAsync(Guid id, GenreDto dto)
     {
-        var entity = await genreRepository.GetByIdAsync(dto.Id);
+        var entity = await genreRepository.GetByIdAsync(id);
         if (entity is null) return false;
         
         entity.Name = dto.Name;
