@@ -1,6 +1,6 @@
 using Moq;
 using NUnit.Framework;
-using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.DataTransferObjects.Order;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.DataAccess.Entities;
 using PracticeGamestore.DataAccess.Enums;
@@ -50,12 +50,12 @@ public class OrderServiceTests
         }
     ];
     
-    private readonly OrderDto _orderRequestDto = new(
+    private readonly OrderRequestDto _orderRequestDto = new(
         "test@test.com",
         100,
         [FirstId, SecondId]
     );
-    private readonly OrderDto _orderResponseDto = new(
+    private readonly OrderResponseDto _orderResponseDto = new(
         FirstId,
         OrderStatus.Initiated,
         "test@test.com",
@@ -89,7 +89,7 @@ public class OrderServiceTests
             Assert.That(result[i].Status, Is.EqualTo(_orderEntities[i].Status));
             Assert.That(result[i].UserEmail, Is.EqualTo(_orderEntities[i].UserEmail));
             Assert.That(result[i].Total, Is.EqualTo(_orderEntities[i].Total));
-            Assert.That(result[i].Games!.Count, Is.EqualTo(_orderEntities[i].GameOrders.Count));
+            Assert.That(result[i].Games.Count, Is.EqualTo(_orderEntities[i].GameOrders.Count));
         }
     }
 
@@ -174,7 +174,7 @@ public class OrderServiceTests
     public async Task CreateAsync_WhenGameIdIsMissing_ReturnsNull()
     {
         // Arrange
-        var existingIds = _orderRequestDto.GameIds!.Take(1).ToList();
+        var existingIds = _orderRequestDto.GameIds.Take(1).ToList();
 
         _gameRepositoryMock
             .Setup(x => x.GetExistingIdsAsync(It.IsAny<List<Guid>>()))

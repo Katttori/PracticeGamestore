@@ -6,7 +6,16 @@ public class OrderRepository(GamestoreDbContext context) : IOrderRepository
 {
     private readonly IQueryable<Entities.Order> _ordersWithGamesIncluded = context.Orders
         .Include(o => o.GameOrders)
-        .ThenInclude(go => go.Game);
+            .ThenInclude(go => go.Game)
+                .ThenInclude(g => g.Publisher)
+        .Include(o => o.GameOrders)
+            .ThenInclude(go => go.Game)
+                .ThenInclude(g => g.GamePlatforms)
+                    .ThenInclude(gp => gp.Platform)
+        .Include(o => o.GameOrders)
+            .ThenInclude(go => go.Game)
+                .ThenInclude(g => g.GameGenres)
+                    .ThenInclude(gg => gg.Genre);
     
     public async Task<IEnumerable<Entities.Order>> GetAllAsync()
     {

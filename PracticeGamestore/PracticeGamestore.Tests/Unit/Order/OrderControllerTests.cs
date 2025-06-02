@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.DataTransferObjects.Order;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.DataAccess.Enums;
@@ -17,7 +17,7 @@ public class OrderControllerTests
     private static readonly Guid FirstId = Guid.NewGuid();
     private static readonly Guid SecondId = Guid.NewGuid();
 
-    private readonly List<OrderDto> _orderDtos =
+    private readonly List<OrderResponseDto> _orderDtos =
     [
         new(
             FirstId,
@@ -70,7 +70,7 @@ public class OrderControllerTests
             Assert.That(responseModels[i].Status, Is.EqualTo(_orderDtos[i].Status.ToString()));
             Assert.That(responseModels[i].UserEmail, Is.EqualTo(_orderDtos[i].UserEmail));
             Assert.That(responseModels[i].Total, Is.EqualTo(_orderDtos[i].Total));
-            Assert.That(responseModels[i].Games.Count, Is.EqualTo(_orderDtos[i].Games!.Count));
+            Assert.That(responseModels[i].Games.Count, Is.EqualTo(_orderDtos[i].Games.Count));
         }
     }
     
@@ -78,7 +78,7 @@ public class OrderControllerTests
     public async Task GetById_WhenOrderIsNull_ReturnsNotFound()
     {
         //Arrange
-        _orderServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as OrderDto);
+        _orderServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as OrderResponseDto);
         
         // Act
         var result = await _orderController.GetById(Guid.NewGuid());
@@ -104,14 +104,16 @@ public class OrderControllerTests
         Assert.That(receivedOrder, Has.Property("Status").EqualTo(_orderDtos[0].Status.ToString()));
         Assert.That(receivedOrder, Has.Property("UserEmail").EqualTo(_orderDtos[0].UserEmail));
         Assert.That(receivedOrder, Has.Property("Total").EqualTo(_orderDtos[0].Total));
-        Assert.That(receivedOrder, Has.Property("Games").Count.EqualTo(_orderDtos[0].Games!.Count));
+        Assert.That(receivedOrder, Has.Property("Games").Count.EqualTo(_orderDtos[0].Games.Count));
     }
     
     [Test]
     public async Task Create_WhenOperationFailed_ReturnsBadRequest()
     {
         //Arrange
-        _orderServiceMock.Setup(x => x.CreateAsync(It.IsAny<OrderDto>())).ReturnsAsync(null as Guid?);
+        _orderServiceMock
+            .Setup(x => x.CreateAsync(It.IsAny<OrderRequestDto>()))
+            .ReturnsAsync(null as Guid?);
         
         // Act
         var result = await _orderController.Create(_orderRequestModel);
@@ -126,7 +128,7 @@ public class OrderControllerTests
         //Arrange
         var newId = Guid.NewGuid();
         
-        _orderServiceMock.Setup(x => x.CreateAsync(It.IsAny<OrderDto>())).ReturnsAsync(newId);
+        _orderServiceMock.Setup(x => x.CreateAsync(It.IsAny<OrderRequestDto>())).ReturnsAsync(newId);
         
         // Act
         var result = await _orderController.Create(_orderRequestModel);
@@ -142,7 +144,7 @@ public class OrderControllerTests
     {
         //Arrange
         _orderServiceMock
-            .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<OrderDto>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<OrderRequestDto>()))
             .ReturnsAsync(true);
         
         // Act
@@ -157,7 +159,7 @@ public class OrderControllerTests
     {
         //Arrange
         _orderServiceMock
-            .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<OrderDto>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<OrderRequestDto>()))
             .ReturnsAsync(false);
         
         // Act

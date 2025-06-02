@@ -1,12 +1,12 @@
-using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.DataTransferObjects.Order;
 
 namespace PracticeGamestore.Business.Services.Order;
 
 public interface IOrderService
 {
-    Task<IEnumerable<OrderDto>> GetAllAsync();
-    Task<OrderDto?> GetByIdAsync(Guid id);
-    Task<Guid?> CreateAsync(OrderDto dto);
-    Task<bool> UpdateAsync(Guid id, OrderDto dto);
+    Task<IEnumerable<OrderResponseDto>> GetAllAsync();
+    Task<OrderResponseDto?> GetByIdAsync(Guid id);
+    Task<Guid?> CreateAsync(OrderRequestDto dto);
+    Task<bool> UpdateAsync(Guid id, OrderRequestDto dto);
     Task DeleteAsync(Guid id);
 }

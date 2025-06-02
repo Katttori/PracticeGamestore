@@ -1,11 +1,11 @@
-using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.DataTransferObjects.Order;
 using PracticeGamestore.Models.Order;
 
 namespace PracticeGamestore.Mappers;
 
 public static class OrderMappingExtensions
 {
-    public static OrderDto MapToOrderDto(this OrderRequestModel model)
+    public static OrderRequestDto MapToOrderDto(this OrderRequestModel model)
     {
         return new(
             model.UserEmail,
@@ -14,7 +14,7 @@ public static class OrderMappingExtensions
             );
     }
 
-    public static OrderResponseModel MapToOrderModel(this OrderDto dto)
+    public static OrderResponseModel MapToOrderModel(this OrderResponseDto dto)
     {
         return new()
         {
@@ -22,7 +22,7 @@ public static class OrderMappingExtensions
             Status = dto.Status.ToString(),
             UserEmail = dto.UserEmail,
             Total = dto.Total,
-            Games = dto.Games!.Select(g => g.MapToGameModel()).ToList()
+            Games = dto.Games.Select(g => g.MapToGameModel()).ToList()
         };
     }
 }

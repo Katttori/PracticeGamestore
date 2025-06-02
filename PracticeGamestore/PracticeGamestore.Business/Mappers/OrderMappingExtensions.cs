@@ -1,11 +1,11 @@
-using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.DataTransferObjects.Order;
 using PracticeGamestore.DataAccess.Entities;
 
 namespace PracticeGamestore.Business.Mappers;
 
 public static class OrderMappingExtensions
 {
-    public static Order MapToOrderEntity(this OrderDto dto)
+    public static Order MapToOrderEntity(this OrderRequestDto dto)
     {
         return new()
         {
@@ -15,7 +15,7 @@ public static class OrderMappingExtensions
         };
     }
 
-    public static OrderDto MapToOrderDto(this Order entity)
+    public static OrderResponseDto MapToOrderDto(this Order entity)
     {
         var games = entity.GameOrders.Select(go => go.Game.MapToGameDto()).ToList();            
         
