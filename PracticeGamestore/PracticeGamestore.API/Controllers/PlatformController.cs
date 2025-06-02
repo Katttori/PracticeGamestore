@@ -27,12 +27,13 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPost]
     public async Task<IActionResult> CreatePlatform([FromBody] PlatformRequestModel platform)
     {
-        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name))
+        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name)
+            || platform.Name.Length == 0)
         {
             return BadRequest("Platform name cannot be empty or whitespace.");
         }
 
-        if (platform.Name.Length == 0 || platform.Name.Length > 100)
+        if (platform.Name.Length > 100)
             return BadRequest("Platform name must be between 1 and 100 characters long.");
         if (platform.Description.Length > 255 || string.IsNullOrEmpty(platform.Description))
             return BadRequest("Platform description must be up to 255 characters long.");
@@ -47,7 +48,12 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformRequestModel platform)
     {
-        if (platform.Name.Length == 0 || platform.Name.Length > 100 || string.IsNullOrEmpty(platform.Name))
+        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name)
+            || platform.Name.Length == 0)
+        {
+            return BadRequest("Platform name cannot be empty or whitespace.");
+        }
+        if (platform.Name.Length > 100)
             return BadRequest("Platform name must be between 1 and 100 characters long.");
         if (platform.Description.Length > 255 || string.IsNullOrEmpty(platform.Description))
             return BadRequest("Platform description must be up to 255 characters long.");
