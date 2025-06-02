@@ -1,5 +1,6 @@
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Game;
@@ -122,6 +123,43 @@ public class GameServiceTests
 
         //Act
         var result = await _gameService.GetByIdAsync(Guid.NewGuid());
+        
+        //Assert
+        Assert.That(result, Is.Null);
+    }
+    
+    [Test]
+    public async Task GetByPlatformAsync_WhenPlatformExists_ReturnsGames()
+    {
+        //Arrange
+        var platformId = Guid.NewGuid();
+        var games = TestData.Game.GenerateGameEntities();
+        var expected = games.Select(p => p.MapToGameDto()).ToList();
+        
+        _platformRepository.Setup(p => p.ExistsAsync(platformId)).ReturnsAsync(true);
+        _gameRepository.Setup(g => g.GetByPlatformIdAsync(platformId)).ReturnsAsync(games);
+
+        //Act
+        var result = 
+            (await _gameService.GetByPlatformAsync(platformId) ?? Array.Empty<GameResponseDto>())
+            .ToList();
+
+        //Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.Not.Empty);
+        Assert.That(result.Count, Is.EqualTo(expected.Count));
+        var elementsAreTheSame = expected.Zip(result, GameResponseDtosAreTheSame).All(equal => equal);
+        Assert.That(elementsAreTheSame, Is.True);
+    }
+    
+    [Test]
+    public async Task GetByPlatformAsync_WhenPlatformDoesNotExist_ReturnsNull()
+    {
+        //Arrange
+        _platformRepository.Setup(p => p.ExistsAsync(It.IsAny<Guid>())).ReturnsAsync(false);
+
+        //Act
+        var result = await _gameService.GetByPlatformAsync(It.IsAny<Guid>());
         
         //Assert
         Assert.That(result, Is.Null);

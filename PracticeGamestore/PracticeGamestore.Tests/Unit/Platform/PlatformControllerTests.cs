@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Controllers;
+using PracticeGamestore.Models.Game;
 using PracticeGamestore.Models.Platform;
 
 namespace PracticeGamestore.Tests.Unit.Platform;
@@ -11,13 +13,15 @@ namespace PracticeGamestore.Tests.Unit.Platform;
 public class PlatformControllerTests
 {
     private Mock<IPlatformService> _platformService;
+    private Mock<IGameService> _gameService;
     private PlatformController _platformController;
     
     [SetUp]
     public void Setup()
     {
         _platformService = new Mock<IPlatformService>();
-        _platformController = new PlatformController(_platformService.Object);
+        _gameService = new Mock<IGameService>();
+        _platformController = new PlatformController(_platformService.Object, _gameService.Object);
     }
     
     [Test]
@@ -81,6 +85,42 @@ public class PlatformControllerTests
         // Act
         var result = await _platformController.GetPlatformById(platformId);
         
+        // Assert
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+    }
+    
+    [Test]
+    public async Task GetGamesByPlatformAsync_ReturnsOkWithGames()
+    {
+        // Arrange
+        var platformId = Guid.NewGuid();
+        var mockGames = TestData.Game.GenerateGameResponseDtos();
+
+        _gameService.Setup(s => s.GetByPlatformAsync(platformId)).ReturnsAsync(mockGames);
+
+        // Act
+        var result = await _platformController.GetGamesByPlatform(platformId);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        var responseModels = (okResult?.Value as IEnumerable<GameResponseModel> ?? []).ToList();
+        Assert.That(responseModels.Count, Is.EqualTo(mockGames.Count));
+    }
+    
+    [Test]
+    public async Task GetGamesByPlatformAsync_WhenNoGames_ReturnsNotFound()
+    {
+        // Arrange
+        var platformId = Guid.NewGuid();
+
+        _gameService
+            .Setup(s => s.GetByPlatformAsync(platformId))
+            .ReturnsAsync(null as IEnumerable<GameResponseDto>);
+
+        // Act
+        var result = await _platformController.GetGamesByPlatform(platformId);
+
         // Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
     }
