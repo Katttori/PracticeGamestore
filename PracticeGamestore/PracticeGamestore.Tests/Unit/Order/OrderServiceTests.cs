@@ -2,8 +2,6 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects.Order;
 using PracticeGamestore.Business.Services.Order;
-using PracticeGamestore.DataAccess.Entities;
-using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Order;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -16,52 +14,10 @@ public class OrderServiceTests
     private Mock<IGameRepository> _gameRepositoryMock;
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private OrderService _orderService;
-    
-    private static readonly Guid FirstId = Guid.NewGuid();
-    private static readonly Guid SecondId = Guid.NewGuid();
-    private static readonly List<DataAccess.Entities.Game> GameEntities = TestData.Game.GenerateGameEntities();
-    
-    private readonly List<DataAccess.Entities.Order> _orderEntities =
-    [
-        new()
-        {
-            Id = FirstId,
-            Status = OrderStatus.Created,
-            UserEmail = "test@test.com",
-            Total = 100,
-            GameOrders =
-            [
-                new GameOrder { GameId = FirstId, OrderId = FirstId, Game = GameEntities[0] },
-                new GameOrder { GameId = SecondId, OrderId = FirstId, Game = GameEntities[1] },
-            ]
-        },
 
-        new()
-        {
-            Id = SecondId,
-            Status = OrderStatus.Paid,
-            UserEmail = "test2@test.com",
-            Total = 200,
-            GameOrders =
-            [
-                new GameOrder { GameId = SecondId, OrderId = SecondId, Game = GameEntities[1] },
-                new GameOrder { GameId = FirstId, OrderId = SecondId, Game = GameEntities[0] }
-            ]
-        }
-    ];
-    
-    private readonly OrderRequestDto _orderRequestDto = new(
-        "test@test.com",
-        100,
-        [FirstId, SecondId]
-    );
-    private readonly OrderResponseDto _orderResponseDto = new(
-        FirstId,
-        OrderStatus.Initiated,
-        "test@test.com",
-        100,
-        TestData.Game.GenerateGameResponseDtos()
-    );
+    private readonly List<DataAccess.Entities.Order> _orderEntities = TestData.Order.GenerateOrderEntities();
+    private readonly OrderRequestDto _orderRequestDto = TestData.Order.GenerateOrderRequestDto();
+    private readonly OrderResponseDto _orderResponseDto = TestData.Order.GenerateOrderResponseDto();
 
     [SetUp]
     public void Setup()

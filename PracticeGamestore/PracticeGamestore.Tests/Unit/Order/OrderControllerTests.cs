@@ -4,7 +4,6 @@ using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects.Order;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Controllers;
-using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Models.Order;
 
 namespace PracticeGamestore.Tests.Unit.Order;
@@ -14,34 +13,8 @@ public class OrderControllerTests
     private Mock<IOrderService> _orderServiceMock;
     private OrderController _orderController;
     
-    private static readonly Guid FirstId = Guid.NewGuid();
-    private static readonly Guid SecondId = Guid.NewGuid();
-
-    private readonly List<OrderResponseDto> _orderDtos =
-    [
-        new(
-            FirstId,
-            OrderStatus.Initiated,
-            "test@test.com",
-            100,
-            TestData.Game.GenerateGameResponseDtos()
-        ),
-
-        new(
-            SecondId,
-            OrderStatus.Created,
-            "test2@test.com",
-            200,
-            TestData.Game.GenerateGameResponseDtos()
-        )
-    ];
-    
-    private readonly OrderRequestModel _orderRequestModel = new()
-    {
-        UserEmail = "test@test.com",
-        Total = 100,
-        GameIds = [FirstId, SecondId]
-    };
+    private readonly List<OrderResponseDto> _orderDtos = TestData.Order.GenerateOrderResponseDtos();
+    private readonly OrderRequestModel _orderRequestModel = TestData.Order.GenerateOrderRequestModel();
 
     [SetUp]
     public void Setup()

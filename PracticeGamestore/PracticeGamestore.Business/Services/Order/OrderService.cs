@@ -47,7 +47,7 @@ public class OrderService(IOrderRepository orderRepository, IGameRepository game
         order.Status = dto.Status;
         order.UserEmail = dto.UserEmail;
         order.Total = dto.Total;
-        order.GameOrders = dto.GameIds!.Select(gameId => new GameOrder
+        order.GameOrders = dto.GameIds.Select(gameId => new GameOrder
         {
             GameId = gameId,
             OrderId = order.Id,
