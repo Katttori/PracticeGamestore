@@ -28,8 +28,7 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
             .Where(g => g.GamePlatforms.Any(gp => gp.PlatformId == platformId))
             .ToListAsync();
     }
-
-
+    
     public async Task DeleteAsync(Guid id)
     {
         var game = await context.Games.FindAsync(id);
