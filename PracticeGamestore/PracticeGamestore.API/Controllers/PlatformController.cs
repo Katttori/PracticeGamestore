@@ -27,15 +27,19 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPost]
     public async Task<IActionResult> CreatePlatform([FromBody] PlatformRequestModel platform)
     {
-        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name)
-            || platform.Name.Length == 0)
+        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name))
         {
             return BadRequest("Platform name cannot be empty or whitespace.");
+        }
+        
+        if (string.IsNullOrEmpty(platform.Description) || string.IsNullOrWhiteSpace(platform.Description))
+        {
+            return BadRequest("Platform description cannot be empty or whitespace.");
         }
 
         if (platform.Name.Length > 100)
             return BadRequest("Platform name must be between 1 and 100 characters long.");
-        if (platform.Description.Length > 255 || string.IsNullOrEmpty(platform.Description))
+        if (platform.Description.Length > 255)
             return BadRequest("Platform description must be up to 255 characters long.");
         
         var platformDto = platform.MapToPlatformDto();
@@ -48,14 +52,19 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformRequestModel platform)
     {
-        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name)
-            || platform.Name.Length == 0)
+        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name))
         {
             return BadRequest("Platform name cannot be empty or whitespace.");
         }
+        
+        if (string.IsNullOrEmpty(platform.Description) || string.IsNullOrWhiteSpace(platform.Description))
+        {
+            return BadRequest("Platform description cannot be empty or whitespace.");
+        }
+        
         if (platform.Name.Length > 100)
             return BadRequest("Platform name must be between 1 and 100 characters long.");
-        if (platform.Description.Length > 255 || string.IsNullOrEmpty(platform.Description))
+        if (platform.Description.Length > 255)
             return BadRequest("Platform description must be up to 255 characters long.");
         
         var dto = platform.MapToPlatformDto();
