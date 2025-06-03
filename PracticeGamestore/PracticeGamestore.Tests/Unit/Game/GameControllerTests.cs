@@ -529,7 +529,6 @@ public class GameControllerTests
         var paginated = gameDtos.Take(10).ToList(); 
         _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
             .ReturnsAsync((paginated, gameDtos.Count));
-        
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
         // Act
