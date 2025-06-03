@@ -27,7 +27,7 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPost]
     public async Task<IActionResult> CreatePlatform([FromBody] PlatformRequestModel platform)
     {
-        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name))
+        if (string.IsNullOrWhiteSpace(platform.Name))
         {
             return BadRequest("Platform name cannot be empty or whitespace.");
         }
@@ -52,7 +52,7 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformRequestModel platform)
     {
-        if (string.IsNullOrEmpty(platform.Name) || string.IsNullOrWhiteSpace(platform.Name))
+        if (string.IsNullOrWhiteSpace(platform.Name))
         {
             return BadRequest("Platform name cannot be empty or whitespace.");
         }
