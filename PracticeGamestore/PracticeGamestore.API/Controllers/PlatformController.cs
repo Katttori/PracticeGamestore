@@ -32,7 +32,7 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
             return BadRequest("Platform name cannot be empty or whitespace.");
         }
         
-        if (string.IsNullOrEmpty(platform.Description) || string.IsNullOrWhiteSpace(platform.Description))
+        if (string.IsNullOrWhiteSpace(platform.Description))
         {
             return BadRequest("Platform description cannot be empty or whitespace.");
         }
@@ -57,7 +57,7 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
             return BadRequest("Platform name cannot be empty or whitespace.");
         }
         
-        if (string.IsNullOrEmpty(platform.Description) || string.IsNullOrWhiteSpace(platform.Description))
+        if (string.IsNullOrWhiteSpace(platform.Description))
         {
             return BadRequest("Platform description cannot be empty or whitespace.");
         }
