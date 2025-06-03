@@ -23,7 +23,7 @@ public class GenreControllerTests
     [Test]
     public async Task GetAll_ReturnsOkWithGenres()
     {
-        //Arrange
+        // Arrange
         var genreDtos = new List<GenreDto>
         {
             new(Guid.NewGuid(), "FPS"),
@@ -48,7 +48,7 @@ public class GenreControllerTests
     [Test]
     public async Task GetById_WhenGenreIsNull_ReturnsNotFound()
     {
-        //Arrange
+        // Arrange
         _genreServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as GenreDto);
         
         // Act
@@ -61,7 +61,7 @@ public class GenreControllerTests
     [Test]
     public async Task GetById_WhenGenreFound_ReturnsOkWithGenre()
     {
-        //Arrange
+        // Arrange
         var genreDto = new GenreDto(Guid.NewGuid(), "FPS");
         
         _genreServiceMock.Setup(x => x.GetByIdAsync(genreDto.Id!.Value)).ReturnsAsync(genreDto);
@@ -80,7 +80,7 @@ public class GenreControllerTests
     [Test]
     public async Task Create_WhenOperationFailed_ReturnsBadRequest()
     {
-        //Arrange
+        // Arrange
         var model = new GenreRequestModel { Name = "FPS" };
         
         _genreServiceMock.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(null as Guid?);
@@ -95,7 +95,7 @@ public class GenreControllerTests
     [Test]
     public async Task Create_WhenOperationSuccessful_ReturnsCreatedWithId()
     {
-        //Arrange
+        // Arrange
         var newId = Guid.NewGuid();
         
         _genreServiceMock.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(newId);
@@ -112,7 +112,7 @@ public class GenreControllerTests
     [Test]
     public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
     {
-        //Arrange
+        // Arrange
         _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(true);
         
         // Act
@@ -125,7 +125,7 @@ public class GenreControllerTests
     [Test]
     public async Task Update_WhenOperationFailed_ReturnsBadRequest()
     {
-        //Arrange
+        // Arrange
         _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(false);
         
         // Act
@@ -138,7 +138,7 @@ public class GenreControllerTests
     [Test]
     public async Task Delete_ReturnsNoContent()
     {
-        //Arrange
+        // Arrange
         _genreServiceMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
         
         // Act
