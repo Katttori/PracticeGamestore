@@ -9,4 +9,5 @@ public interface IPublisherService
     Task<Guid?> CreateAsync(PublisherDto model);
     Task<bool> UpdateAsync(Guid id, PublisherDto model);
     Task DeleteAsync(Guid id);
+    Task<IEnumerable<GameResponseDto>?> GetGamesAsync(Guid id);
 }
