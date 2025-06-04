@@ -7,18 +7,14 @@ public static class PlatformMappingExtensions
 {
     public static PlatformDto MapToPlatformDto(this PlatformRequestModel platform)
     {
-        return new(
-            null,
-            platform.Name,
-            platform.Description
-        );
+        return new PlatformDto(null, platform.Name, platform.Description);
     }
     
     public static PlatformResponseModel MapToPlatformModel(this PlatformDto platform)
     {
         return new()
         {
-            Id = platform.Id,
+            Id = platform.Id!.Value,
             Name = platform.Name,
             Description = platform.Description
         };
