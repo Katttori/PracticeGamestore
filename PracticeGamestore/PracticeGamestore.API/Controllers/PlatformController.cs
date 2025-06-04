@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Platform;
@@ -6,7 +7,7 @@ using PracticeGamestore.Models.Platform;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("platforms")]
-public class PlatformController(IPlatformService platformService) : ControllerBase
+public class PlatformController(IPlatformService platformService, IGameService gameService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllPlatforms()
@@ -23,7 +24,16 @@ public class PlatformController(IPlatformService platformService) : ControllerBa
             ? NotFound($"Platform with id: {id} was not found.")
             : Ok(platform.MapToPlatformModel());
     }
-
+    
+    [HttpGet("{platformId:guid}/games")]
+    public async Task<IActionResult> GetGamesByPlatform(Guid platformId)
+    {
+        var games = await gameService.GetByPlatformAsync(platformId);
+        return games is null
+            ? NotFound($"Platform with id: {platformId} was not found.")
+            : Ok(games.Select(g => g.MapToGameModel()));
+    }
+    
     [HttpPost]
     public async Task<IActionResult> CreatePlatform([FromBody] PlatformRequestModel platform)
     {
