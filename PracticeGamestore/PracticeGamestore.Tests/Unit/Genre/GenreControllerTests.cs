@@ -23,7 +23,7 @@ public class GenreControllerTests
     {
         _loggerMock = new Mock<ILogger<GenreController>>();
         _genreService = new Mock<IGenreService>();
-        _genreController = new GenreController(_genreServiceMock.Object, _loggerMock.Object);
+        _genreController = new GenreController(_genreService.Object, _loggerMock.Object);
     }
 
     [Test]
