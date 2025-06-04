@@ -33,6 +33,22 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
     {
         return await _gamesNoTracking.FirstOrDefaultAsync(g => g.Id == id);
     }
+    
+    public async Task<IEnumerable<Entities.Game>> GetByPlatformIdAsync(Guid platformId)
+    {
+        return await _gamesNoTracking
+            .Where(g => g.GamePlatforms.Any(gp => gp.PlatformId == platformId))
+            .ToListAsync();
+    }
+    
+    public async Task<List<Guid>> GetExistingIdsAsync(IEnumerable<Guid> ids)
+    {
+        return await context.Games
+            .AsNoTracking()
+            .Where(g => ids.Contains(g.Id))
+            .Select(g => g.Id)
+            .ToListAsync();
+    }
 
     public async Task DeleteAsync(Guid id)
     {

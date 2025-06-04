@@ -22,7 +22,7 @@ public class PlatformRepository(GamestoreDbContext context): IPlatformRepository
         return p.Entity.Id;
     }
     
-    public async void Update(Entities.Platform platform)
+    public void Update(Entities.Platform platform)
     {
         context.Platforms.Update(platform);
     }
@@ -33,5 +33,10 @@ public class PlatformRepository(GamestoreDbContext context): IPlatformRepository
         if (platform is null) return;
         
         context.Platforms.Remove(platform);
+    }
+    
+    public Task<bool> ExistsAsync(Guid platformId)
+    {
+        return _platformsNoTracking.AnyAsync(p => p.Id == platformId);
     }
 }

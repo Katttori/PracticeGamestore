@@ -22,6 +22,8 @@ public class GenreService(IGenreRepository genreRepository, IGameRepository game
 
     public async Task<Guid?> CreateAsync(GenreDto dto)
     {
+        if (!await IsParentValidAsync(dto.ParentId)) return null;
+        
         var createdId = await genreRepository.CreateAsync(dto.MapToGenreEntity());
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0 ? createdId : null;
@@ -31,6 +33,8 @@ public class GenreService(IGenreRepository genreRepository, IGameRepository game
     {
         var entity = await genreRepository.GetByIdAsync(id);
         if (entity is null) return false;
+        
+        if (dto.ParentId == entity.Id || !await IsParentValidAsync(dto.ParentId)) return false;
         
         entity.Name = dto.Name;
         entity.ParentId = dto.ParentId;
@@ -54,5 +58,10 @@ public class GenreService(IGenreRepository genreRepository, IGameRepository game
         var genreChildrenIds = await genreRepository.GetGenreChildrenIdsAsync(id);
         var games = await gameRepository.GetByGenreAndItsChildrenAsync(genreChildrenIds);
         return games.Select(g => g.MapToGameDto());
+    }
+
+    private async Task<bool> IsParentValidAsync(Guid? parentId)
+    {
+        return parentId is null || await genreRepository.GetByIdAsync(parentId.Value) is not null;
     }
 }
