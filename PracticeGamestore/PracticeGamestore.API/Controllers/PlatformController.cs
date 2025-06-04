@@ -107,6 +107,7 @@ public class PlatformController(
             logger.LogError("Platform name must be between 1 and 100 characters long.");
             return BadRequest("Platform name must be between 1 and 100 characters long.");
         }
+        
         if (platform.Description.Length > 255)
         {
             logger.LogError("Platform description must be up to 255 characters long.");

@@ -49,6 +49,7 @@ public class BlacklistController(
             logger.LogError("Failed to create blacklist for model: {Model}", model);
             return BadRequest("Failed to create blacklist.");
         }
+        
         logger.LogInformation("Created blacklist with id: {Id}", createdId);
         return CreatedAtAction(nameof(GetById), new { id = createdId }, createdId);
     }

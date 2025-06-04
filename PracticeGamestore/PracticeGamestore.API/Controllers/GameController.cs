@@ -57,6 +57,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
             logger.LogError("Invalid age rating provided: {AgeRating}", model.AgeRating);
             return BadRequest("Cannot convert provided age to the enum.");
         }
+        
         var id = await gameService.CreateAsync(model.MapToGameDto());
         
         if (id is null)
@@ -77,6 +78,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
             logger.LogError("Invalid age rating provided: {AgeRating}", model.AgeRating);
             return BadRequest("Cannot convert provided age to the enum.");
         }
+        
         var updated = await gameService.UpdateAsync(id, model.MapToGameDto());
         
         if (!updated)
