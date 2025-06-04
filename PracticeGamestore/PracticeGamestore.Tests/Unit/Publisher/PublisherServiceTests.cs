@@ -173,33 +173,32 @@ public class PublisherServiceTests
     public async Task GetGamesAsync_ShouldReturnPublisherGames_WhenPublisherExist()
     {
         //Arrange
-        var publisher = TestData.Publisher.GeneratePublisherEntity();
-        var games = TestData.Game.GenerateGameEntities().Where(g => g.PublisherId == publisher.Id).ToList();
-        _publisherRepository.Setup(x => x.GetByIdAsync(publisher.Id))
-            .ReturnsAsync(publisher);
-        _gameRepository.Setup(x => x.GetByPublisherIdAsync(publisher.Id))
+        var publisherId = Guid.NewGuid();
+        var games = TestData.Game.GenerateGameEntities().Where(g => g.PublisherId == publisherId).ToList();
+        _publisherRepository.Setup(x => x.ExistsAsync(publisherId))
+            .ReturnsAsync(true);
+        _gameRepository.Setup(x => x.GetByPublisherIdAsync(publisherId))
             .ReturnsAsync(games);
         
         //Act
-        var result = await _publisherService.GetGamesAsync(publisher.Id);
+        var result = await _publisherService.GetGamesAsync(publisherId);
         
         //Assert
         Assert.That(result, Is.Not.Null);
         var gameResponseDtos = result!.ToList();
         Assert.That(gameResponseDtos.Count, Is.EqualTo(games.Count));
-        Assert.That(gameResponseDtos.All(dto => dto.Publisher.Id == publisher.Id), Is.True);
+        Assert.That(gameResponseDtos.All(dto => dto.Publisher.Id == publisherId), Is.True);
     }
     
     [Test]
     public async Task GetGamesAsync_ShouldReturnNull_WhenPublisherDoesNotExist()
     {
         //Arrange
-        var publisher = TestData.Publisher.GeneratePublisherEntity();
-        _publisherRepository.Setup(x => x.GetByIdAsync(publisher.Id))
-            .ReturnsAsync(null as DataAccess.Entities.Publisher); 
+        _publisherRepository.Setup(x => x.ExistsAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(false); 
         
         //Act
-        var result = await _publisherService.GetGamesAsync(publisher.Id);
+        var result = await _publisherService.GetGamesAsync(Guid.NewGuid());
         
         //Assert
         Assert.That(result, Is.Null);

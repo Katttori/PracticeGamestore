@@ -43,4 +43,24 @@ public class GenreRepository(GamestoreDbContext context) : IGenreRepository
             context.Genres.Remove(genre);
         }
     }
+
+    public Task<bool> ExistsAsync(Guid id)
+    {
+        return _genresNoTracking.AnyAsync(g => g.Id == id);
+    }
+    
+    public async Task<List<Guid>> GetGenreChildrenIdsAsync(Guid id)
+    {
+        return await context.Database
+            .SqlQuery<Guid>($@"
+                WITH children AS (
+                    SELECT id FROM genres
+                    WHERE id = {id}
+                    UNION ALL
+                    SELECT g.id FROM genres g
+                    JOIN children c ON g.parent_id = c.id
+                 )
+                SELECT id FROM children")
+            .ToListAsync();
+    }
 }

@@ -32,4 +32,9 @@ public class PublisherRepository(GamestoreDbContext context) : IPublisherReposit
         var publisher = await context.Publishers.FindAsync(id);
         if (publisher is not null) context.Publishers.Remove(publisher);
     }
+
+    public Task<bool> ExistsAsync(Guid id)
+    {
+        return _publisherNoTracking.AnyAsync(p => p.Id == id);
+    }
 }

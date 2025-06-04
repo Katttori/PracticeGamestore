@@ -1,7 +1,9 @@
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
@@ -9,29 +11,29 @@ namespace PracticeGamestore.Tests.Unit.Genre;
 
 public class GenreServiceTests
 {
-    private Mock<IGenreRepository> _genreRepositoryMock;
-    private Mock<IUnitOfWork> _unitOfWorkMock;
+    private Mock<IGenreRepository> _genreRepository;
+    private Mock<IUnitOfWork> _unitOfWork;
+    private Mock<IGameRepository> _gameRepository;
     private GenreService _service;
 
     [SetUp]
     public void Setup()
     {
-        _genreRepositoryMock = new Mock<IGenreRepository>();
-        _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _service = new GenreService(_genreRepositoryMock.Object, _unitOfWorkMock.Object);
+        _genreRepository = new Mock<IGenreRepository>();
+        _unitOfWork = new Mock<IUnitOfWork>();
+        _gameRepository = new Mock<IGameRepository>();
+        _service = new GenreService(_genreRepository.Object, _gameRepository.Object, _unitOfWork.Object); // Correct order
     }
+    
+    
 
     [Test]
     public async Task GetAllAsync_ReturnsAllGenres()
     {
         // Arrange
-        var entities = new List<DataAccess.Entities.Genre>
-        {
-            new() { Id = Guid.NewGuid(), Name = "Action" },
-            new() { Id = Guid.NewGuid(), Name = "FPS" },
-        };
+        var entities = TestData.Genre.GenerateGenreEntities();
         
-        _genreRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(entities);
+        _genreRepository.Setup(x => x.GetAllAsync()).ReturnsAsync(entities);
         
         // Act
         var result = (await _service.GetAllAsync()).ToList();
@@ -46,9 +48,9 @@ public class GenreServiceTests
     public async Task GetByIdAsync_WhenGenreExists_ReturnsGenreDto()
     {
         // Arrange
-        var entity = new DataAccess.Entities.Genre { Id = Guid.NewGuid(), Name = "Strategy" };
+        var entity = TestData.Genre.GenerateActionGenre();
         
-        _genreRepositoryMock.Setup(x => x.GetByIdAsync(entity.Id)).ReturnsAsync(entity);
+        _genreRepository.Setup(x => x.GetByIdAsync(entity.Id)).ReturnsAsync(entity);
         
         // Act
         var result = await _service.GetByIdAsync(entity.Id);
@@ -63,7 +65,7 @@ public class GenreServiceTests
     public async Task GetByIdAsync_WhenGenreDoesNotExist_ReturnsNull()
     {
         // Arrange
-        _genreRepositoryMock
+        _genreRepository
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Genre);
         
@@ -80,10 +82,10 @@ public class GenreServiceTests
         // Arrange
         var dto = new GenreDto(Guid.NewGuid(), "Action");
         
-        _genreRepositoryMock
+        _genreRepository
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
             .ReturnsAsync(dto.Id!.Value);
-        _unitOfWorkMock
+        _unitOfWork
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
@@ -100,10 +102,10 @@ public class GenreServiceTests
         // Arrange
         var dto = new GenreDto(Guid.NewGuid(), "Action");
         
-        _genreRepositoryMock
+        _genreRepository
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
             .ReturnsAsync(dto.Id!.Value);
-        _unitOfWorkMock
+        _unitOfWork
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);
         
@@ -121,7 +123,7 @@ public class GenreServiceTests
         var invalidParentId = Guid.NewGuid();
         var dto = new GenreDto(Guid.NewGuid(), "Action", invalidParentId);
     
-        _genreRepositoryMock
+        _genreRepository
             .Setup(x => x.GetByIdAsync(invalidParentId))
             .ReturnsAsync(null as DataAccess.Entities.Genre);
     
@@ -140,10 +142,10 @@ public class GenreServiceTests
         var dto = new GenreDto(id, "Action");
         var entity = new DataAccess.Entities.Genre { Id = id, Name = "Action" };
         
-        _genreRepositoryMock
+        _genreRepository
             .Setup(x => x.GetByIdAsync(entity.Id))
             .ReturnsAsync(entity);
-        _unitOfWorkMock
+        _unitOfWork
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
@@ -161,7 +163,7 @@ public class GenreServiceTests
         var id = Guid.NewGuid();
         var dto = new GenreDto(id, "Action");
         
-        _genreRepositoryMock
+        _genreRepository
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Genre);
         
@@ -180,7 +182,7 @@ public class GenreServiceTests
         var dto = new GenreDto(id, "Adventure", id);
         var entity = new DataAccess.Entities.Genre { Id = id, Name = "Adventure" };
     
-        _genreRepositoryMock
+        _genreRepository
             .Setup(x => x.GetByIdAsync(id))
             .ReturnsAsync(entity);
     
@@ -201,7 +203,44 @@ public class GenreServiceTests
         await _service.DeleteAsync(id);
          
         // Assert
-        _genreRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _genreRepository.Verify(x => x.DeleteAsync(id), Times.Once);
+        _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Test]
+    public async Task GetGamesByGenreAsync_ReturnsGamesWithinProvidedGenreAndAllItsChildrenGenres()
+    {
+        // Arrange
+        var actionGenreId = TestData.Genre.GenerateActionGenre().Id;
+        var children = TestData.Genre.GenerateGenreChildren(actionGenreId);
+        
+        var games = TestData.Game.GenerateGameEntities()
+            .Where(game => game.GameGenres.Any(gg => children.Contains(gg.GenreId))).ToList();
+        _genreRepository.Setup(x => x.ExistsAsync(actionGenreId)).ReturnsAsync(true);
+        _genreRepository.Setup(x => x.GetGenreChildrenIdsAsync(actionGenreId)).ReturnsAsync(children);
+        _gameRepository.Setup(x => x.GetByGenreAndItsChildrenAsync(children)).ReturnsAsync(games);
+
+        // Act
+        var result = await _service.GetGames(actionGenreId);
+        
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        var gameResponseDtos = result!.ToList();
+        Assert.That(gameResponseDtos.Count, Is.EqualTo(games.Count));
+        Assert.That(gameResponseDtos.All(g => g.Genres.Any(genre => children.Contains(genre.Id.Value))), Is.True);
+    }
+    
+    [Test]
+    public async Task GetGamesByGenreAsync_ReturnsNullIfSuchGenreDoesNotExist()
+    {
+        // Arrange
+        _genreRepository.Setup(x => x.ExistsAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(false);
+
+        // Act
+        var result = await _service.GetGames(Guid.NewGuid());
+        
+        // Assert
+        Assert.That(result, Is.Null);
     }
 }

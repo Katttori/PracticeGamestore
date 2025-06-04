@@ -7,4 +7,6 @@ public interface IGenreRepository
     Task<Guid> CreateAsync(Entities.Genre genre);
     void Update(Entities.Genre genre);
     Task DeleteAsync(Guid id);
+    Task<bool> ExistsAsync(Guid id);
+    Task<List<Guid>> GetGenreChildrenIdsAsync(Guid id);
 }
