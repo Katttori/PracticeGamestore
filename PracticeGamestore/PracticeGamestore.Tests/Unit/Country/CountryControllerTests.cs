@@ -22,6 +22,7 @@ public class CountryControllerTests
     public void Setup()
     {
         _countryService = new Mock<ICountryService>();
+        _loggerMock = new Mock<ILogger<CountryController>>();
         _countryController = new CountryController(_countryService.Object, _loggerMock.Object);
     }
     

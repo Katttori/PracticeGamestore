@@ -22,6 +22,7 @@ public class PublisherControllerTests
     public void SetUp()
     {
         _publisherService = new Mock<IPublisherService>();
+        _loggerMock = new Mock<ILogger<PublisherController>>();
         _publisherController = new PublisherController(_publisherService.Object, _loggerMock.Object);
     }
 

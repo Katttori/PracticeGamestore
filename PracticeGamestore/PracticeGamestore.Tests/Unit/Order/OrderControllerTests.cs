@@ -22,6 +22,7 @@ public class OrderControllerTests
     public void Setup()
     {
         _orderServiceMock = new Mock<IOrderService>();
+        _loggerMock = new Mock<ILogger<OrderController>>();
         _orderController = new OrderController(_orderServiceMock.Object, _loggerMock.Object);
     }
 

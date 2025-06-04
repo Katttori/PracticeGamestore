@@ -24,6 +24,7 @@ public class PlatformControllerTests
     {
         _platformService = new Mock<IPlatformService>();
         _gameService = new Mock<IGameService>();
+        _loggerMock = new Mock<ILogger<PlatformController>>();
         _platformController = new PlatformController(_platformService.Object, _gameService.Object, _loggerMock.Object);
     }
     

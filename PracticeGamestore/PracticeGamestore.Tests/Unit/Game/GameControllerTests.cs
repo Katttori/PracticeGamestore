@@ -24,6 +24,7 @@ public class GameControllerTests
     public void SetUp()
     {
         _gameService = new Mock<IGameService>();
+        _loggerMock = new Mock<ILogger<GameController>>();
         _gameController = new GameController(_gameService.Object, _loggerMock.Object);
     }
 

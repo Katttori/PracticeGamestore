@@ -20,6 +20,7 @@ public class GenreControllerTests
     public void Setup()
     {
         _genreServiceMock = new Mock<IGenreService>();
+        _loggerMock = new Mock<ILogger<GenreController>>();
         _genreController = new GenreController(_genreServiceMock.Object, _loggerMock.Object);
     }
 
