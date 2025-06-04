@@ -7,5 +7,6 @@ public interface IPlatformRepository
     Task<Guid> CreateAsync(Entities.Platform platform);
     void Update(Entities.Platform platform);
     Task DeleteAsync(Guid id);
-    Task<bool> ExistsAsync(Guid platformId);
+    Task<bool> ExistsByIdAsync(Guid platformId);
+    Task<bool> ExistsByNameAsync(string name);
 }

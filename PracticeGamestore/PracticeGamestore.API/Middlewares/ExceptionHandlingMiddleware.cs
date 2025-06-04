@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace PracticeGamestore.Middlewares;
 
 public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
@@ -14,10 +12,25 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         {
             logger.LogError(e, "Unhandled exception occured.");
             
-            context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
+
+            int statusCode;
+            string message;
+
+            if (e is ArgumentException)
+            {
+                statusCode = StatusCodes.Status400BadRequest;
+                message = e.Message;
+            }
+            else
+            {
+                statusCode = StatusCodes.Status500InternalServerError;
+                message = "something happened?";
+            }
             
-            var response = new { message = "something happened?" };
+            context.Response.StatusCode = statusCode;
+            
+            var response = new { message };
             await context.Response.WriteAsJsonAsync(response);
         }
     }

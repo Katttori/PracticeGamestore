@@ -20,6 +20,8 @@ public class Publisher : IEntityTypeConfiguration<Entities.Publisher>
             .HasColumnName("name")
             .HasMaxLength(100)
             .IsRequired();
+        
+        builder.HasIndex(p => p.Name).IsUnique();
 
         builder.Property(p => p.Description)
             .HasColumnName("description")
@@ -29,5 +31,7 @@ public class Publisher : IEntityTypeConfiguration<Entities.Publisher>
             .HasColumnName("page_url")
             .HasMaxLength(500)
             .IsRequired();
+        
+        builder.HasIndex(p => p.PageUrl).IsUnique();
     }
 }

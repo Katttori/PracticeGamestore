@@ -24,8 +24,6 @@ public class GenreServiceTests
         _gameRepository = new Mock<IGameRepository>();
         _service = new GenreService(_genreRepository.Object, _gameRepository.Object, _unitOfWork.Object); // Correct order
     }
-    
-    
 
     [Test]
     public async Task GetAllAsync_ReturnsAllGenres()
@@ -117,6 +115,18 @@ public class GenreServiceTests
     }
     
     [Test]
+    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var dto = new GenreDto(Guid.NewGuid(), "Action");
+        
+        _genreRepository.Setup(g => g.ExistsByNameAsync(dto.Name)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _service.CreateAsync(dto));
+    }
+    
+    [Test]
     public async Task CreateAsync_WhenParentIsInvalid_ReturnsNull()
     {
         // Arrange
@@ -172,6 +182,21 @@ public class GenreServiceTests
         
         // Assert
         Assert.That(result, Is.False);
+    }
+    
+    [Test]
+    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var dto = new GenreDto(id, "FPS");
+        var entity = new DataAccess.Entities.Genre { Id = id, Name = "Action" };
+        
+        _genreRepository.Setup(g => g.GetByIdAsync(id)).ReturnsAsync(entity);
+        _genreRepository.Setup(g => g.ExistsByNameAsync(dto.Name)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _service.CreateAsync(dto));
     }
     
     [Test]

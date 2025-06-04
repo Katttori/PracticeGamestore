@@ -25,6 +25,8 @@ public class BlackList : IEntityTypeConfiguration<Blacklist>
             .HasColumnName("user_email")
             .HasMaxLength(100)
             .IsRequired();
+        
+        builder.HasIndex(b => b.UserEmail).IsUnique();
 
         builder.HasOne(b => b.Country)
             .WithMany(c => c.Blacklists)

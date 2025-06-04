@@ -106,7 +106,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
         _gameRepository.Setup(x => x.GetByIdAsync(game.Id))
             .ReturnsAsync(game);
         var expected = game.MapToGameDto();
@@ -141,7 +141,7 @@ public class GameServiceTests
         var games = TestData.Game.GenerateGameEntities();
         var expected = games.Select(p => p.MapToGameDto()).ToList();
         
-        _platformRepository.Setup(p => p.ExistsAsync(platformId)).ReturnsAsync(true);
+        _platformRepository.Setup(p => p.ExistsByIdAsync(platformId)).ReturnsAsync(true);
         _gameRepository.Setup(g => g.GetByPlatformIdAsync(platformId)).ReturnsAsync(games);
 
         //Act
@@ -161,7 +161,7 @@ public class GameServiceTests
     public async Task GetByPlatformAsync_WhenPlatformDoesNotExist_ReturnsNull()
     {
         //Arrange
-        _platformRepository.Setup(p => p.ExistsAsync(It.IsAny<Guid>())).ReturnsAsync(false);
+        _platformRepository.Setup(p => p.ExistsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(false);
 
         //Act
         var result = await _gameService.GetByPlatformAsync(It.IsAny<Guid>());
@@ -177,7 +177,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);  _gameRepository.Setup(x => x.GetByIdAsync(game.Id))
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);  _gameRepository.Setup(x => x.GetByIdAsync(game.Id))
             .ReturnsAsync(game);
         SetUpDefaultMocks(genres, platforms, game);
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -197,7 +197,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);   
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);   
         _gameRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Game);
 
@@ -209,13 +209,51 @@ public class GameServiceTests
     }
     
     [Test]
+    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var publishers = TestData.Publisher.GeneratePublisherEntities();
+        var platforms = TestData.Platform.GeneratePlatformEntities();
+        var genres = TestData.Genre.GenerateGenreEntities();
+        var oldGame = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var newGame = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        newGame.Name = "New Game";
+        
+        _gameRepository.Setup(g => g.GetByIdAsync(newGame.Id)).ReturnsAsync(oldGame);
+        _gameRepository.Setup(g => g.ExistsByNameAsync(newGame.Name)).ReturnsAsync(true);
+        
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() =>
+            _gameService.UpdateAsync(newGame.Id, TestData.Game.GenerateGameRequestModel(newGame)));
+    }
+    
+    [Test]
+    public void UpdateAsync_WhenKeyAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var publishers = TestData.Publisher.GeneratePublisherEntities();
+        var platforms = TestData.Platform.GeneratePlatformEntities();
+        var genres = TestData.Genre.GenerateGenreEntities();
+        var oldGame = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var newGame = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        newGame.Key = "New Key";
+        
+        _gameRepository.Setup(g => g.GetByIdAsync(newGame.Id)).ReturnsAsync(oldGame);
+        _gameRepository.Setup(g => g.ExistsByKeyAsync(newGame.Key)).ReturnsAsync(true);
+        
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() =>
+            _gameService.UpdateAsync(newGame.Id, TestData.Game.GenerateGameRequestModel(newGame)));
+    }
+    
+    [Test]
     public async Task UpdateAsync_WhenSpecifiedPublisherDoesNotExist_ReturnsFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms); game.PublisherId = Guid.NewGuid();
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms); game.PublisherId = Guid.NewGuid();
         _gameRepository.Setup(x => x.GetByIdAsync(game.Id))
             .ReturnsAsync(game);
         SetUpMocksWhenPublisherDoesNotExist(genres, platforms, game.PublisherId);
@@ -234,7 +272,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
         game.GameGenres[0].GenreId = Guid.NewGuid();
         _gameRepository.Setup(x => x.GetByIdAsync(game.Id))
             .ReturnsAsync(game);
@@ -254,7 +292,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
         _gameRepository.Setup(x => x.GetByIdAsync(game.Id))
             .ReturnsAsync(game);
         SetUpDefaultMocks(genres, platforms, game);
@@ -273,7 +311,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
         _gameRepository.Setup(x => x.GetByIdAsync(game.Id))
             .ReturnsAsync(game);
         SetUpDefaultMocks(genres, platforms, game);
@@ -295,7 +333,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
         _gameRepository.Setup(x => x.CreateAsync(
                 It.IsAny<DataAccess.Entities.Game>(), 
                 It.IsAny<List<Guid>>(), 
@@ -313,6 +351,36 @@ public class GameServiceTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.EqualTo(game.Id));
     }
+    
+    [Test]
+    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var publishers = TestData.Publisher.GeneratePublisherEntities();
+        var platforms = TestData.Platform.GeneratePlatformEntities();
+        var genres = TestData.Genre.GenerateGenreEntities();
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        
+        _gameRepository.Setup(g => g.ExistsByNameAsync(game.Name)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _gameService.CreateAsync(TestData.Game.GenerateGameRequestModel(game)));
+    }
+    
+    [Test]
+    public void CreateAsync_WhenKeyAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var publishers = TestData.Publisher.GeneratePublisherEntities();
+        var platforms = TestData.Platform.GeneratePlatformEntities();
+        var genres = TestData.Genre.GenerateGenreEntities();
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        
+        _gameRepository.Setup(g => g.ExistsByKeyAsync(game.Key)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _gameService.CreateAsync(TestData.Game.GenerateGameRequestModel(game)));
+    }
 
     [Test]
     public async Task CreateAsync_ShouldReturnNull_WhenSpecifiedPublisherDoesNotExist()
@@ -321,7 +389,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
         _gameRepository.Setup(x => x.CreateAsync(
                 It.IsAny<DataAccess.Entities.Game>(), 
                 It.IsAny<List<Guid>>(), 
@@ -346,7 +414,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
         game.GameGenres[0].GenreId = Guid.NewGuid();
         _gameRepository.Setup(x => x.CreateAsync(
                 It.IsAny<DataAccess.Entities.Game>(), 
@@ -372,7 +440,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms); game.GamePlatforms[0].PlatformId = Guid.NewGuid();
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms); game.GamePlatforms[0].PlatformId = Guid.NewGuid();
         _gameRepository.Setup(x => x.CreateAsync(
                 It.IsAny<DataAccess.Entities.Game>(), 
                 It.IsAny<List<Guid>>(), 
@@ -397,7 +465,7 @@ public class GameServiceTests
         var publishers = TestData.Publisher.GeneratePublisherEntities();
         var platforms = TestData.Platform.GeneratePlatformEntities();
         var genres = TestData.Genre.GenerateGenreEntities();
-        var game =  TestData.Game.GenerateGameEntity(publishers, genres, platforms);
+        var game = TestData.Game.GenerateGameEntity(publishers, genres, platforms);
         _gameRepository.Setup(x => x.CreateAsync(
                 It.IsAny<DataAccess.Entities.Game>(), 
                 It.IsAny<List<Guid>>(), 

@@ -38,7 +38,7 @@ public class CountryController(ICountryService countryService) : ControllerBase
         }
         
         countryDto.Id = id.Value;
-        return CreatedAtAction(nameof(GetCountryById), new { id = countryDto.Id }, countryDto.MapToCountryModel());
+        return CreatedAtAction(nameof(GetCountryById), new { id = countryDto.Id }, id);
     }
     
     [HttpPut("{id:guid}")]

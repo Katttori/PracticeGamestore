@@ -20,6 +20,8 @@ public class Platform : IEntityTypeConfiguration<Entities.Platform>
             .HasColumnName("name")
             .HasMaxLength(100)
             .IsRequired();
+        
+        builder.HasIndex(p => p.Name).IsUnique();
 
         builder.Property(p => p.Description)
             .HasColumnName("description")

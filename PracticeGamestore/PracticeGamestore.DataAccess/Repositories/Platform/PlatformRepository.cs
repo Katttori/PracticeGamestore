@@ -35,8 +35,13 @@ public class PlatformRepository(GamestoreDbContext context): IPlatformRepository
         context.Platforms.Remove(platform);
     }
     
-    public Task<bool> ExistsAsync(Guid platformId)
+    public async Task<bool> ExistsByIdAsync(Guid platformId)
     {
-        return _platformsNoTracking.AnyAsync(p => p.Id == platformId);
+        return await _platformsNoTracking.AnyAsync(p => p.Id == platformId);
+    }
+
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await _platformsNoTracking.AnyAsync(p => p.Name == name);
     }
 }

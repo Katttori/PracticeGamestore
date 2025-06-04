@@ -34,4 +34,9 @@ public class BlacklistRepository(GamestoreDbContext context) : IBlacklistReposit
 
         context.Blacklists.Remove(blacklist);
     }
+
+    public async Task<bool> ExistsByUserEmailAsync(string email)
+    {
+        return await _blacklistsNoTracking.AnyAsync(b => b.UserEmail == email);
+    }
 }

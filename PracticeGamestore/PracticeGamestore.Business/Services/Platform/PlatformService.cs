@@ -22,11 +22,16 @@ public class PlatformService(IPlatformRepository repository, IUnitOfWork unitOfW
     
     public async Task<Guid?> CreateAsync(PlatformDto platform)
     {
+        if (await repository.ExistsByNameAsync(platform.Name))
+        {
+            throw new ArgumentException($"Platform with name '{platform.Name}' already exists.");
+        }
+        
         var entity = platform.MapToPlatformEntity();
         var id = await repository.CreateAsync(entity);
         var changes = await unitOfWork.SaveChangesAsync();
         
-        return changes > 0 ? entity.Id : null;
+        return changes > 0 ? id : null;
     }
     
     public async Task<bool> UpdateAsync(PlatformDto platform)
@@ -34,6 +39,11 @@ public class PlatformService(IPlatformRepository repository, IUnitOfWork unitOfW
         var platformEntity = platform.MapToPlatformEntity();
         var updatedPlatform = await repository.GetByIdAsync(platformEntity.Id);
         if (updatedPlatform is null) return false;
+        
+        if (platform.Name != updatedPlatform.Name && await repository.ExistsByNameAsync(platform.Name))
+        {
+            throw new ArgumentException($"Platform with name '{platform.Name}' already exists.");
+        }
         
         updatedPlatform.Name = platform.Name;
         updatedPlatform.Description = platform.Description;

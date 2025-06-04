@@ -8,4 +8,6 @@ public interface IPublisherRepository
     void Update(Entities.Publisher publisher);
     Task DeleteAsync(Guid id);
     Task<bool> ExistsAsync(Guid id);
+    Task<bool> ExistsByNameAsync(string name);
+    Task<bool> ExistsByPageUrlAsync(string pageUrl);
 }
