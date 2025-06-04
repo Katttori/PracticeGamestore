@@ -154,7 +154,7 @@ public class GenreControllerTests
     public async Task GetGamesByGenre_ShouldReturnNotFound_WhenGenreDoesNotExist()
     {
         // Arrange
-        _genreService.Setup(x => x.GetGamesByGenreAsync(It.IsAny<Guid>()))
+        _genreService.Setup(x => x.GetGames(It.IsAny<Guid>()))
             .ReturnsAsync(null as IEnumerable<GameResponseDto>);
         
         // Act
@@ -174,7 +174,7 @@ public class GenreControllerTests
         var games = TestData.Game.GenerateGameResponseDtos()
             .Where(game => game.Genres.Any(genre => children.Contains(genre.Id.Value))).ToList();
 
-        _genreService.Setup(x => x.GetGamesByGenreAsync(actionGenreId))
+        _genreService.Setup(x => x.GetGames(actionGenreId))
             .ReturnsAsync(games);
         
         // Act

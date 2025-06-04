@@ -184,7 +184,7 @@ public class GenreServiceTests
         _gameRepository.Setup(x => x.GetByGenreAndItsChildrenAsync(children)).ReturnsAsync(games);
 
         // Act
-        var result = await _service.GetGamesByGenreAsync(actionGenreId);
+        var result = await _service.GetGames(actionGenreId);
         
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -201,7 +201,7 @@ public class GenreServiceTests
             .ReturnsAsync(false);
 
         // Act
-        var result = await _service.GetGamesByGenreAsync(Guid.NewGuid());
+        var result = await _service.GetGames(Guid.NewGuid());
         
         // Assert
         Assert.That(result, Is.Null);

@@ -52,7 +52,7 @@ public class GenreController(IGenreService genreService) : ControllerBase
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetGamesByGenre([FromRoute] Guid id)
     {
-        var games = await genreService.GetGamesByGenreAsync(id);
+        var games = await genreService.GetGames(id);
         return games is null
             ? NotFound($"Genre with id {id} was not found.")
             : Ok(games.Select(g => g.MapToGameModel()));

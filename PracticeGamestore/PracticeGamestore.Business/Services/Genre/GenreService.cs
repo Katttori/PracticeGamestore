@@ -47,7 +47,7 @@ public class GenreService(IGenreRepository genreRepository, IGameRepository game
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<GameResponseDto>?> GetGamesByGenreAsync(Guid id)
+    public async Task<IEnumerable<GameResponseDto>?> GetGames(Guid id)
     {
         var genreExists = await genreRepository.ExistsAsync(id);
         if (!genreExists) return null;
