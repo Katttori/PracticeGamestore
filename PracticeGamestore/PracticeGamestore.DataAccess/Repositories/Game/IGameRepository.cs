@@ -13,4 +13,5 @@ public interface IGameRepository
     Task<Guid> CreateAsync(Entities.Game game, List<Guid> genreIds, List<Guid> platformIds);
     Task UpdateAsync(Entities.Game game, List<Guid> genreIds, List<Guid> platformIds);
     Task<IEnumerable<Entities.Game>> GetByPublisherIdAsync(Guid id);
+    Task<IEnumerable<Entities.Game>> GetByGenreAndItsChildrenAsync(List<Guid> ids);
 }

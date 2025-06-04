@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -6,21 +7,22 @@ using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Controllers;
+using PracticeGamestore.Models.Game;
 using PracticeGamestore.Models.Genre;
 
 namespace PracticeGamestore.Tests.Unit.Genre;
 
 public class GenreControllerTests
 {
-    private Mock<IGenreService> _genreServiceMock;
+    private Mock<IGenreService> _genreService;
     private Mock<ILogger<GenreController>> _loggerMock;
     private GenreController _genreController;
 
     [SetUp]
     public void Setup()
     {
-        _genreServiceMock = new Mock<IGenreService>();
         _loggerMock = new Mock<ILogger<GenreController>>();
+        _genreService = new Mock<IGenreService>();
         _genreController = new GenreController(_genreServiceMock.Object, _loggerMock.Object);
     }
 
@@ -34,7 +36,7 @@ public class GenreControllerTests
             new(Guid.NewGuid(), "Action"),
         };
         
-        _genreServiceMock.Setup(x => x.GetAllAsync()).ReturnsAsync(genreDtos);
+        _genreService.Setup(x => x.GetAllAsync()).ReturnsAsync(genreDtos);
         
         // Act
         var result = await _genreController.GetAll();
@@ -53,7 +55,7 @@ public class GenreControllerTests
     public async Task GetById_WhenGenreIsNull_ReturnsNotFound()
     {
         // Arrange
-        _genreServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as GenreDto);
+        _genreService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as GenreDto);
         
         // Act
         var result = await _genreController.GetById(Guid.NewGuid());
@@ -68,7 +70,7 @@ public class GenreControllerTests
         // Arrange
         var genreDto = new GenreDto(Guid.NewGuid(), "FPS");
         
-        _genreServiceMock.Setup(x => x.GetByIdAsync(genreDto.Id!.Value)).ReturnsAsync(genreDto);
+        _genreService.Setup(x => x.GetByIdAsync(genreDto.Id!.Value)).ReturnsAsync(genreDto);
         
         // Act
         var result = await _genreController.GetById(genreDto.Id!.Value);
@@ -87,7 +89,7 @@ public class GenreControllerTests
         // Arrange
         var model = new GenreRequestModel { Name = "FPS" };
         
-        _genreServiceMock.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(null as Guid?);
+        _genreService.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(null as Guid?);
         
         // Act
         var result = await _genreController.Create(model);
@@ -102,7 +104,7 @@ public class GenreControllerTests
         // Arrange
         var newId = Guid.NewGuid();
         
-        _genreServiceMock.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(newId);
+        _genreService.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(newId);
         
         // Act
         var result = await _genreController.Create(new GenreRequestModel { Name = "FPS" });
@@ -117,7 +119,7 @@ public class GenreControllerTests
     public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
     {
         // Arrange
-        _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(true);
+        _genreService.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(true);
         
         // Act
         var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
@@ -130,7 +132,7 @@ public class GenreControllerTests
     public async Task Update_WhenOperationFailed_ReturnsBadRequest()
     {
         // Arrange
-        _genreServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(false);
+        _genreService.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(false);
         
         // Act
         var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
@@ -143,7 +145,7 @@ public class GenreControllerTests
     public async Task Delete_ReturnsNoContent()
     {
         // Arrange
-        _genreServiceMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
+        _genreService.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
         
         // Act
         var result = await _genreController.Delete(Guid.NewGuid());
@@ -151,4 +153,44 @@ public class GenreControllerTests
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
+
+    [Test]
+    public async Task GetGamesByGenre_ShouldReturnNotFound_WhenGenreDoesNotExist()
+    {
+        // Arrange
+        _genreService.Setup(x => x.GetGames(It.IsAny<Guid>()))
+            .ReturnsAsync(null as IEnumerable<GameResponseDto>);
+        
+        // Act
+        var result = await _genreController.GetGamesByGenre(Guid.NewGuid());
+        
+        // Assert
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+    }
+    
+    [Test]
+    public async Task GetGamesByGenre_ShouldReturnGamesWithThisGenreOrItsChildren_WhenGenreExist()
+    {
+        // Arrange
+        var actionGenreId = TestData.Genre.GenerateActionGenre().Id;
+        var children = TestData.Genre.GenerateGenreChildren(actionGenreId);
+        
+        var games = TestData.Game.GenerateGameResponseDtos()
+            .Where(game => game.Genres.Any(genre => children.Contains(genre.Id.Value))).ToList();
+
+        _genreService.Setup(x => x.GetGames(actionGenreId))
+            .ReturnsAsync(games);
+        
+        // Act
+        var result = await _genreController.GetGamesByGenre(actionGenreId);
+        
+        // Assert
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        var response = okResult.Value as IEnumerable<GameResponseModel>;
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response.All(g => g.Genres.Any(genre => children.Contains(genre.Id))), Is.True);
+    }
+    
 }

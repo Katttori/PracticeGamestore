@@ -16,7 +16,7 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
         var genre = await genreService.GetByIdAsync(id);
         
@@ -46,7 +46,7 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] GenreRequestModel model)
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GenreRequestModel model)
     {
         var isUpdated = await genreService.UpdateAsync(id, model.MapToGenreDto());
         
@@ -64,5 +64,14 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
     {
         await genreService.DeleteAsync(id);
         return NoContent();
+    }
+
+    [HttpGet("{id:guid}/games")]
+    public async Task<IActionResult> GetGamesByGenre([FromRoute] Guid id)
+    {
+        var games = await genreService.GetGames(id);
+        return games is null
+            ? NotFound($"Genre with id {id} was not found.")
+            : Ok(games.Select(g => g.MapToGameModel()));
     }
 }

@@ -193,8 +193,7 @@ public class PublisherControllerTests
     {
         //Arrange
         var publisherId = Guid.NewGuid();
-        var publisher = TestData.Publisher.GeneratePublisherDto();
-        var games = TestData.Game.GenerateGameResponseDtos().Where(g => g.Publisher.Id == publisher.Id).ToList();
+        var games = TestData.Game.GenerateGameResponseDtos().Where(g => g.Publisher.Id == publisherId).ToList();
         _publisherService.Setup(x => x.GetGamesAsync(publisherId))
             .ReturnsAsync(games);
 
