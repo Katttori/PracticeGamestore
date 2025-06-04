@@ -33,6 +33,7 @@ public class PublisherService(IPublisherRepository publisherRepository, IGameRep
         if (existingPublisher is null) return false;
         var updatedPublisher = dto.MapToPublisherEntity();
         updatedPublisher.Id = id;
+        publisherRepository.Update(updatedPublisher);
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0;
     }
@@ -45,8 +46,8 @@ public class PublisherService(IPublisherRepository publisherRepository, IGameRep
 
     public async Task<IEnumerable<GameResponseDto>?> GetGamesAsync(Guid id)
     {
-        var publisher = await publisherRepository.GetByIdAsync(id);
-        if (publisher is null) return null;
+        var publisherExists = await publisherRepository.ExistsAsync(id);
+        if (!publisherExists) return null;
         var games = await gameRepository.GetByPublisherIdAsync(id);
         return games.Select(g => g.MapToGameDto());
     }

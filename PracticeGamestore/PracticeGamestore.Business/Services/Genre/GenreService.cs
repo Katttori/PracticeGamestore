@@ -1,11 +1,12 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Genre;
 
-public class GenreService(IGenreRepository genreRepository, IUnitOfWork unitOfWork) : IGenreService
+public class GenreService(IGenreRepository genreRepository, IGameRepository gameRepository, IUnitOfWork unitOfWork) : IGenreService
 {
     public async Task<IEnumerable<GenreDto>> GetAllAsync()
     {
@@ -44,5 +45,14 @@ public class GenreService(IGenreRepository genreRepository, IUnitOfWork unitOfWo
     {
         await genreRepository.DeleteAsync(id);
         await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<GameResponseDto>?> GetGamesByGenreAsync(Guid id)
+    {
+        var genreExists = await genreRepository.ExistsAsync(id);
+        if (!genreExists) return null;
+        var genreChildrenIds = await genreRepository.GetGenreChildrenIdsAsync(id);
+        var games = await gameRepository.GetByGenreAndItsChildrenAsync(genreChildrenIds);
+        return games.Select(g => g.MapToGameDto());
     }
 }

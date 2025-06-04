@@ -7,4 +7,5 @@ public interface IPublisherRepository
     Task<Guid> CreateAsync(Entities.Publisher publisher);
     void Update(Entities.Publisher publisher);
     Task DeleteAsync(Guid id);
+    Task<bool> ExistsAsync(Guid id);
 }

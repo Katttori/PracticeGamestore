@@ -9,4 +9,5 @@ public interface IGenreService
     Task<Guid?> CreateAsync(GenreDto dto);
     Task<bool> UpdateAsync(Guid id, GenreDto dto);
     Task DeleteAsync(Guid id);
+    Task<IEnumerable<GameResponseDto>?> GetGamesByGenreAsync(Guid id);
 }

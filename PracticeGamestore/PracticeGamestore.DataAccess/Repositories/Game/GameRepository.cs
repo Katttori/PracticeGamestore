@@ -117,6 +117,16 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         return await _gamesNoTracking.Where(g => g.PublisherId == id).ToListAsync();
     }
 
+    public async Task<IEnumerable<Entities.Game>> GetByGenreAndItsChildrenAsync(List<Guid> ids)
+    {
+        return await _gamesNoTracking.Where(g => g.GameGenres.Any(gg => ids.Contains(gg.GameId))).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Entities.Game>> GetByGenreAsync(Guid id)
+    {
+        return await _gamesNoTracking.Where(g => g.GameGenres.Any(gg => gg.GenreId == id || gg.Genre.ParentId == id)).ToListAsync();
+    }
+
     private async Task AddPlatformsAsync(Guid gameId, IEnumerable<Guid> platformIds)
     {
         var gamePlatforms = platformIds.Select(id => new GamePlatform
