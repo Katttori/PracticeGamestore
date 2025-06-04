@@ -65,7 +65,7 @@ public class PublisherController(IPublisherService publisherService, ILogger<Pub
 
         if (updated) return NoContent();
         logger.LogWarning("Publisher with id: {Id} was not found for update.", id);
-        return NotFound($"Publisher with id {id} was not found.");
+        return BadRequest($"Publisher with id {id} was not found.");
 
     }
 

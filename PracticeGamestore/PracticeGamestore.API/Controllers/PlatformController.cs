@@ -27,7 +27,7 @@ public class PlatformController(
         if (platform is null)
         {
             logger.LogError("Platform with id: {Id} was not found.", id);
-            NotFound($"Platform with id: {id} was not found.");
+            return NotFound($"Platform with id: {id} was not found.");
         }
         
         return Ok(platform.MapToPlatformModel());
