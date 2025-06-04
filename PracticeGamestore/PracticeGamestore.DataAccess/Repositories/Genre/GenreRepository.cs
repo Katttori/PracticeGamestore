@@ -33,6 +33,13 @@ public class GenreRepository(GamestoreDbContext context) : IGenreRepository
 
         if (genre is not null)
         {
+            var children = await context.Genres.Where(g => g.ParentId == id).ToListAsync();
+
+            foreach (var child in children)
+            {
+                child.ParentId = null;
+            }
+            
             context.Genres.Remove(genre);
         }
     }

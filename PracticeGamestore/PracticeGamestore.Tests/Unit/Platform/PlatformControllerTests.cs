@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Game;
+using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Game;
@@ -58,10 +59,10 @@ public class PlatformControllerTests
         // Arrange
         var platform = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
         
-        _platformService.Setup(service => service.GetByIdAsync(platform.Id)).ReturnsAsync(platform);
+        _platformService.Setup(service => service.GetByIdAsync(platform.MapToPlatformEntity().Id)).ReturnsAsync(platform);
         
         // Act
-        var result = await _platformController.GetPlatformById(platform.Id);
+        var result = await _platformController.GetPlatformById(platform.MapToPlatformEntity().Id);
         
         // Assert
         var okResult = result as OkObjectResult;

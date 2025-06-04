@@ -24,7 +24,7 @@ public class GenreServiceTests
     [Test]
     public async Task GetAllAsync_ReturnsAllGenres()
     {
-        //Arrange
+        // Arrange
         var entities = new List<DataAccess.Entities.Genre>
         {
             new() { Id = Guid.NewGuid(), Name = "Action" },
@@ -45,7 +45,7 @@ public class GenreServiceTests
     [Test]
     public async Task GetByIdAsync_WhenGenreExists_ReturnsGenreDto()
     {
-        //Arrange
+        // Arrange
         var entity = new DataAccess.Entities.Genre { Id = Guid.NewGuid(), Name = "Strategy" };
         
         _genreRepositoryMock.Setup(x => x.GetByIdAsync(entity.Id)).ReturnsAsync(entity);
@@ -62,7 +62,7 @@ public class GenreServiceTests
     [Test]
     public async Task GetByIdAsync_WhenGenreDoesNotExist_ReturnsNull()
     {
-        //Arrange
+        // Arrange
         _genreRepositoryMock
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Genre);
@@ -77,7 +77,7 @@ public class GenreServiceTests
     [Test]
     public async Task CreateAsync_WhenChangesSavedSuccessfully_ReturnsCreatedId()
     {
-        //Arrange
+        // Arrange
         var dto = new GenreDto(Guid.NewGuid(), "Action");
         
         _genreRepositoryMock
@@ -97,7 +97,7 @@ public class GenreServiceTests
     [Test]
     public async Task CreateAsync_WhenSaveChangesFailed_ReturnsNull()
     {
-        //Arrange
+        // Arrange
         var dto = new GenreDto(Guid.NewGuid(), "Action");
         
         _genreRepositoryMock
@@ -113,11 +113,29 @@ public class GenreServiceTests
         // Assert
         Assert.That(result, Is.Null);
     }
+    
+    [Test]
+    public async Task CreateAsync_WhenParentIsInvalid_ReturnsNull()
+    {
+        // Arrange
+        var invalidParentId = Guid.NewGuid();
+        var dto = new GenreDto(Guid.NewGuid(), "Action", invalidParentId);
+    
+        _genreRepositoryMock
+            .Setup(x => x.GetByIdAsync(invalidParentId))
+            .ReturnsAsync(null as DataAccess.Entities.Genre);
+    
+        // Act
+        var result = await _service.CreateAsync(dto);
+    
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 
     [Test]
     public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var dto = new GenreDto(id, "Action");
         var entity = new DataAccess.Entities.Genre { Id = id, Name = "Action" };
@@ -139,7 +157,7 @@ public class GenreServiceTests
     [Test]
     public async Task UpdateAsync_WhenEntityDoesNotExist_ReturnsFalse()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var dto = new GenreDto(id, "Action");
         
@@ -153,11 +171,30 @@ public class GenreServiceTests
         // Assert
         Assert.That(result, Is.False);
     }
+    
+    [Test]
+    public async Task UpdateAsync_WhenParentIsSelf_ReturnsFalse()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var dto = new GenreDto(id, "Adventure", id);
+        var entity = new DataAccess.Entities.Genre { Id = id, Name = "Adventure" };
+    
+        _genreRepositoryMock
+            .Setup(x => x.GetByIdAsync(id))
+            .ReturnsAsync(entity);
+    
+        // Act
+        var result = await _service.UpdateAsync(id, dto);
+    
+        // Assert
+        Assert.That(result, Is.False);
+    }
 
     [Test]
     public async Task DeleteAsync_CallsDeleteAndSaveChanges()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         
         // Act
