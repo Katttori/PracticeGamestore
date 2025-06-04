@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
@@ -16,13 +17,14 @@ namespace PracticeGamestore.Tests.Unit.Game;
 public class GameControllerTests
 {
     private Mock<IGameService> _gameService;
+    private Mock<ILogger<GameController>> _loggerMock;
     private GameController _gameController;
 
     [SetUp]
     public void SetUp()
     {
         _gameService = new Mock<IGameService>();
-        _gameController = new GameController(_gameService.Object);
+        _gameController = new GameController(_gameService.Object, _loggerMock.Object);
     }
 
     private static bool GameResponseModelsAreTheSame(GameResponseModel dto1, GameResponseModel dto2)

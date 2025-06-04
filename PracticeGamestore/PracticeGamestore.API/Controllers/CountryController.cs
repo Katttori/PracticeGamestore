@@ -8,7 +8,7 @@ using PracticeGamestore.DataAccess.Enums;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("countries")]
-public class CountryController(ICountryService countryService) : ControllerBase
+public class CountryController(ICountryService countryService, ILogger<CountryController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllCountries()
@@ -21,9 +21,14 @@ public class CountryController(ICountryService countryService) : ControllerBase
     public async Task<IActionResult> GetCountryById(Guid id)
     {
         var country = await countryService.GetByIdAsync(id);
-        return (country is null)
-            ? NotFound($"Country with id {id} not found") 
-            : Ok(country.MapToCountryModel());
+        
+        if (country is null)
+        {
+            logger.LogError("Country with id: {Id} not found.", id);
+            return NotFound($"Country with id {id} not found");
+        }
+        
+        return Ok(country.MapToCountryModel());
     }
     
     [HttpPost]
@@ -34,10 +39,12 @@ public class CountryController(ICountryService countryService) : ControllerBase
         
         if (id is null)
         {
+            logger.LogError("Failed to create country with model: {Model}", countryCreateRequestModel);
             return BadRequest("Failed to create country.");
         }
         
         countryDto.Id = id.Value;
+        logger.LogInformation("Created country with id: {Id}", countryDto.Id);
         return CreatedAtAction(nameof(GetCountryById), new { id = countryDto.Id }, countryDto.MapToCountryModel());
     }
     
@@ -48,9 +55,14 @@ public class CountryController(ICountryService countryService) : ControllerBase
         countryDto.Id = id;
         
         var updated = await countryService.UpdateAsync(countryDto);
-        return !updated 
-            ? BadRequest($"Country with id {id} not found")
-            : NoContent();
+        
+        if (!updated)
+        {
+            logger.LogError("Country with id: {Id} not found for update.", id);
+            return BadRequest($"Country with id {id} not found");
+        }
+        
+        return NoContent();
     }
     
     [HttpDelete("{id:guid}")]

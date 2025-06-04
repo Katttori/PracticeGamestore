@@ -7,7 +7,10 @@ using PracticeGamestore.Models.Platform;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("platforms")]
-public class PlatformController(IPlatformService platformService, IGameService gameService) : ControllerBase
+public class PlatformController(
+    IPlatformService platformService,
+    IGameService gameService,
+    ILogger<PlatformController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllPlatforms()
@@ -20,18 +23,28 @@ public class PlatformController(IPlatformService platformService, IGameService g
     public async Task<IActionResult> GetPlatformById(Guid id)
     {
         var platform = await platformService.GetByIdAsync(id);
-        return platform is null
-            ? NotFound($"Platform with id: {id} was not found.")
-            : Ok(platform.MapToPlatformModel());
+        
+        if (platform is null)
+        {
+            logger.LogError("Platform with id: {Id} was not found.", id);
+            NotFound($"Platform with id: {id} was not found.");
+        }
+        
+        return Ok(platform.MapToPlatformModel());
     }
     
     [HttpGet("{platformId:guid}/games")]
     public async Task<IActionResult> GetGamesByPlatform(Guid platformId)
     {
         var games = await gameService.GetByPlatformAsync(platformId);
-        return games is null
-            ? NotFound($"Platform with id: {platformId} was not found.")
-            : Ok(games.Select(g => g.MapToGameModel()));
+        
+        if (games is null)
+        {
+            logger.LogError("No games found for platform with id: {PlatformId}", platformId);
+            return NotFound($"Platform with id: {platformId} was not found.");
+        }
+        
+        return Ok(games.Select(g => g.MapToGameModel()));
     }
     
     [HttpPost]
@@ -39,23 +52,38 @@ public class PlatformController(IPlatformService platformService, IGameService g
     {
         if (string.IsNullOrWhiteSpace(platform.Name))
         {
+            logger.LogError("Platform name cannot be empty or whitespace.");
             return BadRequest("Platform name cannot be empty or whitespace.");
         }
         
         if (string.IsNullOrWhiteSpace(platform.Description))
         {
+            logger.LogError("Platform description cannot be empty or whitespace.");
             return BadRequest("Platform description cannot be empty or whitespace.");
         }
 
         if (platform.Name.Length > 100)
+        {
+            logger.LogError("Platform name must be between 1 and 100 characters long.");
             return BadRequest("Platform name must be between 1 and 100 characters long.");
+        }
         if (platform.Description.Length > 255)
+        {
+            logger.LogError("Platform description must be up to 255 characters long.");
             return BadRequest("Platform description must be up to 255 characters long.");
+        }
         
         var platformDto = platform.MapToPlatformDto();
         var id = await platformService.CreateAsync(platformDto);
-        if (id is null) return BadRequest("Failed to create platform");
+        
+        if (id is null)
+        {
+            logger.LogError("Failed to create platform with model: {Model}", platform);
+            return BadRequest("Failed to create platform");
+        }
+        
         platformDto.Id = id.Value;
+        logger.LogInformation("Created platform with id: {Id}", platformDto.Id);
         return CreatedAtAction(nameof(GetPlatformById), new { id }, id);
     }
 
@@ -64,26 +92,39 @@ public class PlatformController(IPlatformService platformService, IGameService g
     {
         if (string.IsNullOrWhiteSpace(platform.Name))
         {
+            logger.LogError("Platform name cannot be empty or whitespace.");
             return BadRequest("Platform name cannot be empty or whitespace.");
         }
         
         if (string.IsNullOrWhiteSpace(platform.Description))
         {
+            logger.LogError("Platform description cannot be empty or whitespace.");
             return BadRequest("Platform description cannot be empty or whitespace.");
         }
         
         if (platform.Name.Length > 100)
+        {
+            logger.LogError("Platform name must be between 1 and 100 characters long.");
             return BadRequest("Platform name must be between 1 and 100 characters long.");
+        }
         if (platform.Description.Length > 255)
+        {
+            logger.LogError("Platform description must be up to 255 characters long.");
             return BadRequest("Platform description must be up to 255 characters long.");
+        }
         
         var dto = platform.MapToPlatformDto();
         dto.Id = id;
 
         var isUpdated = await platformService.UpdateAsync(dto);
-        return isUpdated
-            ? NoContent()
-            : BadRequest($"Error while trying to update the platform");
+        
+        if (!isUpdated)
+        {
+            logger.LogError("Platform with id: {Id} was not found for update.", id);
+            return BadRequest($"Error while trying to update the platform");
+        }
+
+        return NoContent();
     }
     
     [HttpDelete("{id:guid}")]

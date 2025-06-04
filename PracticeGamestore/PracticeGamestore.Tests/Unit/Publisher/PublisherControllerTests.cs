@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
@@ -14,13 +15,14 @@ namespace PracticeGamestore.Tests.Unit.Publisher;
 public class PublisherControllerTests
 {
     private Mock<IPublisherService> _publisherService;
+    private Mock<ILogger<PublisherController>> _loggerMock;
     private PublisherController _publisherController;
     
     [SetUp]
     public void SetUp()
     {
         _publisherService = new Mock<IPublisherService>();
-        _publisherController = new PublisherController(_publisherService.Object);
+        _publisherController = new PublisherController(_publisherService.Object, _loggerMock.Object);
     }
 
     [Test]

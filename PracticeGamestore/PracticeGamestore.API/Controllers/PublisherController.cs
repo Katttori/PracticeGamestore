@@ -6,7 +6,7 @@ using PracticeGamestore.Models.Publisher;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("publishers")]
-public class PublisherController(IPublisherService publisherService) : ControllerBase
+public class PublisherController(IPublisherService publisherService, ILogger<PublisherController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -19,34 +19,54 @@ public class PublisherController(IPublisherService publisherService) : Controlle
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
         var publisher = await publisherService.GetByIdAsync(id);
-        return publisher is null
-            ? NotFound($"Publisher with id {id} was not found.")
-            : Ok(publisher.MapToPublisherModel());
+        
+        if (publisher is null)
+        {
+            logger.LogError("Publisher with id: {Id} was not found.", id);
+            return NotFound($"Publisher with id {id} was not found.");
+        }
+        
+        return Ok(publisher.MapToPublisherModel());
     }
 
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetPublisherGames([FromRoute] Guid id)
     {
          var games = await publisherService.GetGamesAsync(id);
-         return games is null
-             ? NotFound($"Publisher with id {id} was not found.")
-             : Ok(games);
+
+         if (games is null)
+         {
+             logger.LogError("No games found for publisher with id: {Id}", id);
+             return NotFound($"Publisher with id {id} was not found.");
+         }
+         
+         return Ok(games);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] PublisherRequestModel model)
     {
         var id = await publisherService.CreateAsync(model.MapToPublisherDto());
-        return id is null
-            ? BadRequest($"Failed to create publisher.")
-            : CreatedAtAction(nameof(GetById), new { id }, id);
+        
+        if (id is null)
+        {
+            logger.LogError("Failed to create publisher with model: {Model}", model);
+            return BadRequest("Failed to create publisher.");
+        }
+        
+        logger.LogInformation("Created publisher with id: {Id}", id);
+        return CreatedAtAction(nameof(GetById), new { id }, id);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] PublisherRequestModel model)
     {
         var updated = await publisherService.UpdateAsync(id, model.MapToPublisherDto());
-        return updated ? NoContent() : BadRequest("Failed to update.");
+
+        if (updated) return NoContent();
+        logger.LogWarning("Publisher with id: {Id} was not found for update.", id);
+        return NotFound($"Publisher with id {id} was not found.");
+
     }
 
     [HttpDelete("{id:guid}")]

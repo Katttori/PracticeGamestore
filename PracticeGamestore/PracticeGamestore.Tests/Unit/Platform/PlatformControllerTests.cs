@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
@@ -15,6 +16,7 @@ public class PlatformControllerTests
 {
     private Mock<IPlatformService> _platformService;
     private Mock<IGameService> _gameService;
+    private Mock<ILogger<PlatformController>> _loggerMock;
     private PlatformController _platformController;
     
     [SetUp]
@@ -22,7 +24,7 @@ public class PlatformControllerTests
     {
         _platformService = new Mock<IPlatformService>();
         _gameService = new Mock<IGameService>();
-        _platformController = new PlatformController(_platformService.Object, _gameService.Object);
+        _platformController = new PlatformController(_platformService.Object, _gameService.Object, _loggerMock.Object);
     }
     
     [Test]

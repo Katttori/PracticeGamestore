@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects.Order;
@@ -11,6 +12,7 @@ namespace PracticeGamestore.Tests.Unit.Order;
 public class OrderControllerTests
 {
     private Mock<IOrderService> _orderServiceMock;
+    private Mock<ILogger<OrderController>> _loggerMock;
     private OrderController _orderController;
     
     private readonly List<OrderResponseDto> _orderDtos = TestData.Order.GenerateOrderResponseDtos();
@@ -20,7 +22,7 @@ public class OrderControllerTests
     public void Setup()
     {
         _orderServiceMock = new Mock<IOrderService>();
-        _orderController = new OrderController(_orderServiceMock.Object);
+        _orderController = new OrderController(_orderServiceMock.Object, _loggerMock.Object);
     }
 
     [Test]
