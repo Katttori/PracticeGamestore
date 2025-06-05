@@ -7,7 +7,10 @@ using PracticeGamestore.Models.Blacklist;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("blacklists")]
-public class BlacklistController(IBlacklistService blacklistService, ICountryService countryService) : ControllerBase
+public class BlacklistController(
+    IBlacklistService blacklistService,
+    ICountryService countryService,
+    ILogger<BlacklistController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -20,9 +23,14 @@ public class BlacklistController(IBlacklistService blacklistService, ICountrySer
     public async Task<IActionResult> GetById(Guid id)
     {
         var blacklist = await blacklistService.GetByIdAsync(id);
-        return blacklist is null
-            ? NotFound($"Blacklist with id: {id} was not found.") 
-            : Ok(blacklist.MapToBlacklistModel());
+        
+        if (blacklist is null)
+        {
+            logger.LogError("Blacklist with id: {Id} was not found.", id);
+            return NotFound($"Blacklist with id: {id} was not found.");
+        }
+        
+        return Ok(blacklist.MapToBlacklistModel());
     }
 
     [HttpPost]
@@ -30,13 +38,20 @@ public class BlacklistController(IBlacklistService blacklistService, ICountrySer
     {
         if (await countryService.GetByIdAsync(model.CountryId) is null)
         {
+            logger.LogError("Country with id: {CountryId} does not exist.", model.CountryId);
             return BadRequest($"Country with id: {model.CountryId} does not exist.");
         }
         
         var createdId = await blacklistService.CreateAsync(model.MapToBlacklistDto());
-        return createdId is null 
-            ? BadRequest("Failed to create blacklist.") 
-            : CreatedAtAction(nameof(GetById), new { id = createdId }, createdId);
+        
+        if (createdId is null)
+        {
+            logger.LogError("Failed to create blacklist for model: {Model}", model);
+            return BadRequest("Failed to create blacklist.");
+        }
+        
+        logger.LogInformation("Created blacklist with id: {Id}", createdId);
+        return CreatedAtAction(nameof(GetById), new { id = createdId }, createdId);
     }
 
     [HttpPut("{id:guid}")]
@@ -44,13 +59,19 @@ public class BlacklistController(IBlacklistService blacklistService, ICountrySer
     {
         if (await countryService.GetByIdAsync(model.CountryId) is null)
         {
+            logger.LogError("Country with id: {CountryId} does not exist.", model.CountryId);
             return BadRequest($"Country with id: {model.CountryId} does not exist.");
         }
         
         var isUpdated = await blacklistService.UpdateAsync(id, model.MapToBlacklistDto());
-        return isUpdated 
-            ? NoContent() 
-            : BadRequest($"Update failed. Blacklist with id: {id} might not exist.");
+        
+        if (!isUpdated)
+        {
+            logger.LogError("Failed to update blacklist with id: {Id}", id);
+            return  BadRequest($"Update failed. Blacklist with id: {id} might not exist.");
+        }
+
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]

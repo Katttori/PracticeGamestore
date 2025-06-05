@@ -37,5 +37,14 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning"
+    },
+    "File": {
+      "LogFilePath": "logs/log.txt"
+    }
   }
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
@@ -14,6 +15,7 @@ public class BlacklistControllerTests
 {
     private Mock<IBlacklistService> _blacklistServiceMock;
     private Mock<ICountryService> _countryServiceMock;
+    private Mock<ILogger<BlacklistController>> _loggerMock;
     private BlacklistController _blacklistController;
 
     [SetUp]
@@ -21,7 +23,11 @@ public class BlacklistControllerTests
     {
         _blacklistServiceMock = new Mock<IBlacklistService>();
         _countryServiceMock = new Mock<ICountryService>();
-        _blacklistController = new BlacklistController(_blacklistServiceMock.Object, _countryServiceMock.Object);
+        _loggerMock = new Mock<ILogger<BlacklistController>>();
+        _blacklistController = new BlacklistController(
+            _blacklistServiceMock.Object,
+            _countryServiceMock.Object,
+            _loggerMock.Object);
     }
 
     [Test]

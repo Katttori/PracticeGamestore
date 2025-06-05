@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Game;
@@ -13,13 +15,15 @@ namespace PracticeGamestore.Tests.Unit.Genre;
 public class GenreControllerTests
 {
     private Mock<IGenreService> _genreService;
+    private Mock<ILogger<GenreController>> _loggerMock;
     private GenreController _genreController;
 
     [SetUp]
     public void Setup()
     {
+        _loggerMock = new Mock<ILogger<GenreController>>();
         _genreService = new Mock<IGenreService>();
-        _genreController = new GenreController(_genreService.Object);
+        _genreController = new GenreController(_genreService.Object, _loggerMock.Object);
     }
 
     [Test]

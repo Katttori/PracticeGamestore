@@ -6,7 +6,7 @@ using PracticeGamestore.Models.Genre;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("genres")]
-public class GenreController(IGenreService genreService) : ControllerBase
+public class GenreController(IGenreService genreService, ILogger<GenreController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -19,27 +19,44 @@ public class GenreController(IGenreService genreService) : ControllerBase
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
         var genre = await genreService.GetByIdAsync(id);
-        return genre is null
-            ? NotFound($"Genre with id: {id} was not found.") 
-            : Ok(genre.MapToGenreModel());
+        
+        if (genre is null)
+        {
+            logger.LogError("Genre with id: {Id} was not found.", id);
+            return NotFound($"Genre with id: {id} was not found.");
+        }
+        
+        return Ok(genre.MapToGenreModel());
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GenreRequestModel model)
     {
         var createdId = await genreService.CreateAsync(model.MapToGenreDto());
-        return createdId is null 
-            ? BadRequest("Failed to create genre.") 
-            : CreatedAtAction(nameof(GetById), new { id = createdId }, createdId);
+        
+        if (createdId is null)
+        {
+            logger.LogError("Failed to create genre with model: {Model}", model);
+            return BadRequest("Failed to create genre.");
+        }
+        
+        logger.LogInformation("Created genre with id: {Id}", createdId);
+        
+        return CreatedAtAction(nameof(GetById), new { id = createdId }, createdId);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GenreRequestModel model)
     {
         var isUpdated = await genreService.UpdateAsync(id, model.MapToGenreDto());
-        return isUpdated 
-            ? NoContent() 
-            : BadRequest($"Failed to update genre with id: {id}.");
+        
+        if (!isUpdated)
+        {
+            logger.LogError("Genre with id: {Id} was not found for update.", id);
+            return BadRequest($"Update failed. Genre with id: {id} might not exist.");
+        }
+
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]

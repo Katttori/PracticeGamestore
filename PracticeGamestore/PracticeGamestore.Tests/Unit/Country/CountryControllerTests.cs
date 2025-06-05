@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.API.Models;
@@ -14,13 +15,15 @@ namespace PracticeGamestore.API.Tests.Unit.Country;
 public class CountryControllerTests
 {
     private Mock<ICountryService> _countryService;
+    private Mock<ILogger<CountryController>> _loggerMock;
     private CountryController _countryController;
     
     [SetUp]
     public void Setup()
     {
         _countryService = new Mock<ICountryService>();
-        _countryController = new CountryController(_countryService.Object);
+        _loggerMock = new Mock<ILogger<CountryController>>();
+        _countryController = new CountryController(_countryService.Object, _loggerMock.Object);
     }
     
     [Test]
