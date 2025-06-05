@@ -11,6 +11,7 @@ using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Country;
+using PracticeGamestore.DataAccess.Repositories.File;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.Repositories.Platform;
@@ -32,6 +33,7 @@ public static class Dependencies
         services.AddScoped<ICountryRepository, CountryRepository>();
         services.AddScoped<IBlacklistRepository, BlacklistRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IFileRepository, FileRepository>();
     }
 
     private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
