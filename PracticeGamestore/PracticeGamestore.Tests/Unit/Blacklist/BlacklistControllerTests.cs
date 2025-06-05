@@ -6,7 +6,6 @@ using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Controllers;
-using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Models.Blacklist;
 
 namespace PracticeGamestore.Tests.Unit.Blacklist;
@@ -33,12 +32,8 @@ public class BlacklistControllerTests
     [Test]
     public async Task GetAll_ReturnsOkWithBlacklists()
     {
-        //Arrange
-        var blacklistDtos = new List<BlacklistDto>
-        {
-            new(Guid.NewGuid(), "example@gmail.com", Guid.NewGuid()),
-            new(Guid.NewGuid(), "example@gmail.com", Guid.NewGuid()),
-        };
+        // Arrange
+        var blacklistDtos = TestData.Blacklist.GenerateBlacklistDtos();
         
         _blacklistServiceMock.Setup(x => x.GetAllAsync()).ReturnsAsync(blacklistDtos);
         
@@ -58,7 +53,7 @@ public class BlacklistControllerTests
     [Test]
     public async Task GetById_WhenBlacklistIsNull_ReturnsNotFound()
     {
-        //Arrange
+        // Arrange
         _blacklistServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as BlacklistDto);
         
         // Act
@@ -71,8 +66,8 @@ public class BlacklistControllerTests
     [Test]
     public async Task GetById_WhenBlacklistFound_ReturnsOkWithBlacklist()
     {
-        //Arrange
-        var blacklistDto = new BlacklistDto(Guid.NewGuid(), "example@gmail.com", Guid.NewGuid());
+        // Arrange
+        var blacklistDto = TestData.Blacklist.GenerateBlacklistDto();
         
         _blacklistServiceMock.Setup(x => x.GetByIdAsync(blacklistDto.Id!.Value)).ReturnsAsync(blacklistDto);
         
@@ -90,10 +85,12 @@ public class BlacklistControllerTests
     [Test]
     public async Task Create_WhenOperationFailed_ReturnsBadRequest()
     {
-        //Arrange
-        var model = new BlacklistRequestModel { UserEmail = "example@gmail.com" };
-        
-        _blacklistServiceMock.Setup(x => x.CreateAsync(It.IsAny<BlacklistDto>())).ReturnsAsync(null as Guid?);
+        // Arrange
+        var model = TestData.Blacklist.GenerateBlacklistRequestModel();
+
+        _blacklistServiceMock
+            .Setup(x => x.CreateAsync(It.IsAny<BlacklistDto>()))
+            .ReturnsAsync(null as Guid?);
         
         // Act
         var result = await _blacklistController.Create(model);
@@ -105,15 +102,15 @@ public class BlacklistControllerTests
     [Test]
     public async Task Create_WhenOperationSuccessful_ReturnsCreatedWithId()
     {
-        //Arrange
+        // Arrange
         var newId = Guid.NewGuid();
         
         _countryServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Business.DataTransferObjects.CountryDto(Guid.NewGuid(), "CountryName", CountryStatus.Allowed));
+            .ReturnsAsync(TestData.Country.GenerateCountryDto());
         _blacklistServiceMock.Setup(x => x.CreateAsync(It.IsAny<BlacklistDto>())).ReturnsAsync(newId);
         
         // Act
-        var result = await _blacklistController.Create(new BlacklistRequestModel { UserEmail = "example@gmail.com"});
+        var result = await _blacklistController.Create(TestData.Blacklist.GenerateBlacklistRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
@@ -124,13 +121,15 @@ public class BlacklistControllerTests
     [Test]
     public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
     {
-        //Arrange
+        // Arrange
         _countryServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Business.DataTransferObjects.CountryDto(Guid.NewGuid(), "CountryName", CountryStatus.Allowed));
-        _blacklistServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<BlacklistDto>())).ReturnsAsync(true);
+            .ReturnsAsync(TestData.Country.GenerateCountryDto());
+        _blacklistServiceMock
+            .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<BlacklistDto>()))
+            .ReturnsAsync(true);
         
         // Act
-        var result = await _blacklistController.Update(Guid.NewGuid(), new BlacklistRequestModel { UserEmail = "example@gmail.com"});
+        var result = await _blacklistController.Update(Guid.NewGuid(), TestData.Blacklist.GenerateBlacklistRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
@@ -139,11 +138,13 @@ public class BlacklistControllerTests
     [Test]
     public async Task Update_WhenOperationFailed_ReturnsBadRequest()
     {
-        //Arrange
-        _blacklistServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<BlacklistDto>())).ReturnsAsync(false);
+        // Arrange
+        _blacklistServiceMock
+            .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<BlacklistDto>()))
+            .ReturnsAsync(false);
         
         // Act
-        var result = await _blacklistController.Update(Guid.NewGuid(), new BlacklistRequestModel { UserEmail = "example@gmail.com"});
+        var result = await _blacklistController.Update(Guid.NewGuid(), TestData.Blacklist.GenerateBlacklistRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -152,7 +153,7 @@ public class BlacklistControllerTests
     [Test]
     public async Task Delete_ReturnsNoContent()
     {
-        //Arrange
+        // Arrange
         _blacklistServiceMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
         
         // Act

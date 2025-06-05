@@ -1,6 +1,5 @@
 using Moq;
 using NUnit.Framework;
-using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -24,12 +23,8 @@ public class BlacklistServiceTests
     [Test]
     public async Task GetAllAsync_ReturnsAllBlacklists()
     {
-        //Arrange
-        var entities = new List<DataAccess.Entities.Blacklist>
-        {
-            new() { Id = Guid.NewGuid(), UserEmail = "user@example.com"},
-            new() { Id = Guid.NewGuid(), UserEmail = "user@example.com" },
-        };
+        // Arrange
+        var entities = TestData.Blacklist.GenerateBlacklistEntities();
         
         _blacklistRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(entities);
         
@@ -45,8 +40,8 @@ public class BlacklistServiceTests
     [Test]
     public async Task GetByIdAsync_WhenBlacklistExists_ReturnsBlacklistDto()
     {
-        //Arrange
-        var entity = new DataAccess.Entities.Blacklist { Id = Guid.NewGuid(), UserEmail = "user@example.com" };
+        // Arrange
+        var entity = TestData.Blacklist.GenerateBlacklistEntity();
         
         _blacklistRepositoryMock.Setup(x => x.GetByIdAsync(entity.Id)).ReturnsAsync(entity);
         
@@ -62,7 +57,7 @@ public class BlacklistServiceTests
     [Test]
     public async Task GetByIdAsync_WhenBlacklistDoesNotExist_ReturnsNull()
     {
-        //Arrange
+        // Arrange
         _blacklistRepositoryMock
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.Blacklist);
@@ -77,8 +72,8 @@ public class BlacklistServiceTests
     [Test]
     public async Task CreateAsync_WhenChangesSavedSuccessfully_ReturnsCreatedId()
     {
-        //Arrange
-        var dto = new BlacklistDto(Guid.NewGuid(), "user@example.com", Guid.NewGuid());
+        // Arrange
+        var dto = TestData.Blacklist.GenerateBlacklistDto();
         
         _blacklistRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Blacklist>()))
@@ -97,8 +92,8 @@ public class BlacklistServiceTests
     [Test]
     public async Task CreateAsync_WhenSaveChangesFailed_ReturnsNull()
     {
-        //Arrange
-        var dto = new BlacklistDto(Guid.NewGuid(), "user@example.com", Guid.NewGuid());
+        // Arrange
+        var dto = TestData.Blacklist.GenerateBlacklistDto();
         
         _blacklistRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Blacklist>()))
@@ -117,20 +112,19 @@ public class BlacklistServiceTests
     [Test]
     public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
-        //Arrange
-        var id = Guid.NewGuid();
-        var dto = new BlacklistDto(id, "user@example.com", Guid.NewGuid());
-        var entity = new DataAccess.Entities.Blacklist { Id = id, UserEmail = "user@example.com" };
+        // Arrange
+        var dto = TestData.Blacklist.GenerateBlacklistDto();
+        var entity = TestData.Blacklist.GenerateBlacklistEntity();
         
         _blacklistRepositoryMock
-            .Setup(x => x.GetByIdAsync(entity.Id))
+            .Setup(x => x.GetByIdAsync(dto.Id))
             .ReturnsAsync(entity);
         _unitOfWorkMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // Act
-        var result = await _service.UpdateAsync(id, dto);
+        var result = await _service.UpdateAsync(dto.Id!.Value, dto);
         
         // Assert
         Assert.That(result, Is.True);
@@ -141,7 +135,7 @@ public class BlacklistServiceTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var dto = new BlacklistDto(id, "user@example.com", Guid.NewGuid());
+        var dto = TestData.Blacklist.GenerateBlacklistDto();
         
         _blacklistRepositoryMock
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))

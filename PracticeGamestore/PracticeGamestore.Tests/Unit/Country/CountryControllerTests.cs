@@ -7,10 +7,8 @@ using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Controllers;
-using PracticeGamestore.DataAccess.Enums;
-using PracticeGamestore.DataAccess.Repositories.Country;
 
-namespace PracticeGamestore.API.Tests.Unit.Country;
+namespace PracticeGamestore.Tests.Unit.Country;
 
 public class CountryControllerTests
 {
@@ -30,11 +28,7 @@ public class CountryControllerTests
     public async Task GetAllCountrys_ShouldReturnOkResult_WhenCountrysExist()
     {
         // Arrange
-        var countries = new List<CountryDto>
-        {
-            new(Guid.NewGuid(), "Canada", CountryStatus.Allowed),
-            new(Guid.NewGuid(), "USA", CountryStatus.Allowed)
-        };
+        var countries = TestData.Country.GenerateCountryDtos();
         
         _countryService.Setup(service => service.GetAllAsync()).ReturnsAsync(countries);
         
@@ -58,7 +52,7 @@ public class CountryControllerTests
     public async Task GetCountryById_ShouldReturnOkResult_WhenCountryExists()
     {
         // Arrange
-        var country = new CountryDto(Guid.NewGuid(), "Canada", CountryStatus.Allowed);
+        var country = TestData.Country.GenerateCountryDto();
         
         _countryService.Setup(service => service.GetByIdAsync(country.MapToCountryEntity().Id)).ReturnsAsync(country);
         
@@ -95,12 +89,8 @@ public class CountryControllerTests
     public async Task CreateCountry_ShouldReturnCreatedResult_WhenCountryIsCreated()
     {
         // Arrange
-        var countryRequest = new CountryCreateRequestModel
-        {
-            Name = "Canada"
-        };
-        
-        var countryDto = new CountryDto(Guid.NewGuid(), countryRequest.Name, CountryStatus.Allowed);
+        var countryRequest = TestData.Country.GenerateCountryCreateRequestModel();
+        var countryDto = TestData.Country.GenerateCountryDto();
         
         _countryService.Setup(service => service.CreateAsync(It.IsAny<CountryDto>()))
             .ReturnsAsync(countryDto.Id);
@@ -117,10 +107,7 @@ public class CountryControllerTests
     public async Task CreateCountry_ShouldReturnBadRequest_WhenCreationFails()
     {
         // Arrange
-        var countryRequest = new CountryCreateRequestModel
-        {
-            Name = "USA"
-        };
+        var countryRequest = TestData.Country.GenerateCountryCreateRequestModel();
         
         _countryService.Setup(service => service.CreateAsync(It.IsAny<CountryDto>()))
             .ReturnsAsync((Guid?)null);
@@ -140,7 +127,7 @@ public class CountryControllerTests
         
         // Act
         var result = await _countryController
-            .UpdateCountry(Guid.NewGuid(), new CountryUpdateRequestModel {Name = "UK", Status = CountryStatus.Banned});
+            .UpdateCountry(Guid.NewGuid(), TestData.Country.GenerateCountryUpdateRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
@@ -154,7 +141,7 @@ public class CountryControllerTests
         
         // Act
         var result = await _countryController
-            .UpdateCountry(Guid.NewGuid(), new CountryUpdateRequestModel {Name = "UKR", Status = CountryStatus.Allowed});
+            .UpdateCountry(Guid.NewGuid(), TestData.Country.GenerateCountryUpdateRequestModel());
         
         // Assert
         var badRequest = result as BadRequestObjectResult;

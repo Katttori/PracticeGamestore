@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Game;
@@ -30,11 +29,7 @@ public class GenreControllerTests
     public async Task GetAll_ReturnsOkWithGenres()
     {
         // Arrange
-        var genreDtos = new List<GenreDto>
-        {
-            new(Guid.NewGuid(), "FPS"),
-            new(Guid.NewGuid(), "Action"),
-        };
+        var genreDtos = TestData.Genre.GenerateGenreDtos();
         
         _genreService.Setup(x => x.GetAllAsync()).ReturnsAsync(genreDtos);
         
@@ -68,7 +63,7 @@ public class GenreControllerTests
     public async Task GetById_WhenGenreFound_ReturnsOkWithGenre()
     {
         // Arrange
-        var genreDto = new GenreDto(Guid.NewGuid(), "FPS");
+        var genreDto = TestData.Genre.GenerateGenreDto();
         
         _genreService.Setup(x => x.GetByIdAsync(genreDto.Id!.Value)).ReturnsAsync(genreDto);
         
@@ -87,7 +82,7 @@ public class GenreControllerTests
     public async Task Create_WhenOperationFailed_ReturnsBadRequest()
     {
         // Arrange
-        var model = new GenreRequestModel { Name = "FPS" };
+        var model = TestData.Genre.GenerateGenreRequestModel();
         
         _genreService.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(null as Guid?);
         
@@ -107,7 +102,7 @@ public class GenreControllerTests
         _genreService.Setup(x => x.CreateAsync(It.IsAny<GenreDto>())).ReturnsAsync(newId);
         
         // Act
-        var result = await _genreController.Create(new GenreRequestModel { Name = "FPS" });
+        var result = await _genreController.Create(TestData.Genre.GenerateGenreRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
@@ -122,7 +117,7 @@ public class GenreControllerTests
         _genreService.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(true);
         
         // Act
-        var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
+        var result = await _genreController.Update(Guid.NewGuid(), TestData.Genre.GenerateGenreRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
@@ -135,7 +130,7 @@ public class GenreControllerTests
         _genreService.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(false);
         
         // Act
-        var result = await _genreController.Update(Guid.NewGuid(), new GenreRequestModel { Name = "FPS" });
+        var result = await _genreController.Update(Guid.NewGuid(), TestData.Genre.GenerateGenreRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -176,7 +171,7 @@ public class GenreControllerTests
         var children = TestData.Genre.GenerateGenreChildren(actionGenreId);
         
         var games = TestData.Game.GenerateGameResponseDtos()
-            .Where(game => game.Genres.Any(genre => children.Contains(genre.Id.Value))).ToList();
+            .Where(game => game.Genres.Any(genre => children.Contains(genre.Id!.Value))).ToList();
 
         _genreService.Setup(x => x.GetGames(actionGenreId))
             .ReturnsAsync(games);
@@ -188,7 +183,8 @@ public class GenreControllerTests
         var okResult = result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        var response = okResult.Value as IEnumerable<GameResponseModel>;
+        var response = 
+            (okResult.Value as IEnumerable<GameResponseModel> ?? Array.Empty<GameResponseModel>()).ToList();
         Assert.That(response, Is.Not.Null);
         Assert.That(response.All(g => g.Genres.Any(genre => children.Contains(genre.Id))), Is.True);
     }

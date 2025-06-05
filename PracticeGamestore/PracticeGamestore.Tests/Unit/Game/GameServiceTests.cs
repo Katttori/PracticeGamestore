@@ -13,7 +13,6 @@ using GameFilter = PracticeGamestore.Business.Filtering.GameFilter;
 
 namespace PracticeGamestore.Tests.Unit.Game;
 
-[TestFixture]
 public class GameServiceTests
 {
     private Mock<IGameRepository> _gameRepository;

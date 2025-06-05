@@ -11,7 +11,6 @@ using PracticeGamestore.Models.Publisher;
 
 namespace PracticeGamestore.Tests.Unit.Publisher;
 
-[TestFixture]
 public class PublisherControllerTests
 {
     private Mock<IPublisherService> _publisherService;
@@ -97,7 +96,7 @@ public class PublisherControllerTests
     public async Task CreatePublisher_ShouldReturnCreatedResult_WhenPublisherIsCreated()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
         _publisherService.Setup(x => x.CreateAsync(It.IsAny<PublisherDto>()))
             .ReturnsAsync(id);
@@ -204,8 +203,9 @@ public class PublisherControllerTests
         var okResult = result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        var response = okResult.Value as IEnumerable<GameResponseDto>;
+        var response =
+            (okResult.Value as IEnumerable<GameResponseDto> ?? Array.Empty<GameResponseDto>()).ToList();
         Assert.That(response, Is.Not.Null);
-        Assert.That(response!.All(dto => dto.Publisher.Id == publisherId), Is.True);
+        Assert.That(response.All(dto => dto.Publisher.Id == publisherId), Is.True);
     }
 }
