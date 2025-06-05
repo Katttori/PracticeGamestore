@@ -115,6 +115,38 @@ public class PublisherServiceTests
         //Assert
         Assert.That(result, Is.False);
     }
+    
+    [Test]
+    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
+        var dto = TestData.Publisher.GeneratePublisherDto();
+        dto.Name = "New Name";
+        
+        _publisherRepository.Setup(p => p.GetByIdAsync(id)).ReturnsAsync(publisher);
+        _publisherRepository.Setup(p => p.ExistsByNameAsync(dto.Name)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _publisherService.UpdateAsync(id, dto));
+    }
+    
+    [Test]
+    public void UpdateAsync_WhenPageUrlAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
+        var dto = TestData.Publisher.GeneratePublisherDto();
+        dto.PageUrl = "Existing Page Url";
+        
+        _publisherRepository.Setup(p => p.GetByIdAsync(id)).ReturnsAsync(publisher);
+        _publisherRepository.Setup(p => p.ExistsByPageUrlAsync(dto.PageUrl)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _publisherService.UpdateAsync(id, dto));
+    }
 
     [Test]
     public async Task CreateAsync_ShouldAddPublisher_WhenChangesSavedSuccessfully()
@@ -149,6 +181,30 @@ public class PublisherServiceTests
         
         //Assert
         Assert.That(result, Is.Null);
+    }
+    
+    [Test]
+    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var publisher = TestData.Publisher.GeneratePublisherEntity();
+        
+        _publisherRepository.Setup(p => p.ExistsByNameAsync(publisher.Name)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _publisherService.CreateAsync(publisher.MapToPublisherDto()));
+    }
+    
+    [Test]
+    public void CreateAsync_WhenPageUrlAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var dto = TestData.Publisher.GeneratePublisherDto();
+        
+        _publisherRepository.Setup(p => p.ExistsByPageUrlAsync(dto.PageUrl)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _publisherService.CreateAsync(dto));
     }
 
     [Test]

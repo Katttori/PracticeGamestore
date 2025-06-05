@@ -63,4 +63,9 @@ public class GenreRepository(GamestoreDbContext context) : IGenreRepository
                 SELECT id FROM children")
             .ToListAsync();
     }
+
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await _genresNoTracking.AnyAsync(g => g.Name == name);
+    }
 }

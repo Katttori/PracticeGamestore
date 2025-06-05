@@ -7,4 +7,5 @@ public interface ICountryRepository
     Task<Guid> CreateAsync(Entities.Country country); 
     void Update(Entities.Country country); 
     Task DeleteAsync(Guid id);
+    Task<bool> ExistsByNameAsync(string name);
 }

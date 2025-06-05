@@ -30,6 +30,16 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         var existingGame = await gameRepository.GetByIdAsync(id);
         if (existingGame is null) return false;
         
+        if (gameRequestDto.Name != existingGame.Name && await gameRepository.ExistsByNameAsync(gameRequestDto.Name))
+        {
+            throw new ArgumentException($"Game with name '{gameRequestDto.Name}' already exists.");
+        }
+        
+        if (gameRequestDto.Key != existingGame.Key && await gameRepository.ExistsByKeyAsync(gameRequestDto.Key))
+        {
+            throw new ArgumentException($"Game with key '{gameRequestDto.Key}' already exists.");
+        }
+        
         if (!await AreSpecifiedRelationshipsValid(gameRequestDto))
         {
             return false;
@@ -44,6 +54,16 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
 
     public async Task<Guid?> CreateAsync(GameRequestDto gameRequestDto)
     {
+        if (await gameRepository.ExistsByNameAsync(gameRequestDto.Name))
+        {
+            throw new ArgumentException($"Game with name '{gameRequestDto.Name}' already exists.");
+        }
+        
+        if (await gameRepository.ExistsByKeyAsync(gameRequestDto.Key))
+        {
+            throw new ArgumentException($"Game with key '{gameRequestDto.Key}' already exists.");
+        }
+        
         if (!await AreSpecifiedRelationshipsValid(gameRequestDto))
         {
             return null;
@@ -63,7 +83,7 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
     
     public async Task<IEnumerable<GameResponseDto>?> GetByPlatformAsync(Guid platformId)
     {
-        var platformExists = await platformRepository.ExistsAsync(platformId);
+        var platformExists = await platformRepository.ExistsByIdAsync(platformId);
         if (!platformExists) return null;
 
         var games = await gameRepository.GetByPlatformIdAsync(platformId);

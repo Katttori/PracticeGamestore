@@ -21,16 +21,26 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
     
     public async Task<Guid?> CreateAsync(CountryDto country)
     {
+        if (await countryRepository.ExistsByNameAsync(country.Name))
+        {
+            throw new ArgumentException($"Country with name '{country.Name}' already exists.");
+        }
+        
         var entity = country.MapToCountryEntity();
         var id = await countryRepository.CreateAsync(entity);
         var changes = await unitOfWork.SaveChangesAsync();
-        return changes > 0 ? entity.Id : null;
+        return changes > 0 ? id : null;
     }
     
     public async Task<bool> UpdateAsync(CountryDto country)
     {
         var entity = await countryRepository.GetByIdAsync(country.MapToCountryEntity().Id);
         if (entity == null) return false;
+
+        if (country.Name != entity.Name && await countryRepository.ExistsByNameAsync(country.Name))
+        {
+            throw new ArgumentException($"Country with name '{country.Name}' already exists.");
+        }
 
         entity.Name = country.Name;
         entity.CountryStatus = country.Status;

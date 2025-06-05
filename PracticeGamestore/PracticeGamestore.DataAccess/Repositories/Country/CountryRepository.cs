@@ -34,4 +34,9 @@ public class CountryRepository(GamestoreDbContext context) : ICountryRepository
 
         context.Countries.Remove(country);
     }
+
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await _countriesNoTracking.AnyAsync(c => c.Name == name);
+    }
 }

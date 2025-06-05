@@ -1,8 +1,6 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
-using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
-using PracticeGamestore.DataAccess.Repositories.Country;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Blacklist;
@@ -23,6 +21,11 @@ public class BlacklistService(IBlacklistRepository blacklistRepository, IUnitOfW
     
     public async Task<Guid?> CreateAsync(BlacklistDto dto)
     {
+        if (await blacklistRepository.ExistsByUserEmailAsync(dto.UserEmail))
+        {
+            throw new ArgumentException($"Blacklist entry with user email '{dto.UserEmail}' already exists.");
+        }
+        
         var createdId = await blacklistRepository.CreateAsync(dto.MapToBlacklistEntity());
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0 ? createdId : null;
@@ -32,6 +35,11 @@ public class BlacklistService(IBlacklistRepository blacklistRepository, IUnitOfW
     {
         var entity = await blacklistRepository.GetByIdAsync(id);
         if (entity is null) return false;
+        
+        if (dto.UserEmail != entity.UserEmail && await blacklistRepository.ExistsByUserEmailAsync(dto.UserEmail))
+        {
+            throw new ArgumentException($"Blacklist entry with user email '{dto.UserEmail}' already exists.");
+        }
         
         dto.Id = id;
         blacklistRepository.Update(dto.MapToBlacklistEntity());
