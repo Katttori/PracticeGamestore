@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Mappers;
-using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Filtering;
+using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
+using PracticeGamestore.Filters;
 using PracticeGamestore.Models.Game;
 
 namespace PracticeGamestore.Controllers;
@@ -20,12 +21,11 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [HttpGet("/filter")]
     public async Task<IActionResult> GetFiltered([FromQuery] GameFilter filter)
     {
-        if (!ModelState.IsValid || filter.IsInvalid())
+        if (!ModelState.IsValid)
         {
             logger.LogError("Invalid query parameters: {Query}", filter);
-            return BadRequest("Invalid query parameters!");
+            return BadRequest(ErrorMessages.IncorrectQueryParameters + ModelState);
         }
-        
         var (games, totalCount) = await gameService.GetFilteredAsync(filter);
         return Ok(new PaginatedGameListResponseModel {
             Games = games.Select(g => g.MapToGameModel()).ToList(),
@@ -43,27 +43,22 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
         if (gameDto is null)
         {
             logger.LogWarning("Game with id: {Id} was not found.", id);
-            return NotFound($"Game with id {id} was not found.");
+            return NotFound(ErrorMessages.NotFound("Game", id));
         }
         
         return Ok(gameDto.MapToGameModel());
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(RequestModelValidationFilter))]
     public async Task<IActionResult> Create([FromBody] GameRequestModel model)
     {
-        if (GameRequestDto.HasIncorrectAgeRatingEnum(model.AgeRating))
-        {
-            logger.LogError("Invalid age rating provided: {AgeRating}", model.AgeRating);
-            return BadRequest("Cannot convert provided age to the enum.");
-        }
-        
         var id = await gameService.CreateAsync(model.MapToGameDto());
         
         if (id is null)
         {
             logger.LogError("Failed to create game with model: {Model}", model);
-            return BadRequest("Failed to create game.");
+            return BadRequest(ErrorMessages.FailedToCreate("game"));
         }
         
         logger.LogInformation("Created game with id: {Id}", id);
@@ -71,23 +66,16 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     }
 
     [HttpPut("{id:guid}")]
+    [ServiceFilter(typeof(RequestModelValidationFilter))]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GameRequestModel model)
     {
-        if (GameRequestDto.HasIncorrectAgeRatingEnum(model.AgeRating))
-        {
-            logger.LogError("Invalid age rating provided: {AgeRating}", model.AgeRating);
-            return BadRequest("Cannot convert provided age to the enum.");
-        }
-        
         var updated = await gameService.UpdateAsync(id, model.MapToGameDto());
-        
-        if (!updated)
-        {
-            logger.LogWarning("Game with id: {Id} was not found for update.", id);
-            return BadRequest($"Failed to update the game.");
-        }
 
-        return NoContent();
+        if (updated) return NoContent();
+        
+        logger.LogWarning("Game with id: {Id} was not found for update.", id);
+        return BadRequest(ErrorMessages.FailedToUpdate("game", id));
+
     }
 
     [HttpDelete("{id:guid}")]

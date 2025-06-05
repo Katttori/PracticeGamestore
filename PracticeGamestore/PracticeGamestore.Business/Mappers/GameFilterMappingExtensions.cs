@@ -5,7 +5,7 @@ namespace PracticeGamestore.Business.Mappers;
 
 public static class GameFilterMappingExtensions
 {
-    public static GameFilter MapToDataAccessGameFilter(this Filtering.GameFilter filter)
+    public static GameFilter MapToDataAccessGameFilter(this DataTransferObjects.Filtering.GameFilter filter)
     {
         return new ()
         {

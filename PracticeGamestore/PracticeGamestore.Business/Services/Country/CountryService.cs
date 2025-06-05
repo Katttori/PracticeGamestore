@@ -1,5 +1,6 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Country;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
@@ -43,7 +44,7 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
         }
 
         entity.Name = country.Name;
-        entity.CountryStatus = country.Status;
+        entity.CountryStatus = (CountryStatus)country.Status;
         
         countryRepository.Update(entity);
         var changes = await unitOfWork.SaveChangesAsync();

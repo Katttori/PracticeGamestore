@@ -1,6 +1,6 @@
-using PracticeGamestore.API.Models;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.Models.Country;
 
 namespace PracticeGamestore.Tests.TestData;
 
@@ -10,8 +10,8 @@ public class Country
     {
         return
         [
-            new(Guid.NewGuid(), "Canada", CountryStatus.Allowed),
-            new(Guid.NewGuid(), "USA", CountryStatus.Allowed)
+            new(Guid.NewGuid(), "Canada", Business.Enums.CountryStatus.Allowed),
+            new(Guid.NewGuid(), "USA", Business.Enums.CountryStatus.Allowed)
         ];
     }
 
@@ -36,7 +36,7 @@ public class Country
 
     public static CountryDto GenerateCountryDto()
     {
-        return new(Guid.NewGuid(), "Canada", CountryStatus.Allowed);
+        return new(Guid.NewGuid(), "Canada", Business.Enums.CountryStatus.Allowed);
     }
     
     public static DataAccess.Entities.Country GenerateCountryEntity()
@@ -51,6 +51,6 @@ public class Country
     
     public static CountryUpdateRequestModel GenerateCountryUpdateRequestModel()
     {
-        return new() { Name = "UK", Status = CountryStatus.Banned };
+        return new() { Name = "UK", Status = Business.Enums.CountryStatus.Banned };
     }
 }

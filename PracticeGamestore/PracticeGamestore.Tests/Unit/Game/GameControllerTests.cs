@@ -1,15 +1,17 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Filtering;
+using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Game;
+using PracticeGamestore.Validators;
 
 namespace PracticeGamestore.Tests.Unit.Game;
 
@@ -85,6 +87,17 @@ public class GameControllerTests
     
         var elementsAreTheSame = expectedGames.Zip(games, GameResponseModelsAreTheSame).All(equal => equal);
         Assert.That(elementsAreTheSame, Is.True);
+    }
+    
+    private void ValidateFilterQueryParams(GameFilter filter)
+    {
+        var validator = new GameFilterValidator();
+        var validationResult = validator.Validate(filter);
+        if (!validationResult.IsValid)
+        {
+            _gameController.ModelState.AddModelError("error", "some error");
+
+        }
     }
     
     [Test]
@@ -333,7 +346,7 @@ public class GameControllerTests
     public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidAgeRatingsProvided()
     {
         // Arrange
-        var gameFilter = new GameFilter { Age = [AgeRating.TwelvePlus, AgeRating.SixteenPlus] };
+        var gameFilter = new GameFilter { Age = [12, 16] };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g => g.AgeRating is AgeRating.TwelvePlus or AgeRating.SixteenPlus).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
         _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
@@ -402,7 +415,7 @@ public class GameControllerTests
             MaxPrice = 70,
             RatingFrom = 4.0,
             RatingTo = 5.0,
-            Age = [AgeRating.SixteenPlus, AgeRating.EighteenPlus],
+            Age = [16, 18],
             ReleaseDateStart = new DateTime(2023, 1, 1),
             ReleaseDateEnd = new DateTime(2024, 12, 31),
             OrderBy = ["rating", "price"],
@@ -439,6 +452,7 @@ public class GameControllerTests
     {
         // Arrange
         var gameFilter = new GameFilter { MinPrice = minPrice, MaxPrice = maxPrice};
+        ValidateFilterQueryParams(gameFilter);
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
@@ -456,6 +470,7 @@ public class GameControllerTests
     {
         // Arrange
         var gameFilter = new GameFilter { RatingFrom = ratingFrom, RatingTo = ratingTo};
+        ValidateFilterQueryParams(gameFilter);
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
@@ -474,6 +489,7 @@ public class GameControllerTests
             ReleaseDateStart = DateTime.Parse(startDateStr),
             ReleaseDateEnd =  DateTime.Parse(endDateStr)
         };
+        ValidateFilterQueryParams(gameFilter);
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
@@ -487,6 +503,7 @@ public class GameControllerTests
     {
         // Arrange
         var gameFilter = new GameFilter { Order = "invalid" };
+        ValidateFilterQueryParams(gameFilter);
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
@@ -500,6 +517,7 @@ public class GameControllerTests
     {
         // Arrange
         var gameFilter = new GameFilter { OrderBy = ["invalid-field"] };
+        ValidateFilterQueryParams(gameFilter);
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
@@ -509,10 +527,11 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task CreateGame_ShouldReturnBadRequest_WhenInvalidAgeRating()
+    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidAgeRating()
     {
         // Arrange
-        var gameFilter = new GameFilter { Age = [(AgeRating)999] };
+        var gameFilter = new GameFilter { Age = [999] };
+        ValidateFilterQueryParams(gameFilter);
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
@@ -527,6 +546,7 @@ public class GameControllerTests
     { 
         // Arrange
         var gameFilter = new GameFilter { Page = page, PageSize = pageSize };
+        ValidateFilterQueryParams(gameFilter);
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
