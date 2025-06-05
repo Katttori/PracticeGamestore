@@ -48,7 +48,37 @@ public class ExceptionHandlingMiddlewareTests
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
                 ), Times.Once()
         );
+    }
+    
+    [Test]
+    public async Task InvokeAsync_WhenArgumentExceptionIsThrown_Returns400AndLogs()
+    {
+        // Arrange
+        _middleware = new ExceptionHandlingMiddleware(_ => throw new ArgumentException("Incorrect argument"),
+            _loggerMock.Object);
+        await using var responseBodyStream = new MemoryStream();
+        _httpContext.Response.Body = responseBodyStream;
+        
+        // Act
+        await _middleware.InvokeAsync(_httpContext);
+        responseBodyStream.Seek(0, SeekOrigin.Begin);
+        var responseBody = await new StreamReader(responseBodyStream).ReadToEndAsync();
+        
+        // Assert
+        Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        
+        var json = JsonSerializer.Deserialize<Dictionary<string, string>>(responseBody);
+        Assert.That(json!["message"], Is.EqualTo("Incorrect argument"));
 
+        _loggerMock.Verify(logger =>
+                logger.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((o, t) => o.ToString()!.Contains("Unhandled exception occured.")),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+                ), Times.Once()
+        );
     }
     
     [Test]

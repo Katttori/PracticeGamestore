@@ -20,11 +20,15 @@ public class Game : IEntityTypeConfiguration<Entities.Game>
             .HasColumnName("name")
             .HasMaxLength(255)
             .IsRequired();
+        
+        builder.HasIndex(g => g.Name).IsUnique();
 
         builder.Property(g => g.Key)
             .HasColumnName("key")
             .HasMaxLength(50)
             .IsRequired();
+        
+        builder.HasIndex(g => g.Key).IsUnique();
 
         builder.Property(g => g.Description)
             .HasColumnName("description")

@@ -37,4 +37,14 @@ public class PublisherRepository(GamestoreDbContext context) : IPublisherReposit
     {
         return _publisherNoTracking.AnyAsync(p => p.Id == id);
     }
+
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await _publisherNoTracking.AnyAsync(p => p.Name == name);
+    }
+    
+    public async Task<bool> ExistsByPageUrlAsync(string pageUrl)
+    {
+        return await _publisherNoTracking.AnyAsync(p => p.PageUrl == pageUrl);
+    }
 }

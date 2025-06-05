@@ -110,6 +110,18 @@ public class PlatformServiceTests
     }
     
     [Test]
+    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var platformDto = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
+        
+        _platformRepository.Setup(p => p.ExistsByNameAsync(platformDto.Name)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _platformService.CreateAsync(platformDto));
+    }
+    
+    [Test]
     public async Task UpdateAsync_ShouldReturnTrue_WhenPlatformUpdatedSuccessfully()
     {
         // Arrange
@@ -146,6 +158,25 @@ public class PlatformServiceTests
         
         // Assert
         Assert.That(result, Is.False);
+    }
+    
+    [Test]
+    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    {
+        // Arrange
+        var platformDto = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
+        var platform = new DataAccess.Entities.Platform
+        {
+            Id = platformDto.MapToPlatformEntity().Id,
+            Name = "Windows",
+            Description = platformDto.Description
+        };
+        
+        _platformRepository.Setup(p => p.GetByIdAsync(platform.Id)).ReturnsAsync(platform);
+        _platformRepository.Setup(p => p.ExistsByNameAsync(platformDto.Name)).ReturnsAsync(true);
+    
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentException>(() => _platformService.UpdateAsync(platformDto));
     }
     
     [Test]

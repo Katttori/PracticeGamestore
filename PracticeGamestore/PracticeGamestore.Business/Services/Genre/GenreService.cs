@@ -22,6 +22,11 @@ public class GenreService(IGenreRepository genreRepository, IGameRepository game
 
     public async Task<Guid?> CreateAsync(GenreDto dto)
     {
+        if (await genreRepository.ExistsByNameAsync(dto.Name))
+        {
+            throw new ArgumentException($"Genre with name '{dto.Name}' already exists.");
+        }
+        
         if (!await IsParentValidAsync(dto.ParentId)) return null;
         
         var createdId = await genreRepository.CreateAsync(dto.MapToGenreEntity());
@@ -33,6 +38,11 @@ public class GenreService(IGenreRepository genreRepository, IGameRepository game
     {
         var entity = await genreRepository.GetByIdAsync(id);
         if (entity is null) return false;
+        
+        if (dto.Name != entity.Name && await genreRepository.ExistsByNameAsync(dto.Name))
+        {
+            throw new ArgumentException($"Genre with name '{dto.Name}' already exists.");
+        }
         
         if (dto.ParentId == entity.Id || !await IsParentValidAsync(dto.ParentId)) return false;
         

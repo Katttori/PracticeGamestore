@@ -196,4 +196,14 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
     
         await AddPlatformsAsync(gameId, platformIdsToAdd);
     }
+
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await _gamesNoTracking.AnyAsync(g => g.Name == name);
+    }
+    
+    public async Task<bool> ExistsByKeyAsync(string key)
+    {
+        return await _gamesNoTracking.AnyAsync(g => g.Key == key);
+    }
 }

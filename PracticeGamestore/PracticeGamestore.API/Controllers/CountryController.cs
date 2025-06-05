@@ -45,7 +45,7 @@ public class CountryController(ICountryService countryService, ILogger<CountryCo
         
         countryDto.Id = id.Value;
         logger.LogInformation("Created country with id: {Id}", countryDto.Id);
-        return CreatedAtAction(nameof(GetCountryById), new { id = countryDto.Id }, countryDto.MapToCountryModel());
+        return CreatedAtAction(nameof(GetCountryById), new { id = countryDto.Id }, id);
     }
     
     [HttpPut("{id:guid}")]

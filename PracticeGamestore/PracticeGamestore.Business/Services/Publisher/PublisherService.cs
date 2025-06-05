@@ -22,6 +22,16 @@ public class PublisherService(IPublisherRepository publisherRepository, IGameRep
 
     public async Task<Guid?> CreateAsync(PublisherDto dto)
     {
+        if (await publisherRepository.ExistsByNameAsync(dto.Name))
+        {
+            throw new ArgumentException($"Publisher with name '{dto.Name}' already exists.");
+        }
+        
+        if (await publisherRepository.ExistsByPageUrlAsync(dto.PageUrl))
+        {
+            throw new ArgumentException($"Publisher with page url '{dto.PageUrl}' already exists.");
+        }
+        
         var id = await publisherRepository.CreateAsync(dto.MapToPublisherEntity());
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0 ? id : null;
@@ -31,6 +41,17 @@ public class PublisherService(IPublisherRepository publisherRepository, IGameRep
     {
         var existingPublisher = await GetByIdAsync(id);
         if (existingPublisher is null) return false;
+        
+        if (dto.Name != existingPublisher.Name && await publisherRepository.ExistsByNameAsync(dto.Name))
+        {
+            throw new ArgumentException($"Publisher with name '{dto.Name}' already exists.");
+        }
+        
+        if (dto.PageUrl != existingPublisher.PageUrl && await publisherRepository.ExistsByPageUrlAsync(dto.PageUrl))
+        {
+            throw new ArgumentException($"Publisher with page url '{dto.PageUrl}' already exists.");
+        }
+        
         var updatedPublisher = dto.MapToPublisherEntity();
         updatedPublisher.Id = id;
         publisherRepository.Update(updatedPublisher);

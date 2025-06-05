@@ -20,6 +20,8 @@ public class Genre : IEntityTypeConfiguration<Entities.Genre>
             .HasColumnName("name")
             .HasMaxLength(50)
             .IsRequired();
+        
+        builder.HasIndex(g => g.Name).IsUnique();
 
         builder.Property(g => g.Description)
             .HasColumnName("description")

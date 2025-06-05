@@ -25,6 +25,8 @@ public class File : IEntityTypeConfiguration<Entities.File>
             .HasColumnName("path")
             .HasMaxLength(500)
             .IsRequired();
+        
+        builder.HasIndex(f => f.Path).IsUnique();
 
         builder.Property(f => f.CreationDate)
             .HasColumnName("creation_date")

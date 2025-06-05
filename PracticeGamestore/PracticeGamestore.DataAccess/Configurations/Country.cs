@@ -21,6 +21,8 @@ public class Country : IEntityTypeConfiguration<Entities.Country>
             .HasColumnName("name")
             .HasMaxLength(100)
             .IsRequired();
+        
+        builder.HasIndex(c => c.Name).IsUnique();
 
         builder.Property(c => c.CountryStatus)
             .HasColumnName("status")
