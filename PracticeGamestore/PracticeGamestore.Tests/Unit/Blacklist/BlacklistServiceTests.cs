@@ -113,7 +113,7 @@ public class BlacklistServiceTests
     public void CreateAsync_WhenEmailAlreadyExists_ThrowsArgumentException()
     {
         // Arrange
-        var dto = new BlacklistDto(Guid.NewGuid(), "user@example.com", Guid.NewGuid());
+        var dto = TestData.Blacklist.GenerateBlacklistDto();
         
         _blacklistRepositoryMock.Setup(b => b.ExistsByUserEmailAsync(dto.UserEmail)).ReturnsAsync(true);
     
@@ -164,15 +164,14 @@ public class BlacklistServiceTests
     public void UpdateAsync_WhenEmailAlreadyExists_ThrowsArgumentException()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        var entity = new DataAccess.Entities.Blacklist { Id = id, UserEmail = "olduser@example.com" };
-        var dto = new BlacklistDto(id, "newuser@example.com", Guid.NewGuid());
+        var entity = TestData.Blacklist.GenerateBlacklistEntity();
+        var dto = TestData.Blacklist.GenerateBlacklistDto();
         
-        _blacklistRepositoryMock.Setup(b => b.GetByIdAsync(id)).ReturnsAsync(entity);
+        _blacklistRepositoryMock.Setup(b => b.GetByIdAsync(dto.Id)).ReturnsAsync(entity);
         _blacklistRepositoryMock.Setup(b => b.ExistsByUserEmailAsync(dto.UserEmail)).ReturnsAsync(true);
     
         // Act & Assert
-        Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateAsync(id, dto));
+        Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateAsync(dto.Id!.Value, dto));
     }
 
     [Test]

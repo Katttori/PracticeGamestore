@@ -113,7 +113,7 @@ public class CountryServiceTests
     public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
+        var countryDto = TestData.Country.GenerateCountryDto();
         
         _countryRepository.Setup(c => c.ExistsByNameAsync(countryDto.Name)).ReturnsAsync(true);
     
@@ -186,15 +186,10 @@ public class CountryServiceTests
     public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
-        var country = new DataAccess.Entities.Country
-        {
-            Id = countryDto.MapToCountryEntity().Id,
-            Name = "Columbia",
-            CountryStatus = countryDto.Status
-        };
+        var countryDto = TestData.Country.GenerateCountryDto();
+        var country = TestData.Country.GenerateCountryEntity();
         
-        _countryRepository.Setup(c => c.GetByIdAsync(country.Id)).ReturnsAsync(country);
+        _countryRepository.Setup(c => c.GetByIdAsync(countryDto.Id!.Value)).ReturnsAsync(country);
         _countryRepository.Setup(c => c.ExistsByNameAsync(countryDto.Name)).ReturnsAsync(true);
     
         // Act & Assert
