@@ -26,7 +26,7 @@ public class FileService(IFileRepository fileRepository, IPhysicalFileService se
             
         var fileEntity = file.MapToFileEntity();
             
-        fileEntity.Id = Guid.NewGuid();
+        fileEntity.Id = file.Id ?? Guid.NewGuid();
         fileEntity.Path = path;
             
         await fileRepository.CreateAsync(fileEntity);
