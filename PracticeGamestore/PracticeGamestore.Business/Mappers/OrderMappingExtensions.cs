@@ -9,7 +9,7 @@ public static class OrderMappingExtensions
     {
         return new()
         {
-            Status = dto.Status,
+            Status = (DataAccess.Enums.OrderStatus)dto.Status,
             UserEmail = dto.UserEmail,
             Total = dto.Total,
         };

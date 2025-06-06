@@ -1,5 +1,5 @@
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Filtering;
+using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;

@@ -7,6 +7,7 @@ using PracticeGamestore.Middlewares;
 
 namespace PracticeGamestore.Tests.Unit.Middleware;
 
+[TestFixture]
 public class ExceptionHandlingMiddlewareTests
 {
     private Mock<ILogger<ExceptionHandlingMiddleware>> _loggerMock;

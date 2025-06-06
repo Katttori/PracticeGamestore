@@ -11,6 +11,7 @@ using PracticeGamestore.Models.Genre;
 
 namespace PracticeGamestore.Tests.Unit.Genre;
 
+[TestFixture]
 public class GenreControllerTests
 {
     private Mock<IGenreService> _genreService;

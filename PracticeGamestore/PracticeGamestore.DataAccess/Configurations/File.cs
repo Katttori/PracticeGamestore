@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PracticeGamestore.DataAccess.Constants;
 
 namespace PracticeGamestore.DataAccess.Configurations;
 
@@ -18,12 +19,12 @@ public class File : IEntityTypeConfiguration<Entities.File>
 
         builder.Property(f => f.Type)
             .HasColumnName("type")
-            .HasMaxLength(50)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
 
         builder.Property(f => f.Path)
             .HasColumnName("path")
-            .HasMaxLength(500)
+            .HasMaxLength(ValidationConstants.StringLength.LongMaximum)
             .IsRequired();
         
         builder.HasIndex(f => f.Path).IsUnique();

@@ -35,6 +35,6 @@ public class Blacklist
     
     public static BlacklistRequestModel GenerateBlacklistRequestModel()
     {
-        return new() { UserEmail = "example@gmail.com" };
+        return new() { CountryId = Guid.NewGuid(), UserEmail = "example@gmail.com" };
     }
 }

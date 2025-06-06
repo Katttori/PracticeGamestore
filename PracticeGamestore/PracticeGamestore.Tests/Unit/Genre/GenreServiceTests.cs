@@ -8,6 +8,7 @@ using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Tests.Unit.Genre;
 
+[TestFixture]
 public class GenreServiceTests
 {
     private Mock<IGenreRepository> _genreRepository;

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PracticeGamestore.DataAccess.Constants;
 using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.DataAccess.Configurations;
@@ -19,7 +20,7 @@ public class Order : IEntityTypeConfiguration<Entities.Order>
 
         builder.Property(o => o.UserEmail)
             .HasColumnName("user_email")
-            .HasMaxLength(100)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
 
         builder.Property(o => o.Status)

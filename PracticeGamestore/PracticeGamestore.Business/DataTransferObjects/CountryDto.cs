@@ -1,4 +1,4 @@
-using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.Business.Enums;
 
 namespace PracticeGamestore.Business.DataTransferObjects;
 

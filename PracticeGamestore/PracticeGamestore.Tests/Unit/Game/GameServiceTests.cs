@@ -9,7 +9,7 @@ using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.Repositories.Platform;
 using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.UnitOfWork;
-using GameFilter = PracticeGamestore.Business.Filtering.GameFilter;
+using GameFilter = PracticeGamestore.Business.DataTransferObjects.Filtering.GameFilter;
 
 namespace PracticeGamestore.Tests.Unit.Game;
 
@@ -637,7 +637,7 @@ public class GameServiceTests
         //Arrange
         List<AgeRating> ageRatings = [AgeRating.TwelvePlus, AgeRating.SixteenPlus];
         var games = TestData.Game.GenerateGameEntities().Where(g => ageRatings.Contains(g.AgeRating)).ToList();
-        var gameFilter = new GameFilter { Age = ageRatings };
+        var gameFilter = new GameFilter { Age = [12, 16] };
         var paginated = games.Take(10).ToList();
         _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
@@ -656,7 +656,7 @@ public class GameServiceTests
         //Arrange
         var ageRatings = new List<AgeRating> { AgeRating.ThreePlus };
         var games = TestData.Game.GenerateGameEntities().Where(g => ageRatings.Contains(g.AgeRating)).ToList();
-        var gameFilter = new GameFilter { Age = ageRatings };
+        var gameFilter = new GameFilter { Age = [3] };
         var paginated = games.Take(10).ToList();
         _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
@@ -816,7 +816,7 @@ public class GameServiceTests
             MinPrice = 30m,
             MaxPrice = 60m,
             RatingFrom = 4.0,
-            Age = [AgeRating.TwelvePlus],
+            Age = [12],
             OrderBy =["rating"],
             Order = "desc",
             PageSize = 5

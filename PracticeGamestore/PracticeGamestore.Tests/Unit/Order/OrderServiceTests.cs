@@ -8,6 +8,7 @@ using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Tests.Unit.Order;
 
+[TestFixture]
 public class OrderServiceTests
 {
     private Mock<IOrderRepository> _orderRepositoryMock;

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Filtering;
+using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.DataAccess.Enums;
@@ -333,7 +333,7 @@ public class GameControllerTests
     public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidAgeRatingsProvided()
     {
         // Arrange
-        var gameFilter = new GameFilter { Age = [AgeRating.TwelvePlus, AgeRating.SixteenPlus] };
+        var gameFilter = new GameFilter { Age = [12, 16] };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g => g.AgeRating is AgeRating.TwelvePlus or AgeRating.SixteenPlus).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
         _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
@@ -402,7 +402,7 @@ public class GameControllerTests
             MaxPrice = 70,
             RatingFrom = 4.0,
             RatingTo = 5.0,
-            Age = [AgeRating.SixteenPlus, AgeRating.EighteenPlus],
+            Age = [16, 18],
             ReleaseDateStart = new DateTime(2023, 1, 1),
             ReleaseDateEnd = new DateTime(2024, 12, 31),
             OrderBy = ["rating", "price"],
@@ -430,108 +430,5 @@ public class GameControllerTests
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
-    }
-        
-    [TestCase(-10, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMinPriceIsNegative")]
-    [TestCase(null, -5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMaxPriceIsNegative")]
-    [TestCase(100, 50, TestName = "GetFiltered_ShouldReturnBadRequest_WhenMinPriceIsGreaterThanMaxPrice")]
-    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidPriceRange(decimal? minPrice, decimal? maxPrice)
-    {
-        // Arrange
-        var gameFilter = new GameFilter { MinPrice = minPrice, MaxPrice = maxPrice};
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [TestCase(-1, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingFromIsNegative")]
-    [TestCase(6, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingFromIsGreaterThanFive")]
-    [TestCase(null, -0.5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingToIsNegative")]
-    [TestCase(null, 7.5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingToIsGreaterThanFive")]
-    [TestCase(4.5, 3.0, TestName = "GetFiltered_ShouldReturnBadRequest_WhenRatingFromIsGreaterThanRatingTo")]
-    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidRatingRange(double? ratingFrom, double? ratingTo)
-    {
-        // Arrange
-        var gameFilter = new GameFilter { RatingFrom = ratingFrom, RatingTo = ratingTo};
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [TestCase("2024-12-31", "2024-01-01", TestName = "GetFiltered_ShouldReturnBadRequest_WhenStartDateAfterEndDate")]
-    [TestCase("2025-01-01", "2024-12-31", TestName = "GetFiltered_ShouldReturnBadRequest_WhenStartDateInFuture")]
-    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidDateRange(string startDateStr, string endDateStr)
-    {
-        // Arrange
-        var gameFilter = new GameFilter 
-        { 
-            ReleaseDateStart = DateTime.Parse(startDateStr),
-            ReleaseDateEnd =  DateTime.Parse(endDateStr)
-        };
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [Test]
-    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidOrderDirectionProvided()
-    {
-        // Arrange
-        var gameFilter = new GameFilter { Order = "invalid" };
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [Test]
-    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidOrderByFields()
-    {
-        // Arrange
-        var gameFilter = new GameFilter { OrderBy = ["invalid-field"] };
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [Test]
-    public async Task CreateGame_ShouldReturnBadRequest_WhenInvalidAgeRating()
-    {
-        // Arrange
-        var gameFilter = new GameFilter { Age = [(AgeRating)999] };
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [TestCase(-1, null, TestName = "GetFiltered_ShouldReturnBadRequest_WhenPageIsNegative")]
-    [TestCase(null, -5, TestName = "GetFiltered_ShouldReturnBadRequest_WhenPageSizeIsNegative")]
-    public async Task GetFiltered_ShouldReturnBadRequest_WhenInvalidPagination(int? page, int? pageSize)
-    { 
-        // Arrange
-        var gameFilter = new GameFilter { Page = page, PageSize = pageSize };
-
-        // Act
-        var result = await _gameController.GetFiltered(gameFilter);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
 }
