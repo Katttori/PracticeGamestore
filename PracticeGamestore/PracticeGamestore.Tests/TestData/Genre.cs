@@ -1,7 +1,19 @@
+using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Models.Genre;
+
 namespace PracticeGamestore.Tests.TestData;
 
 public class Genre
 {
+    public static List<GenreDto> GenerateGenreDtos()
+    {
+        return
+        [
+            new(Guid.NewGuid(), "FPS"),
+            new(Guid.NewGuid(), "Action"),
+        ];
+    }
+    
     public static List<DataAccess.Entities.Genre> GenerateGenreEntities()
     {
         var strategyId = Guid.NewGuid();
@@ -43,8 +55,17 @@ public class Genre
             new() { Id = Guid.NewGuid(), Name = "Off-road", Description = "Off-road racing games", ParentId = racingId }
         };
     }
-    
 
+    public static GenreDto GenerateGenreDto()
+    {
+        return new(Guid.NewGuid(), "FPS");
+    }
+
+    public static GenreRequestModel GenerateGenreRequestModel()
+    {
+        return new() { Name = "FPS" };
+    }
+    
     public static DataAccess.Entities.Genre GenerateActionGenre()
     {
         return new() { Id = Guid.NewGuid(), Name = "Action", Description = "Fast-paced action games" };

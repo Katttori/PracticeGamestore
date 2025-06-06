@@ -1,6 +1,5 @@
 using Moq;
 using NUnit.Framework;
-using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.DataAccess.Repositories.Country;
@@ -26,21 +25,7 @@ public class CountryServiceTests
     public async Task GetAllAsync_ShouldReturnAllCountries()
     {
         // Arrange
-        var countries = new List<DataAccess.Entities.Country>
-        {
-            new DataAccess.Entities.Country
-            {
-                Id = Guid.NewGuid(),
-                Name = "USA",
-                CountryStatus = DataAccess.Enums.CountryStatus.Allowed
-            },
-            new DataAccess.Entities.Country
-            {
-                Id = Guid.NewGuid(),
-                Name = "Canada",
-                CountryStatus = DataAccess.Enums.CountryStatus.Allowed
-            }
-        };
+        var countries = TestData.Country.GenerateCountryEntities();
         
         _countryRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(countries);
         
@@ -58,12 +43,7 @@ public class CountryServiceTests
     public async Task GetByIdAsync_ShouldReturnCountryDto_WhenCountryExists()
     {
         // Arrange
-        var country = new DataAccess.Entities.Country
-        {
-            Id = Guid.NewGuid(),
-            Name = "USA",
-            CountryStatus = DataAccess.Enums.CountryStatus.Allowed
-        };
+        var country = TestData.Country.GenerateCountryEntity();
         
         _countryRepository.Setup(repo => repo.GetByIdAsync(country.Id)).ReturnsAsync(country);
         
@@ -94,7 +74,7 @@ public class CountryServiceTests
     public async Task CreateAsync_ShouldAddCountry_WhenChangesSavedSuccessfully()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
+        var countryDto = TestData.Country.GenerateCountryDto();
 
         _countryRepository.Setup(c => c.CreateAsync(It.IsAny<DataAccess.Entities.Country>()))
             .ReturnsAsync(countryDto.MapToCountryEntity().Id);
@@ -112,7 +92,7 @@ public class CountryServiceTests
     public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
+        var countryDto = TestData.Country.GenerateCountryDto();
 
         _countryRepository
             .Setup(c => c.CreateAsync(It.IsAny<DataAccess.Entities.Country>()))
@@ -133,7 +113,7 @@ public class CountryServiceTests
     public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
+        var countryDto = TestData.Country.GenerateCountryDto();
         
         _countryRepository.Setup(c => c.ExistsByNameAsync(countryDto.Name)).ReturnsAsync(true);
     
@@ -145,16 +125,11 @@ public class CountryServiceTests
     public async Task UpdateAsync_ShouldReturnTrue_WhenCountryUpdatedSuccessfully()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
-        var country = new DataAccess.Entities.Country
-        {
-            Id = countryDto.MapToCountryEntity().Id,
-            Name = countryDto.Name,
-            CountryStatus = countryDto.Status
-        };
+        var countryDto = TestData.Country.GenerateCountryDto();
+        var country = TestData.Country.GenerateCountryEntity();
         
         _countryRepository
-            .Setup(c => c.GetByIdAsync(country.Id))
+            .Setup(c => c.GetByIdAsync(countryDto.Id!.Value))
             .ReturnsAsync(country);
         
         _unitOfWork
@@ -172,7 +147,7 @@ public class CountryServiceTests
     public async Task UpdateAsync_ShouldReturnFalse_WhenCountryNotFound()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
+        var countryDto = TestData.Country.GenerateCountryDto();
         
         _countryRepository
             .Setup(c => c.GetByIdAsync(countryDto.MapToCountryEntity().Id))
@@ -189,13 +164,8 @@ public class CountryServiceTests
     public async Task UpdateAsync_ShouldReturnFalse_WhenChangesNotSaved()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
-        var country = new DataAccess.Entities.Country
-        {
-            Id = countryDto.MapToCountryEntity().Id,
-            Name = countryDto.Name,
-            CountryStatus = countryDto.Status
-        };
+        var countryDto = TestData.Country.GenerateCountryDto();
+        var country = TestData.Country.GenerateCountryEntity();
         
         _countryRepository
             .Setup(c => c.GetByIdAsync(country.Id))
@@ -216,15 +186,10 @@ public class CountryServiceTests
     public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
     {
         // Arrange
-        var countryDto = new CountryDto(Guid.NewGuid(), "Canada", DataAccess.Enums.CountryStatus.Allowed);
-        var country = new DataAccess.Entities.Country
-        {
-            Id = countryDto.MapToCountryEntity().Id,
-            Name = "Columbia",
-            CountryStatus = countryDto.Status
-        };
+        var countryDto = TestData.Country.GenerateCountryDto();
+        var country = TestData.Country.GenerateCountryEntity();
         
-        _countryRepository.Setup(c => c.GetByIdAsync(country.Id)).ReturnsAsync(country);
+        _countryRepository.Setup(c => c.GetByIdAsync(countryDto.Id!.Value)).ReturnsAsync(country);
         _countryRepository.Setup(c => c.ExistsByNameAsync(countryDto.Name)).ReturnsAsync(true);
     
         // Act & Assert

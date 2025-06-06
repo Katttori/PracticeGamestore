@@ -32,11 +32,7 @@ public class PlatformControllerTests
     public async Task GetAllPlatforms_ShouldReturnOkResult_WhenPlatformsExist()
     {
         // Arrange
-        var platforms = new List<PlatformDto>
-        {
-            new(Guid.NewGuid(), "PC", "Personal Computer"),
-            new(Guid.NewGuid(), "PS5", "PlayStation 5")
-        };
+        var platforms = TestData.Platform.GeneratePlatformDtos();
         
         _platformService.Setup(service => service.GetAllAsync()).ReturnsAsync(platforms);
         
@@ -60,7 +56,7 @@ public class PlatformControllerTests
     public async Task GetPlatformById_ShouldReturnOkResult_WhenPlatformExists()
     {
         // Arrange
-        var platform = new PlatformDto(Guid.NewGuid(), "PC", "Personal Computer");
+        var platform = TestData.Platform.GeneratePlatformDto();
         
         _platformService.Setup(service => service.GetByIdAsync(platform.MapToPlatformEntity().Id)).ReturnsAsync(platform);
         
@@ -133,13 +129,8 @@ public class PlatformControllerTests
     public async Task CreatePlatform_ShouldReturnCreatedResult_WhenPlatformIsCreated()
     {
         // Arrange
-        var platformRequest = new PlatformRequestModel
-        {
-            Name = "PC",
-            Description = "Personal Computer"
-        };
-        
-        var platformDto = new PlatformDto(Guid.NewGuid(), platformRequest.Name, platformRequest.Description);
+        var platformRequest = TestData.Platform.GeneratePlatformRequestModel();
+        var platformDto = TestData.Platform.GeneratePlatformDto();
         
         _platformService.Setup(service => service.CreateAsync(It.IsAny<PlatformDto>()))
             .ReturnsAsync(platformDto.Id);
@@ -158,11 +149,7 @@ public class PlatformControllerTests
     public async Task CreatePlatform_ShouldReturnBadRequest_WhenCreationFails()
     {
         // Arrange
-        var platformRequest = new PlatformRequestModel
-        {
-            Name = "PC",
-            Description = "Personal Computer"
-        };
+        var platformRequest = TestData.Platform.GeneratePlatformRequestModel();
         
         _platformService.Setup(service => service.CreateAsync(It.IsAny<PlatformDto>()))
             .ReturnsAsync((Guid?)null);
@@ -182,7 +169,7 @@ public class PlatformControllerTests
         
         // Act
         var result = await _platformController
-            .UpdatePlatform(Guid.NewGuid(), new PlatformRequestModel {Name = "PC", Description = "Personal Computer"});
+            .UpdatePlatform(Guid.NewGuid(), TestData.Platform.GeneratePlatformRequestModel());
         
         // Assert
         var noContent = result as NoContentResult;
@@ -197,7 +184,7 @@ public class PlatformControllerTests
         
         // Act
         var result = await _platformController
-            .UpdatePlatform(Guid.NewGuid(), new PlatformRequestModel {Name = "PC", Description = "Personal Computer"});
+            .UpdatePlatform(Guid.NewGuid(), TestData.Platform.GeneratePlatformRequestModel());
         
         // Assert
         var badRequest = result as BadRequestObjectResult;

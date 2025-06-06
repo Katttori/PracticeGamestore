@@ -13,7 +13,6 @@ using PracticeGamestore.Models.Game;
 
 namespace PracticeGamestore.Tests.Unit.Game;
 
-[TestFixture]
 public class GameControllerTests
 {
     private Mock<IGameService> _gameService;
@@ -49,7 +48,7 @@ public class GameControllerTests
                dto1.Genres.All(eg => dto2.Genres.Any(rg => rg.Id == eg.Id && rg.Name == eg.Name && rg.Description == eg.Description && rg.ParentId == eg.ParentId));
     }
 
-    private OkObjectResult AssetThatStatusCodeIsOk(IActionResult result)
+    private static OkObjectResult AssertThatStatusCodeIsOk(IActionResult result)
     {
         var okResult = result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
@@ -101,7 +100,7 @@ public class GameControllerTests
         var result = await _gameController.GetAll();
 
         //Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
     }
 
@@ -119,7 +118,7 @@ public class GameControllerTests
         var result = await _gameController.GetById(id);
 
         //Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         var response = okResult.Value as GameResponseModel;
         Assert.That(response, Is.Not.Null);
         Assert.That(GameResponseModelsAreTheSame(response!, expected), Is.True);
@@ -271,7 +270,7 @@ public class GameControllerTests
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
     }
 
@@ -287,7 +286,7 @@ public class GameControllerTests
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, [], 1, 10, 0);
     }
 
@@ -307,7 +306,7 @@ public class GameControllerTests
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
     }
 
@@ -326,7 +325,7 @@ public class GameControllerTests
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
     }
 
@@ -345,7 +344,7 @@ public class GameControllerTests
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
     }
 
@@ -358,7 +357,8 @@ public class GameControllerTests
             ReleaseDateStart = new DateTime(2024, 1, 1),
             ReleaseDateEnd = new DateTime(2024, 12, 31)
         };
-        var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g => g.ReleaseDate >= new DateTime(2024, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31)).ToList();
+        var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g =>
+            g.ReleaseDate >= new DateTime(2024, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31)).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
         _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
             .ReturnsAsync((paginated, gameDtos.Count));
@@ -368,7 +368,7 @@ public class GameControllerTests
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
     }
 
@@ -387,7 +387,7 @@ public class GameControllerTests
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 2, 5, gameDtos.Count);
     }
 
@@ -428,7 +428,7 @@ public class GameControllerTests
         var result = await _gameController.GetFiltered(gameFilter);
 
         // Assert
-        var okResult = AssetThatStatusCodeIsOk(result);
+        var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
     }
         

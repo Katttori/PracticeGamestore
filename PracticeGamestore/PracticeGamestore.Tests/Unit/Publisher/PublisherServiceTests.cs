@@ -1,15 +1,14 @@
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.UnitOfWork;
-using PracticeGamestore.Tests.TestData;
 
 namespace PracticeGamestore.Tests.Unit.Publisher;
 
-[TestFixture]
 public class PublisherServiceTests
 {
     private Mock<IPublisherRepository> _publisherRepository;
@@ -77,7 +76,7 @@ public class PublisherServiceTests
             .ReturnsAsync(null as DataAccess.Entities.Publisher);
 
         //Act
-        var result = await _publisherService.GetByIdAsync(new Guid());
+        var result = await _publisherService.GetByIdAsync(Guid.NewGuid());
         
         //Assert
         Assert.That(result, Is.Null);
@@ -237,13 +236,13 @@ public class PublisherServiceTests
             .ReturnsAsync(games);
         
         //Act
-        var result = await _publisherService.GetGamesAsync(publisherId);
+        var result =
+            (await _publisherService.GetGamesAsync(publisherId) ?? Array.Empty<GameResponseDto>()).ToList();
         
         //Assert
         Assert.That(result, Is.Not.Null);
-        var gameResponseDtos = result!.ToList();
-        Assert.That(gameResponseDtos.Count, Is.EqualTo(games.Count));
-        Assert.That(gameResponseDtos.All(dto => dto.Publisher.Id == publisherId), Is.True);
+        Assert.That(result.Count, Is.EqualTo(games.Count));
+        Assert.That(result.All(dto => dto.Publisher.Id == publisherId), Is.True);
     }
     
     [Test]

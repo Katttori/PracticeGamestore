@@ -1,7 +1,6 @@
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
@@ -24,7 +23,7 @@ public class GenreServiceTests
         _gameRepository = new Mock<IGameRepository>();
         _service = new GenreService(_genreRepository.Object, _gameRepository.Object, _unitOfWork.Object); // Correct order
     }
-
+  
     [Test]
     public async Task GetAllAsync_ReturnsAllGenres()
     {
@@ -78,7 +77,7 @@ public class GenreServiceTests
     public async Task CreateAsync_WhenChangesSavedSuccessfully_ReturnsCreatedId()
     {
         // Arrange
-        var dto = new GenreDto(Guid.NewGuid(), "Action");
+        var dto = TestData.Genre.GenerateGenreDto();
         
         _genreRepository
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
@@ -98,7 +97,7 @@ public class GenreServiceTests
     public async Task CreateAsync_WhenSaveChangesFailed_ReturnsNull()
     {
         // Arrange
-        var dto = new GenreDto(Guid.NewGuid(), "Action");
+        var dto = TestData.Genre.GenerateGenreDto();
         
         _genreRepository
             .Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.Genre>()))
@@ -131,7 +130,7 @@ public class GenreServiceTests
     {
         // Arrange
         var invalidParentId = Guid.NewGuid();
-        var dto = new GenreDto(Guid.NewGuid(), "Action", invalidParentId);
+        var dto = TestData.Genre.GenerateGenreDto();
     
         _genreRepository
             .Setup(x => x.GetByIdAsync(invalidParentId))
@@ -148,19 +147,18 @@ public class GenreServiceTests
     public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        var dto = new GenreDto(id, "Action");
-        var entity = new DataAccess.Entities.Genre { Id = id, Name = "Action" };
+        var dto = TestData.Genre.GenerateGenreDto();
+        var entity = TestData.Genre.GenerateActionGenre();
         
         _genreRepository
-            .Setup(x => x.GetByIdAsync(entity.Id))
+            .Setup(x => x.GetByIdAsync(dto.Id!.Value))
             .ReturnsAsync(entity);
         _unitOfWork
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // Act
-        var result = await _service.UpdateAsync(id, dto);
+        var result = await _service.UpdateAsync(dto.Id!.Value, dto);
         
         // Assert
         Assert.That(result, Is.True);
@@ -171,7 +169,7 @@ public class GenreServiceTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var dto = new GenreDto(id, "Action");
+        var dto = TestData.Genre.GenerateGenreDto();
         
         _genreRepository
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -204,8 +202,8 @@ public class GenreServiceTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var dto = new GenreDto(id, "Adventure", id);
-        var entity = new DataAccess.Entities.Genre { Id = id, Name = "Adventure" };
+        var dto = TestData.Genre.GenerateGenreDto();
+        var entity = TestData.Genre.GenerateActionGenre();
     
         _genreRepository
             .Setup(x => x.GetByIdAsync(id))
@@ -246,13 +244,12 @@ public class GenreServiceTests
         _gameRepository.Setup(x => x.GetByGenreAndItsChildrenAsync(children)).ReturnsAsync(games);
 
         // Act
-        var result = await _service.GetGames(actionGenreId);
+        var result = (await _service.GetGames(actionGenreId) ?? Array.Empty<GameResponseDto>()).ToList();
         
         // Assert
         Assert.That(result, Is.Not.Null);
-        var gameResponseDtos = result!.ToList();
-        Assert.That(gameResponseDtos.Count, Is.EqualTo(games.Count));
-        Assert.That(gameResponseDtos.All(g => g.Genres.Any(genre => children.Contains(genre.Id.Value))), Is.True);
+        Assert.That(result.Count, Is.EqualTo(games.Count));
+        Assert.That(result.All(g => g.Genres.Any(genre => children.Contains(genre.Id!.Value))), Is.True);
     }
     
     [Test]
