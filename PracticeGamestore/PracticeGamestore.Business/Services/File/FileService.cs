@@ -19,14 +19,14 @@ public class FileService(IFileRepository fileRepository, IPhysicalFileService se
         return file?.MapToFileDto();
     }
     
-    public async Task<Guid?> CreateAsync(FileDto file)
+    public async Task<Guid?> UploadAsync(FileDto fileDto)
     {   
         await unitOfWork.BeginTransactionAsync();
-        var path = await service.SaveFileAsync(file.File);
+        var path = await service.SaveFileAsync(fileDto.File);
             
-        var fileEntity = file.MapToFileEntity();
+        var fileEntity = fileDto.MapToFileEntity();
             
-        fileEntity.Id = file.Id ?? Guid.NewGuid();
+        fileEntity.Id = fileDto.Id ?? Guid.NewGuid();
         fileEntity.Path = path;
             
         await fileRepository.CreateAsync(fileEntity);
@@ -46,11 +46,8 @@ public class FileService(IFileRepository fileRepository, IPhysicalFileService se
         var file = await fileRepository.GetByIdAsync(id);
         if (file == null) return;
         
-        await unitOfWork.BeginTransactionAsync();
         service.DeleteFile(file.Path);
         await fileRepository.DeleteAsync(id);
         await unitOfWork.SaveChangesAsync();
-        
-        await unitOfWork.CommitTransactionAsync();
     }
 }

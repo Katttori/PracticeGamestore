@@ -13,6 +13,7 @@ namespace PracticeGamestore.Tests.Unit.File;
 public class FileControllerTests
 {
     private Mock<IFileService> _fileService;
+    private Mock<IPhysicalFileService> _physicalFileService;
     private Mock<ILogger<FileController>> _logger;
     private FileController _controller;
 
@@ -20,8 +21,9 @@ public class FileControllerTests
     public void Setup()
     {
         _fileService = new Mock<IFileService>();
+        _physicalFileService = new Mock<IPhysicalFileService>();
         _logger = new Mock<ILogger<FileController>>();
-        _controller = new FileController(_fileService.Object, _logger.Object);
+        _controller = new FileController(_fileService.Object, _physicalFileService.Object, _logger.Object);
     }
 
     [Test]
@@ -48,6 +50,8 @@ public class FileControllerTests
     {
         var dto = TestData.File.GenerateFileDto();
         _fileService.Setup(s => s.GetByIdAsync(dto.Id!.Value)).ReturnsAsync(dto);
+        _physicalFileService.Setup(s => s.ReadFileAsync(dto.Path))
+            .ReturnsAsync(Encoding.UTF8.GetBytes("test content"));
 
         // simulate file on disk
         var dummyContent = Encoding.UTF8.GetBytes("test content");
@@ -83,7 +87,7 @@ public class FileControllerTests
     {
         var dto = TestData.File.GenerateFileDto();
         var model = new FileRequestModel { GameId = dto.GameId, File = dto.File };
-        _fileService.Setup(s => s.CreateAsync(It.IsAny<FileDto>())).ReturnsAsync(dto.Id);
+        _fileService.Setup(s => s.UploadAsync(It.IsAny<FileDto>())).ReturnsAsync(dto.Id);
 
         var result = await _controller.Upload(model);
         var created = result as CreatedAtActionResult;
@@ -101,7 +105,7 @@ public class FileControllerTests
     {
         var dto = TestData.File.GenerateFileDto();
         var model = new FileRequestModel { GameId = dto.GameId, File = dto.File };
-        _fileService.Setup(s => s.CreateAsync(It.IsAny<FileDto>())).ReturnsAsync((Guid?)null);
+        _fileService.Setup(s => s.UploadAsync(It.IsAny<FileDto>())).ReturnsAsync((Guid?)null);
 
         var result = await _controller.Upload(model);
         var badRequest = result as BadRequestObjectResult;

@@ -84,7 +84,7 @@ public class FileServiceTests
         _unitOfWork.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
         // Act
-        var result = await _fileService.CreateAsync(fileDto);
+        var result = await _fileService.UploadAsync(fileDto);
 
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -106,7 +106,7 @@ public class FileServiceTests
             .ReturnsAsync(0);
 
         // Act
-        var result = await _fileService.CreateAsync(fileDto);
+        var result = await _fileService.UploadAsync(fileDto);
 
         // Assert
         Assert.That(result, Is.Null);

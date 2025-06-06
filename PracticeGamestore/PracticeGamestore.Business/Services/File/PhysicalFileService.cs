@@ -2,13 +2,16 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.DataAccess.Repositories.File;
 
 namespace PracticeGamestore.Business.Services.File;
 
 public class PhysicalFileService(
     IWebHostEnvironment env,
     IConfiguration config,
-    ILogger<PhysicalFileService> logger) : IPhysicalFileService
+    ILogger<PhysicalFileService> logger,
+    IFileRepository fileRepository) : IPhysicalFileService
 {
     
     private readonly string root = Path.Combine(env.ContentRootPath, config["Storage:GameFilesPath"]!);
@@ -30,6 +33,22 @@ public class PhysicalFileService(
         {
             logger.LogError(ex, "An error occurred while saving the file: {FileName}", file.FileName);
             throw new Exception("An error occurred while saving the file.", ex);
+        }
+    }
+    
+    public async Task<byte[]> ReadFileAsync(string filePath)
+    {
+        try
+        {
+            if (!System.IO.File.Exists(filePath))
+                throw new FileNotFoundException("File not found.", filePath);
+            
+            return await System.IO.File.ReadAllBytesAsync(filePath);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while reading the file: {FilePath}", filePath);
+            throw new Exception("An error occurred while reading the file.", ex);
         }
     }
     

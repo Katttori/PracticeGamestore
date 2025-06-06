@@ -7,7 +7,7 @@ namespace PracticeGamestore.Controllers;
 
 [ApiController]
 [Route("files")]
-public class FileController(IFileService fileService, ILogger<FileController> logger) : ControllerBase
+public class FileController(IFileService fileService, IPhysicalFileService physicalFileService, ILogger<FileController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -26,14 +26,14 @@ public class FileController(IFileService fileService, ILogger<FileController> lo
             return NotFound($"File with id: {id} was not found.");
         }
         
-        var bytes = await System.IO.File.ReadAllBytesAsync(file.Path);
+        var bytes = await physicalFileService.ReadFileAsync(file.Path);
         return File(bytes, file.Type, Path.GetFileName(file.Path));
     }
 
     [HttpPost]
     public async Task<IActionResult> Upload([FromForm] FileRequestModel request)
     {
-        var id = await fileService.CreateAsync(request.MapToFileDto());
+        var id = await fileService.UploadAsync(request.MapToFileDto());
         if (id is null)
         {
             logger.LogError("Failed to upload file for request: {Request}", request);
@@ -58,6 +58,4 @@ public class FileController(IFileService fileService, ILogger<FileController> lo
         logger.LogInformation("Deleted file with id: {Id}", id);
         return NoContent();
     }
-    
-    
 }
