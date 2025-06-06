@@ -10,7 +10,7 @@ public static class CommonValidationRules
         return ruleBuilder
             .NotEmpty()
             .Length(ValidationConstants.StringLength.Minimum, ValidationConstants.StringLength.ShortMaximum)
-            .Matches(@"^[a-zA-Z\s'-]+$")
+            .Matches(@"^[\p{L}\s'-]+$")
             .WithMessage(ErrorMessages.IncorrectName);
     }
     
@@ -25,10 +25,19 @@ public static class CommonValidationRules
     {
         return ruleBuilder
             .NotEmpty()
+            .MaximumLength(ValidationConstants.StringLength.ShortMaximum)
             .EmailAddress()
-            .MaximumLength(ValidationConstants.StringLength.ShortMaximum);
+            .Must(x =>
+            {   if (x == null) return false;
+                var atIndex = x.LastIndexOf('@');
+                var domain = x.Substring(atIndex + 1);
+                return !x.Contains(' ') && domain.Contains('.') &&
+                       domain.Split('.').Length >= 2 &&
+                       domain.Split('.').All(part => !string.IsNullOrEmpty(part)) &&
+                       !domain.StartsWith('.') &&
+                       !domain.EndsWith('.');
+            });
     }
-    
 
     public static IRuleBuilderOptions<T, Guid> HasCorrectId<T>(this IRuleBuilder<T, Guid> ruleBuilder)
     {

@@ -50,12 +50,18 @@ public class OrderValidatorTests
 
     [TestCase(null, TestName = "Email is null")]
     [TestCase("", TestName = "Email is empty")]
-    [TestCase("invalid-email", TestName = "Email format is invalid")]
+    [TestCase(" ", TestName = "Email is whitespace")]
+    [TestCase("invalid-email", TestName = "Email without @ symbol")]
+    [TestCase("@domain.com", TestName = "Email missing local part")]
+    [TestCase("user@", TestName = "Email missing domain")]
+    [TestCase("user.domain.com", TestName = "Email missing @ symbol")]
+    [TestCase("user@domain", TestName = "Email missing TLD")]
+    [TestCase("user name@domain.com", TestName = "Email with space in local part")]
     public void ShouldHaveError_WhenEmailIsInvalid(string? email)
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
-        order.UserEmail = email;
+        order.UserEmail = email!;
 
         // Act
         var result = _validator.TestValidate(order);
