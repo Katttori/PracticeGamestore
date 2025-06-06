@@ -23,21 +23,11 @@ public class FileRepository(GamestoreDbContext context) : IFileRepository
         return entity.Entity.Id;
     }
     
-    public void Update(Entities.File file)
-    {
-        context.Files.Update(file);
-    }
-    
     public async Task DeleteAsync(Guid id)
     {
         var file = await context.Files.FindAsync(id);
         if (file == null) return;
 
         context.Files.Remove(file);
-    }
-    
-    public async Task BeginTransactionAsync()
-    {
-        await context.Database.BeginTransactionAsync();
     }
 }

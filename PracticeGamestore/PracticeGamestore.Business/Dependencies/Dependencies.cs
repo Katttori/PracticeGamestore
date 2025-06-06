@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.Business.Services.Country;
+using PracticeGamestore.Business.Services.File;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.DataAccess;
 using PracticeGamestore.Business.Services.Publisher;
@@ -53,5 +54,7 @@ public static class Dependencies
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IBlacklistService, BlacklistService>();
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IPhysicalFileService, PhysicalFileService>();
     }
 }
