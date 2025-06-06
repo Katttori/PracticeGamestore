@@ -11,12 +11,11 @@ public class GenreValidator : AbstractValidator<GenreRequestModel>
          RuleFor(x => x.Name)
              .HasValidName();
 
-         RuleFor(x => x.Description).
-             HasCorrectDescription();
+         RuleFor(x => x.Description)
+             .MaximumLength(ValidationConstants.StringLength.LongMaximum);
 
          RuleFor(x => x.ParentId)
              .NotEqual(Guid.Empty)
-             .WithMessage(ErrorMessages.EmptyGuid)
              .When(x => x.ParentId.HasValue);
      }
 }

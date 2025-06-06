@@ -11,11 +11,11 @@ public class GameFilterValidator : AbstractValidator<GameFilter>
     {
         RuleFor(x => x.MinPrice)
             .GreaterThanOrEqualTo(0)
-            .WithMessage(ErrorMessages.MustBeGreaterThanZero);
+            .When(x => x.MinPrice.HasValue);
 
         RuleFor(x => x.MaxPrice)
             .GreaterThanOrEqualTo(0)
-            .WithMessage(ErrorMessages.MustBeGreaterThanZero);
+            .When(x => x.MaxPrice.HasValue);
 
         RuleFor(x => x)
             .Must(x => !x.MinPrice.HasValue || !x.MaxPrice.HasValue || x.MinPrice <= x.MaxPrice)
@@ -36,10 +36,12 @@ public class GameFilterValidator : AbstractValidator<GameFilter>
             .WithMessage(ErrorMessages.FirstCannotBeGreaterThanSecond("Start release date", "end release date"));
 
         RuleFor(x => x.RatingFrom)
-            .HasCorrectGameRating();
-
+            .InclusiveBetween(ValidationConstants.GameRating.Min, ValidationConstants.GameRating.Max)
+            .When(x => x.RatingFrom.HasValue); 
+        
         RuleFor(x => x.RatingTo)
-            .HasCorrectGameRating();
+            .InclusiveBetween(ValidationConstants.GameRating.Min, ValidationConstants.GameRating.Max)
+            .When(x => x.RatingTo.HasValue); 
 
         RuleFor(x => x)
             .Must(x => !x.RatingFrom.HasValue || !x.RatingTo.HasValue || x.RatingFrom <= x.RatingTo)
@@ -60,15 +62,12 @@ public class GameFilterValidator : AbstractValidator<GameFilter>
             .When(x => x.Age is { Count: > 0 });
 
         RuleFor(x => x.Page)
-            .GreaterThanOrEqualTo(1)
-            .WithMessage(ErrorMessages.MustBeGreaterThanZero);
+            .GreaterThanOrEqualTo(1);
 
         RuleFor(x => x.PageSize)
-            .InclusiveBetween(1, ValidationConstants.MaxPageSize)
-            .WithMessage(ErrorMessages.InvalidPageSize);
+            .InclusiveBetween(1, ValidationConstants.MaxPageSize);
 
         RuleFor(x => x.Name)
-            .MaximumLength(ValidationConstants.StringLength.ShortMaximum)
-            .WithMessage(ErrorMessages.StringIsTooLong);
+            .MaximumLength(ValidationConstants.StringLength.ShortMaximum);
     }
 }

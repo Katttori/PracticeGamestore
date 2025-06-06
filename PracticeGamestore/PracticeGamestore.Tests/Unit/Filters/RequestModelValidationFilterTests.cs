@@ -2,15 +2,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Filters;
 
-namespace PracticeGamestore.Tests.Unit.Filter;
+namespace PracticeGamestore.Tests.Unit.Filters;
 
+[TestFixture]
 public class RequestModelValidationFilterTests
 {
     private Mock<ILogger<RequestModelValidationFilter>> _logger;

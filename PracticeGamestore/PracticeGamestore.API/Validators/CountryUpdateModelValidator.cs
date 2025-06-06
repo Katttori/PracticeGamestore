@@ -10,9 +10,8 @@ public class CountryUpdateModelValidator : AbstractValidator<CountryUpdateReques
     {
         RuleFor(x => x.Name).
             HasValidName();
-        
-        RuleFor(x => x.Status) 
-            .IsInEnum()
-            .WithMessage(ErrorMessages.InvalidEnum);
+
+        RuleFor(x => x.Status)
+            .IsInEnum();
     }
 }

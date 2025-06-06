@@ -1,4 +1,5 @@
 using FluentValidation;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Models.Platform;
 
 namespace PracticeGamestore.Validators;
@@ -8,9 +9,9 @@ public class PlatformValidator : AbstractValidator<PlatformRequestModel>
     public PlatformValidator()
     {
         RuleFor(x => x.Name)
-            .HasValidName();
+            .HasValidTitle();
 
         RuleFor(x => x.Description)
-            .HasCorrectDescription();
+            .MaximumLength(ValidationConstants.StringLength.LongMaximum);
     }
 }

@@ -8,7 +8,7 @@ public class OrderValidator : AbstractValidator<OrderRequestModel>
     public OrderValidator()
     {
         RuleFor(x => x.Total)
-            .HasCorrectPrice();
+            .GreaterThan(0);
         
         RuleFor(x => x.UserEmail)
             .HasCorrectEmail();

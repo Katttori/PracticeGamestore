@@ -9,17 +9,17 @@ public class GameValidator : AbstractValidator<GameRequestModel>
     public GameValidator()
     {
         RuleFor(x => x.Name)
-            .HasValidName();
+            .HasValidTitle();
 
         RuleFor(x => x.Key)
-            .HasValidName();
+            .HasValidTitle();
 
         RuleFor(x => x.Price)
-            .HasCorrectPrice();
+            .GreaterThan(0);
 
         RuleFor(x => x.Description)
-            .HasCorrectDescription();
-
+            .MaximumLength(ValidationConstants.StringLength.LongMaximum);
+        
         RuleFor(x => x.Rating)
             .InclusiveBetween
                 (ValidationConstants.GameRating.Min, ValidationConstants.GameRating.Max)

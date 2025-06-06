@@ -21,11 +21,6 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [HttpGet("/filter")]
     public async Task<IActionResult> GetFiltered([FromQuery] GameFilter filter)
     {
-        if (!ModelState.IsValid)
-        {
-            logger.LogError("Invalid query parameters: {Query}", filter);
-            return BadRequest(ErrorMessages.IncorrectQueryParameters + ModelState);
-        }
         var (games, totalCount) = await gameService.GetFilteredAsync(filter);
         return Ok(new PaginatedGameListResponseModel {
             Games = games.Select(g => g.MapToGameModel()).ToList(),

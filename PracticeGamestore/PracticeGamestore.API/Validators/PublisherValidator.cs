@@ -12,13 +12,13 @@ public class PublisherValidator : AbstractValidator<PublisherRequestModel>
             .HasValidName();
 
         RuleFor(x => x.Description)
-            .HasCorrectDescription();
+            .MaximumLength(ValidationConstants.StringLength.LongMaximum);
 
         RuleFor(x => x.PageUrl)
             .NotEmpty()
             .Must(IsValidPageUrl)
-            .MaximumLength(ValidationConstants.StringLength.LongMaximum)
-            .WithMessage(ErrorMessages.IncorrectPageUrl);
+            .WithMessage(ErrorMessages.IncorrectPageUrl)
+            .MaximumLength(ValidationConstants.StringLength.LongMaximum);
     }
 
     private static bool IsValidPageUrl(string url) =>
