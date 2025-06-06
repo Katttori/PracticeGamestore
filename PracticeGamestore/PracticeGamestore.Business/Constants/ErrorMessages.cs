@@ -36,5 +36,6 @@ public static class ErrorMessages
     public const string EmptyGuid = "The provided guid must not be empty.";
     public const string IncorrectOrdering = "Order by field must be either asc or desc.";
     public const string IncorrectQueryParameters = "Invalid query parameters";
+    public const string InvalidReleaseDate = "Release date cannot be in future";
 
 }

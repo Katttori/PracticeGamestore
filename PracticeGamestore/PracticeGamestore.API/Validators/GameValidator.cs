@@ -30,8 +30,9 @@ public class GameValidator : AbstractValidator<GameRequestModel>
             .WithMessage(ErrorMessages.InvalidAgeRating);
 
         RuleFor(x => x.ReleaseDate)
-            .NotNull();//***
-
+            .LessThanOrEqualTo(DateTime.Today)
+            .WithMessage(ErrorMessages.InvalidReleaseDate);
+        
         RuleFor(x => x.PublisherId)
             .HasCorrectId();
 

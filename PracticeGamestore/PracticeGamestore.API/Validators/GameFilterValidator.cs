@@ -21,6 +21,16 @@ public class GameFilterValidator : AbstractValidator<GameFilter>
             .Must(x => !x.MinPrice.HasValue || !x.MaxPrice.HasValue || x.MinPrice <= x.MaxPrice)
             .WithMessage(ErrorMessages.FirstCannotBeGreaterThanSecond("Minimum price", "maximum price"));
 
+        RuleFor(x => x.ReleaseDateStart)
+            .LessThanOrEqualTo(DateTime.Today)
+            .WithMessage(ErrorMessages.InvalidReleaseDate)
+            .When(x => x.ReleaseDateStart.HasValue);
+        
+        RuleFor(x => x.ReleaseDateEnd)
+            .LessThanOrEqualTo(DateTime.Today)
+            .WithMessage(ErrorMessages.InvalidReleaseDate)
+            .When(x => x.ReleaseDateEnd.HasValue);
+        
         RuleFor(x => x)
             .Must(x => !x.ReleaseDateStart.HasValue || !x.ReleaseDateEnd.HasValue || x.ReleaseDateStart <= x.ReleaseDateEnd)
             .WithMessage(ErrorMessages.FirstCannotBeGreaterThanSecond("Start release date", "end release date"));
