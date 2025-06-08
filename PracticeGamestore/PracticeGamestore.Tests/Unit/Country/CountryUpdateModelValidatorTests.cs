@@ -4,7 +4,7 @@ using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Validators;
 
-namespace PracticeGamestore.Tests.Unit.Validators;
+namespace PracticeGamestore.Tests.Unit.Country;
 
 public class CountryUpdateModelValidatorTests
 {

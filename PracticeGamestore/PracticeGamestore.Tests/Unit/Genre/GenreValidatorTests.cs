@@ -1,10 +1,10 @@
 using FluentValidation.TestHelper;
 using NUnit.Framework;
 using PracticeGamestore.Business.Constants;
-using PracticeGamestore.Validators;
 using PracticeGamestore.Tests.TestData;
+using PracticeGamestore.Validators;
 
-namespace PracticeGamestore.Tests.Unit.Validators;
+namespace PracticeGamestore.Tests.Unit.Genre;
 
 [TestFixture]
 public class GenreValidatorTests

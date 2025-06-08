@@ -1,9 +1,9 @@
 using FluentValidation.TestHelper;
 using NUnit.Framework;
-using PracticeGamestore.Validators;
 using PracticeGamestore.Tests.TestData;
+using PracticeGamestore.Validators;
 
-namespace PracticeGamestore.Tests.Unit.Validators;
+namespace PracticeGamestore.Tests.Unit.Platform;
 
 [TestFixture]
 public class PlatformValidatorTests

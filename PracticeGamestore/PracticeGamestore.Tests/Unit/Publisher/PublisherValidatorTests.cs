@@ -3,7 +3,7 @@ using NUnit.Framework;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Validators;
 
-namespace PracticeGamestore.Tests.Unit.Validators;
+namespace PracticeGamestore.Tests.Unit.Publisher;
 
 [TestFixture]
 public class PublisherValidatorTests
@@ -151,7 +151,7 @@ public class PublisherValidatorTests
     {
         // Arrange
         var publisher = TestData.Publisher.GeneratePublisherRequestModel();
-        publisher.PageUrl = TestData.StringConstants.LongerThatLongMaximum;
+        publisher.PageUrl = TestData.StringConstants.LongerThatShortMaximum;
         
         // Act
         var result = _validator.TestValidate(publisher);

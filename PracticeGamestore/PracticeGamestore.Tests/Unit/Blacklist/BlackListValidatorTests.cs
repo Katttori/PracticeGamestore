@@ -2,7 +2,7 @@ using FluentValidation.TestHelper;
 using NUnit.Framework;
 using PracticeGamestore.Validators;
 
-namespace PracticeGamestore.Tests.Unit.Validators;
+namespace PracticeGamestore.Tests.Unit.Blacklist;
 
 [TestFixture]
 public class BlackListValidatorTests

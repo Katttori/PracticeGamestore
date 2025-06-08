@@ -1,9 +1,9 @@
 using FluentValidation.TestHelper;
 using NUnit.Framework;
-using PracticeGamestore.Validators;
 using PracticeGamestore.Models.Order;
+using PracticeGamestore.Validators;
 
-namespace PracticeGamestore.Tests.Unit.Validators;
+namespace PracticeGamestore.Tests.Unit.Order;
 
 [TestFixture]
 public class OrderValidatorTests

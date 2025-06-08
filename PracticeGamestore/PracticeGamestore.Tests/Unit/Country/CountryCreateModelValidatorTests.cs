@@ -3,7 +3,7 @@ using NUnit.Framework;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Validators;
 
-namespace PracticeGamestore.Tests.Unit.Validators;
+namespace PracticeGamestore.Tests.Unit.Country;
 
 [TestFixture]
 public class CountryCreateModelValidatorTests

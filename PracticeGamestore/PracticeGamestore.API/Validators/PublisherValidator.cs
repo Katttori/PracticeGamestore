@@ -18,7 +18,7 @@ public class PublisherValidator : AbstractValidator<PublisherRequestModel>
             .NotEmpty()
             .Must(IsValidPageUrl)
             .WithMessage(ErrorMessages.IncorrectPageUrl)
-            .MaximumLength(ValidationConstants.StringLength.LongMaximum);
+            .MaximumLength(ValidationConstants.StringLength.ShortMaximum);
     }
 
     private static bool IsValidPageUrl(string url) =>
