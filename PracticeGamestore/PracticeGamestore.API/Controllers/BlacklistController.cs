@@ -26,7 +26,7 @@ public class BlacklistController(
     {
         var blacklist = await blacklistService.GetByIdAsync(id);
 
-        if (blacklist is  null)
+        if (blacklist is null)
         {
             logger.LogError("Blacklist with id: {Id} was not found.", id);
             return NotFound(ErrorMessages.NotFound("Blacklist", id));
@@ -69,11 +69,13 @@ public class BlacklistController(
         
         var isUpdated = await blacklistService.UpdateAsync(id, model.MapToBlacklistDto());
 
-        if (isUpdated) return NoContent();
+        if (!isUpdated)
+        {
+            logger.LogError("Failed to update blacklist with id: {Id}", id);
+            return  BadRequest(ErrorMessages.FailedToUpdate("blacklist", id));
+        }
         
-        logger.LogError("Failed to update blacklist with id: {Id}", id);
-        return  BadRequest(ErrorMessages.FailedToUpdate("blacklist", id));
-
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]

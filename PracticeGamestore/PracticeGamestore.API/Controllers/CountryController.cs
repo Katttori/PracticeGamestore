@@ -58,12 +58,15 @@ public class CountryController(ICountryService countryService, ILogger<CountryCo
         var countryDto = model.MapToCountryDto();
         countryDto.Id = id;
         
-        var updated = await countryService.UpdateAsync(countryDto);
+        var isUpdated = await countryService.UpdateAsync(countryDto);
 
-        if (updated) return NoContent();
+        if (!isUpdated)
+        {
+            logger.LogError("Country with id: {Id} not found for update.", id);
+            return BadRequest(ErrorMessages.FailedToUpdate("country", id));
+        }
         
-        logger.LogError("Country with id: {Id} not found for update.", id);
-        return BadRequest(ErrorMessages.FailedToUpdate("country", id));
+        return NoContent();
     }
     
     [HttpDelete("{id:guid}")]

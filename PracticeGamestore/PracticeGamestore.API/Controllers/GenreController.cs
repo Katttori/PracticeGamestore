@@ -54,10 +54,13 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
     {
         var isUpdated = await genreService.UpdateAsync(id, model.MapToGenreDto());
 
-        if (isUpdated) return NoContent();
+        if (!isUpdated)
+        {
+            logger.LogError("Genre with id: {Id} was not found for update.", id);
+            return BadRequest(ErrorMessages.FailedToUpdate("genre", id));
+        }
         
-        logger.LogError("Genre with id: {Id} was not found for update.", id);
-        return BadRequest(ErrorMessages.FailedToUpdate("genre", id));
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]

@@ -53,10 +53,13 @@ public class OrderController(IOrderService orderService, ILogger<OrderController
     {
         var isUpdated = await orderService.UpdateAsync(id, model.MapToOrderDto());
 
-        if (isUpdated) return NoContent();
+        if (!isUpdated)
+        {
+            logger.LogError("Order with id: {Id} was not found for update.", id);
+            return BadRequest(ErrorMessages.FailedToUpdate("order", id));
+        }
         
-        logger.LogError("Order with id: {Id} was not found for update.", id);
-        return BadRequest(ErrorMessages.FailedToUpdate("order", id));
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]

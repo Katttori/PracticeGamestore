@@ -21,6 +21,10 @@ public static class ErrorMessages
     public static string IncorrectOrderByFields =>
         $"OrderBy fields must be one of: {string.Join(", ", ValidationConstants.OrderByFields)}";
 
+    public static readonly string IncorrectPictureFormat =
+        $"Picture must be a valid image format ({string.Join(", ", ValidationConstants.AllowedPictureFormats.Keys)}) " +
+        $"and between {ValidationConstants.MinimumPictureSize} and {ValidationConstants.MaximumPictureSize} bytes.";
+
     public const string UnauthorizedAccess = "You don't have permission to perform this action.";
     public const string UnauthenticatedAccess = "You must be logged in to perform this action.";
     public const string IncorrectPageUrl = "Specified page URL is invalid.";
@@ -28,5 +32,4 @@ public static class ErrorMessages
     public const string IncorrectQueryParameters = "Invalid query parameters";
     public const string InvalidReleaseDate = "Release date cannot be in future";
     public const string IncorrectName = "Name must contain only letters, hyphens, spaces, and apostrophes";
-
 }

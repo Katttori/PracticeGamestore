@@ -42,7 +42,7 @@ public class Game : IEntityTypeConfiguration<Entities.Game>
 
         builder.Property(g => g.Picture)
             .HasColumnName("picture")
-            .HasColumnType("varbinary(max)");
+            .HasMaxLength(ValidationConstants.MaximumPictureSize);
 
         builder.Property(g => g.Rating)
             .HasColumnName("rating")

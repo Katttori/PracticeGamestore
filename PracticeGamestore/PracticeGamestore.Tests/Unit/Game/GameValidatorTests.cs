@@ -461,7 +461,86 @@ public class GameValidatorTests
         // Assert
         result.ShouldNotHaveValidationErrorFor(x => x.GenreIds);
     }
+    
+    [Test]
+    public void ShouldNotHaveError_WhenPictureIsNull()
+    {
+        // Arrange
+        var game = TestData.Game.GenerateGameRequestModel();
+        game.Picture = null;
+        
+        // Act
+        var result = _validator.TestValidate(game);
+        
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.Picture);
+    }
+    
+    [Test]
+    public void ShouldHaveError_WhenPictureIsTooSmall()
+    {
+        // Arrange
+        var game = TestData.Game.GenerateGameRequestModel();
+        game.Picture = new byte[ValidationConstants.MinimumPictureSize - 1];
+        
+        // Act
+        var result = _validator.TestValidate(game);
+        
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Picture)
+            .WithErrorMessage(ErrorMessages.IncorrectPictureFormat);
+    }
 
+    [Test]
+    public void ShouldHaveError_WhenPictureIsTooLarge()
+    {
+        // Arrange
+        var game = TestData.Game.GenerateGameRequestModel();
+        game.Picture = new byte[ValidationConstants.MaximumPictureSize + 1];
+        
+        // Act
+        var result = _validator.TestValidate(game);
+        
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Picture)
+            .WithErrorMessage(ErrorMessages.IncorrectPictureFormat);
+    }
+
+    [TestCase(new byte[] { 0xFF, 0xD8, 0xFF }, TestName = "JPEG format")]
+    [TestCase(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }, TestName = "PNG format")]
+    [TestCase(new byte[] { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61 }, TestName = "GIF87a format")]
+    [TestCase(new byte[] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61 }, TestName = "VGIF89a format")]
+    public void ShouldNotHaveError_WhenPictureHasValidFormat(byte[] pictureBytes)
+    {
+        // Arrange
+        var game = TestData.Game.GenerateGameRequestModel();
+        game.Picture = TestData.Game.CreateGamePicture(pictureBytes);
+        
+        // Act
+        var result = _validator.TestValidate(game);
+        
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.Picture);
+    }
+
+    [TestCase(new byte[] { 0x00, 0x00, 0x01, 0x00 }, TestName = "ICO format")]
+    [TestCase(new byte[] { 0x49, 0x49, 0x2A, 0x00 }, TestName = "TIFF format")]
+    [TestCase(new byte[] { 0x50, 0x4B, 0x03, 0x04 }, TestName = "ZIP format")]
+    [TestCase(new byte[] { 0x25, 0x50, 0x44, 0x46 }, TestName = "PDF format")]
+    public void ShouldHaveError_WhenPictureHasInvalidFormat(byte[] pictureBytes)
+    {
+        // Arrange
+        var game = TestData.Game.GenerateGameRequestModel();
+        game.Picture = TestData.Game.CreateGamePicture(pictureBytes);
+        
+        // Act
+        var result = _validator.TestValidate(game);
+        
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Picture)
+            .WithErrorMessage(ErrorMessages.IncorrectPictureFormat);
+    }
+    
     [Test]
     public void ShouldNotHaveError_WhenAllPropertiesAreValid()
     {
@@ -506,19 +585,5 @@ public class GameValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.PublisherId);
         result.ShouldHaveValidationErrorFor(x => x.PlatformIds);
         result.ShouldHaveValidationErrorFor(x => x.GenreIds);
-    }
-    
-    [Test]
-    public void ShouldNotHaveError_WhenPictureIsNull()
-    {
-        // Arrange
-        var game = TestData.Game.GenerateGameRequestModel();
-        game.Picture = null;
-        
-        // Act
-        var result = _validator.TestValidate(game);
-        
-        // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.Picture);
     }
 }

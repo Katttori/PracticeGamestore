@@ -65,12 +65,15 @@ public class PublisherController(IPublisherService publisherService, ILogger<Pub
     [ServiceFilter(typeof(RequestModelValidationFilter))]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] PublisherRequestModel model)
     {
-        var updated = await publisherService.UpdateAsync(id, model.MapToPublisherDto());
+        var isUpdated = await publisherService.UpdateAsync(id, model.MapToPublisherDto());
 
-        if (updated) return NoContent();
+        if (!isUpdated)
+        {
+            logger.LogWarning("Publisher with id: {Id} was not found for update.", id);
+            return BadRequest(ErrorMessages.FailedToUpdate("publisher", id));
+        }
         
-        logger.LogWarning("Publisher with id: {Id} was not found for update.", id);
-        return BadRequest(ErrorMessages.FailedToUpdate("publisher", id));
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]

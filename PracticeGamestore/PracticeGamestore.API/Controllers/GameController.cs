@@ -64,13 +64,15 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [ServiceFilter(typeof(RequestModelValidationFilter))]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GameRequestModel model)
     {
-        var updated = await gameService.UpdateAsync(id, model.MapToGameDto());
+        var isUpdated = await gameService.UpdateAsync(id, model.MapToGameDto());
 
-        if (updated) return NoContent();
+        if (!isUpdated)
+        {
+            logger.LogWarning("Game with id: {Id} was not found for update.", id);
+            return BadRequest(ErrorMessages.FailedToUpdate("game", id));
+        }
         
-        logger.LogWarning("Game with id: {Id} was not found for update.", id);
-        return BadRequest(ErrorMessages.FailedToUpdate("game", id));
-
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]

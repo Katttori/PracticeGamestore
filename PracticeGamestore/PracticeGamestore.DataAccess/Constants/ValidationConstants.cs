@@ -8,4 +8,6 @@ public static class ValidationConstants
         public const int ShortMaximum = 100;
         public const int LongMaximum = 2000;
     }
+    public const int PageSize = 20;
+    public const int MaximumPictureSize = 1048576;
 }

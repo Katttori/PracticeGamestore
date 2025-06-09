@@ -29,6 +29,13 @@ public class GameValidator : AbstractValidator<GameRequestModel>
             .Must(age => ValidationConstants.AgeRatingValues.Contains(age))
             .WithMessage(ErrorMessages.InvalidAgeRating);
 
+        RuleFor(x => x.Picture)
+            .Must(p => p.Length is <= ValidationConstants.MaximumPictureSize
+                           and >= ValidationConstants.MinimumPictureSize &&
+                       IsValidPictureFormat(p))
+            .When(x => x.Picture != null)
+            .WithMessage(ErrorMessages.IncorrectPictureFormat);
+        
         RuleFor(x => x.ReleaseDate)
             .LessThanOrEqualTo(DateTime.Today)
             .WithMessage(ErrorMessages.InvalidReleaseDate);
@@ -42,4 +49,12 @@ public class GameValidator : AbstractValidator<GameRequestModel>
         RuleFor(x => x.GenreIds)
             .HasCorrectIds();
     }
+    
+    private static bool IsValidPictureFormat(byte[] bytes) =>
+         bytes.Length >= 4 && ValidationConstants.AllowedPictureFormats
+             .Any(format => format.Value
+                 .Any(signature => bytes.Length >= signature.Length &&
+                                   signature.Select((b, i) => b == 0x00 || bytes[i] == b)
+                                       .All(x => x)));
+
 }

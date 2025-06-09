@@ -76,10 +76,13 @@ public class PlatformController(
 
         var isUpdated = await platformService.UpdateAsync(dto);
 
-        if (isUpdated) return NoContent();
+        if (!isUpdated)
+        {
+            logger.LogError("Platform with id: {Id} was not found for update.", id);
+            return BadRequest(ErrorMessages.FailedToUpdate("platform", id));
+        }
         
-        logger.LogError("Platform with id: {Id} was not found for update.", id);
-        return BadRequest(ErrorMessages.FailedToUpdate("platform", id));
+        return NoContent();
     }
     
     [HttpDelete("{id:guid}")]
