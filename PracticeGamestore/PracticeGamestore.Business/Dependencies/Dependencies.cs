@@ -55,6 +55,5 @@ public static class Dependencies
         services.AddScoped<IBlacklistService, BlacklistService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IFileService, FileService>();
-        services.AddScoped<IPhysicalFileService, PhysicalFileService>();
     }
 }

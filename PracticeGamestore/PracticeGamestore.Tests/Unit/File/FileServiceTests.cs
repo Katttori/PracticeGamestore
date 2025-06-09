@@ -1,4 +1,7 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
@@ -11,17 +14,30 @@ namespace PracticeGamestore.Tests.Unit.File;
 public class FileServiceTests
 {
     private Mock<IFileRepository> _fileRepository;
-    private Mock<IPhysicalFileService> _physicalFileService;
     private Mock<IUnitOfWork> _unitOfWork;
+    private Mock<IWebHostEnvironment> _webHostEnvironment;
+    private Mock<IConfiguration> _configuration;
+    private Mock<ILogger<FileService>> _logger;
     private IFileService _fileService;
 
     [SetUp]
     public void Setup()
     {
         _fileRepository = new Mock<IFileRepository>();
-        _physicalFileService = new Mock<IPhysicalFileService>();
         _unitOfWork = new Mock<IUnitOfWork>();
-        _fileService = new FileService(_fileRepository.Object, _physicalFileService.Object, _unitOfWork.Object);
+        _webHostEnvironment = new Mock<IWebHostEnvironment>();
+        _configuration = new Mock<IConfiguration>();
+        _logger = new Mock<ILogger<FileService>>();
+        
+        _webHostEnvironment.Setup(e => e.ContentRootPath).Returns("C:\\app");
+        _configuration.Setup(c => c["Storage:GameFilesPath"]).Returns("GameFiles");
+        
+        _fileService = new FileService(
+            _fileRepository.Object,
+            _unitOfWork.Object,
+            _webHostEnvironment.Object,
+            _configuration.Object,
+            _logger.Object);
     }
 
     [Test]

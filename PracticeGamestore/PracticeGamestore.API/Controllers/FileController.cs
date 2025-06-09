@@ -7,7 +7,7 @@ namespace PracticeGamestore.Controllers;
 
 [ApiController]
 [Route("files")]
-public class FileController(IFileService fileService, IPhysicalFileService physicalFileService, ILogger<FileController> logger) : ControllerBase
+public class FileController(IFileService fileService, ILogger<FileController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -26,7 +26,7 @@ public class FileController(IFileService fileService, IPhysicalFileService physi
             return NotFound($"File with id: {id} was not found.");
         }
         
-        var bytes = await physicalFileService.ReadFileAsync(file.Path);
+        var bytes = await fileService.ReadPhysicalFileAsync(file.Path);
         return File(bytes, file.Type, Path.GetFileName(file.Path));
     }
 

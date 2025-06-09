@@ -13,7 +13,6 @@ namespace PracticeGamestore.Tests.Unit.File;
 public class FileControllerTests
 {
     private Mock<IFileService> _fileService;
-    private Mock<IPhysicalFileService> _physicalFileService;
     private Mock<ILogger<FileController>> _logger;
     private FileController _controller;
 
@@ -21,9 +20,8 @@ public class FileControllerTests
     public void Setup()
     {
         _fileService = new Mock<IFileService>();
-        _physicalFileService = new Mock<IPhysicalFileService>();
         _logger = new Mock<ILogger<FileController>>();
-        _controller = new FileController(_fileService.Object, _physicalFileService.Object, _logger.Object);
+        _controller = new FileController(_fileService.Object, _logger.Object);
     }
 
     [Test]
@@ -49,26 +47,21 @@ public class FileControllerTests
     public async Task Download_ShouldReturnFileResult_WhenFileExists()
     {
         var dto = TestData.File.GenerateFileDto();
+        
         _fileService.Setup(s => s.GetByIdAsync(dto.Id!.Value)).ReturnsAsync(dto);
-        _physicalFileService.Setup(s => s.ReadFileAsync(dto.Path))
-            .ReturnsAsync(Encoding.UTF8.GetBytes("test content"));
-
-        // simulate file on disk
-        var dummyContent = Encoding.UTF8.GetBytes("test content");
-        Directory.CreateDirectory(Path.GetDirectoryName(dto.Path)!);
-        await System.IO.File.WriteAllBytesAsync(dto.Path, dummyContent);
-
+        _fileService.Setup(s => s.ReadPhysicalFileAsync(dto.Path)).ReturnsAsync(Encoding.UTF8.GetBytes("File content"));
+        
         var result = await _controller.Download(dto.Id.Value);
         var fileResult = result as FileContentResult;
-
+        
         Assert.Multiple(() =>
         {
             Assert.That(fileResult, Is.Not.Null);
-            Assert.That(fileResult!.FileContents, Is.EqualTo(dummyContent));
+            Assert.That(fileResult!.FileContents, Is.Not.Null);
+            Assert.That(fileResult.FileContents.Length, Is.GreaterThan(0));
             Assert.That(fileResult.ContentType, Is.EqualTo(dto.Type));
+            Assert.That(fileResult.FileDownloadName, Is.EqualTo(Path.GetFileName(dto.Path)));
         });
-
-        System.IO.File.Delete(dto.Path);
     }
 
     [Test]
