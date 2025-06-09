@@ -18,7 +18,7 @@ public static class FileMappingExtensions
     {
         return new FileResponseModel
         {
-            Id = dto.Id ?? Guid.NewGuid(),
+            Id = dto.Id!.Value,
             GameId = dto.GameId,
             Size = dto.Size,
             Path = dto.Path,
