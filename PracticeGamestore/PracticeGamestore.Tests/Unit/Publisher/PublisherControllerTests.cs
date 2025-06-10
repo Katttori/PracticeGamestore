@@ -96,7 +96,7 @@ public class PublisherControllerTests
     public async Task CreatePublisher_ShouldReturnCreatedResult_WhenPublisherIsCreated()
     {
         //Arrange
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.CreateAsync(It.IsAny<PublisherDto>()))
             .ReturnsAsync(id);
