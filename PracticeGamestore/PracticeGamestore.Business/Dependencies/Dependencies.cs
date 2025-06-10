@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.Business.Services.Country;
+using PracticeGamestore.Business.Services.File;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.DataAccess;
 using PracticeGamestore.Business.Services.Publisher;
@@ -11,6 +12,7 @@ using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Country;
+using PracticeGamestore.DataAccess.Repositories.File;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.Repositories.Platform;
@@ -32,6 +34,7 @@ public static class Dependencies
         services.AddScoped<ICountryRepository, CountryRepository>();
         services.AddScoped<IBlacklistRepository, BlacklistRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IFileRepository, FileRepository>();
     }
 
     private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -51,5 +54,6 @@ public static class Dependencies
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IBlacklistService, BlacklistService>();
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IFileService, FileService>();
     }
 }
