@@ -2,6 +2,7 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -232,20 +233,20 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task GetGamesByGenreAsync_ReturnsGamesWithinProvidedGenreAndAllItsChildrenGenres()
+    public async Task GetByGenreGamesAsync_WhenGenreExistAndUserIsAdult_ReturnsAllGames()
     {
         // Arrange
         var actionGenreId = TestData.Genre.GenerateActionGenre().Id;
         var children = TestData.Genre.GenerateGenreChildren(actionGenreId);
-        
+        var hideAdultContent = false;
         var games = TestData.Game.GenerateGameEntities()
             .Where(game => game.GameGenres.Any(gg => children.Contains(gg.GenreId))).ToList();
         _genreRepository.Setup(x => x.ExistsAsync(actionGenreId)).ReturnsAsync(true);
         _genreRepository.Setup(x => x.GetGenreChildrenIdsAsync(actionGenreId)).ReturnsAsync(children);
-        _gameRepository.Setup(x => x.GetByGenreAndItsChildrenAsync(children)).ReturnsAsync(games);
+        _gameRepository.Setup(x => x.GetByGenreAndItsChildrenAsync(children, hideAdultContent)).ReturnsAsync(games);
 
         // Act
-        var result = (await _service.GetGames(actionGenreId) ?? Array.Empty<GameResponseDto>()).ToList();
+        var result = (await _service.GetGamesAsync(actionGenreId) ?? Array.Empty<GameResponseDto>()).ToList();
         
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -254,14 +255,36 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task GetGamesByGenreAsync_ReturnsNullIfSuchGenreDoesNotExist()
+    public async Task GetByGenreGamesAsync_WhenGenreExistAndUserIsUnderage_ReturnsGamesWithAgeRatingLessThan18()
+    {
+        // Arrange
+        var actionGenreId = TestData.Genre.GenerateActionGenre().Id;
+        var children = TestData.Genre.GenerateGenreChildren(actionGenreId);
+        var hideAdultContent = true;
+        var games = TestData.Game.GenerateGameEntitiesWithAgeRatingLessThan18()
+            .Where(game => game.GameGenres.Any(gg => children.Contains(gg.GenreId))).ToList();
+        _genreRepository.Setup(x => x.ExistsAsync(actionGenreId)).ReturnsAsync(true);
+        _genreRepository.Setup(x => x.GetGenreChildrenIdsAsync(actionGenreId)).ReturnsAsync(children);
+        _gameRepository.Setup(x => x.GetByGenreAndItsChildrenAsync(children, hideAdultContent)).ReturnsAsync(games);
+
+        // Act
+        var result = (await _service.GetGamesAsync(actionGenreId) ?? Array.Empty<GameResponseDto>()).ToList();
+        
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(games.Count));
+        Assert.That(result.All(g => g.Genres.Any(genre => children.Contains(genre.Id!.Value))), Is.True);
+    }
+    
+    [Test]
+    public async Task GetByGenreGamesAsync_WhenGenreDoesNotExist_ReturnsNull()
     {
         // Arrange
         _genreRepository.Setup(x => x.ExistsAsync(It.IsAny<Guid>()))
             .ReturnsAsync(false);
 
         // Act
-        var result = await _service.GetGames(Guid.NewGuid());
+        var result = await _service.GetGamesAsync(Guid.NewGuid());
         
         // Assert
         Assert.That(result, Is.Null);

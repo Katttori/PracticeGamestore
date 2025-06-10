@@ -23,7 +23,12 @@ public class GenreControllerTests
     {
         _loggerMock = new Mock<ILogger<GenreController>>();
         _genreService = new Mock<IGenreService>();
-        _genreController = new GenreController(_genreService.Object, _loggerMock.Object);
+        _genreController = new GenreController(_genreService.Object, _loggerMock.Object){
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext() 
+            }
+        };;
     }
 
     [Test]
@@ -154,7 +159,7 @@ public class GenreControllerTests
     public async Task GetGamesByGenre_ShouldReturnNotFound_WhenGenreDoesNotExist()
     {
         // Arrange
-        _genreService.Setup(x => x.GetGames(It.IsAny<Guid>()))
+        _genreService.Setup(x => x.GetGamesAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
             .ReturnsAsync(null as IEnumerable<GameResponseDto>);
         
         // Act
@@ -165,17 +170,43 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task GetGamesByGenre_ShouldReturnGamesWithThisGenreOrItsChildren_WhenGenreExist()
+    public async Task GetGamesByGenre_ReturnsAllGamesWithThisGenreOrItsChildren_WhenGenreExistAndUserIsAdult()
     {
         // Arrange
+        var hideAdultContent = false;
         var actionGenreId = TestData.Genre.GenerateActionGenre().Id;
         var children = TestData.Genre.GenerateGenreChildren(actionGenreId);
-        
         var games = TestData.Game.GenerateGameResponseDtos()
             .Where(game => game.Genres.Any(genre => children.Contains(genre.Id!.Value))).ToList();
-
-        _genreService.Setup(x => x.GetGames(actionGenreId))
+        _genreService.Setup(x => x.GetGamesAsync(actionGenreId, hideAdultContent))
             .ReturnsAsync(games);
+        _genreController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        
+        // Act
+        var result = await _genreController.GetGamesByGenre(actionGenreId);
+        
+        // Assert
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        var response = 
+            (okResult.Value as IEnumerable<GameResponseModel> ?? Array.Empty<GameResponseModel>()).ToList();
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response.All(g => g.Genres.Any(genre => children.Contains(genre.Id))), Is.True);
+    }
+    
+    [Test]
+    public async Task GetGamesByGenre_ReturnsGamesWithThisGenreOrItsChildrenAndAgeRatingLessThan18_WhenGenreExistAndUserIsUnderage()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var actionGenreId = TestData.Genre.GenerateActionGenre().Id;
+        var children = TestData.Genre.GenerateGenreChildren(actionGenreId);
+        var games = TestData.Game.GenerateGameResponseDtos()
+            .Where(game => game.Genres.Any(genre => children.Contains(genre.Id!.Value))).ToList();
+        _genreService.Setup(x => x.GetGamesAsync(actionGenreId, hideAdultContent))
+            .ReturnsAsync(games);
+        _genreController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
         
         // Act
         var result = await _genreController.GetGamesByGenre(actionGenreId);

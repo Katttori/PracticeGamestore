@@ -8,4 +8,5 @@ public interface IPlatformService
     Task<Guid?> CreateAsync(PlatformDto platform); 
     Task<bool> UpdateAsync(PlatformDto platform); 
     Task DeleteAsync(Guid id);
+    Task<IEnumerable<GameResponseDto>?> GetGamesAsync(Guid platformId, bool hideAdultContent = false);
 }

@@ -25,6 +25,10 @@ public class GameControllerTests
         _gameService = new Mock<IGameService>();
         _loggerMock = new Mock<ILogger<GameController>>();
         _gameController = new GameController(_gameService.Object, _loggerMock.Object);
+        _gameController.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext() 
+        };
     }
 
     private static bool GameResponseModelsAreTheSame(GameResponseModel dto1, GameResponseModel dto2)
@@ -88,14 +92,35 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetAll_ReturnsOkWithGames()
+    public async Task GetAll_ReturnsOkWithAllGamesIfUserIsAdult()
     {
         //Arrange
+        var hideAdultContent = false;
         var gameDtos = TestData.Game.GenerateGameResponseDtos();
-        _gameService.Setup(x => x.GetAllAsync())
+        _gameService.Setup(x => x.GetAllAsync(hideAdultContent))
             .ReturnsAsync(gameDtos);
         var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        
+        //Act
+        var result = await _gameController.GetAll();
 
+        //Assert
+        var okResult = AssertThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+    }
+    
+    [Test]
+    public async Task GetAll_ReturnsOkWithGamesOfAgeRatingLessThan18IfUserIsUnderage()
+    {
+        //Arrange
+        var hideAdultContent = true;
+        var gameDtos = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18();
+        _gameService.Setup(x => x.GetAllAsync(hideAdultContent))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        
         //Act
         var result = await _gameController.GetAll();
 
@@ -123,9 +148,9 @@ public class GameControllerTests
         Assert.That(response, Is.Not.Null);
         Assert.That(GameResponseModelsAreTheSame(response!, expected), Is.True);
     }
-
+    
     [Test]
-    public async Task GetGameById_ShouldReturnNotFound_WhenPublisherDoesNotExist()
+    public async Task GetGameById_ShouldReturnNotFound_WhenGameDoesNotExist()
     {
         //Arrange
         _gameService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -137,9 +162,26 @@ public class GameControllerTests
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
     }
+    
+    [Test]
+    public async Task GetGameById_ShouldReturnNotFound_WhenGameHasAgeRatingEighteenPlusAndUserIsUnderage()
+    {
+        //Arrange
+        var game = TestData.Game.GenerateGameResponseDto();
+        game.AgeRating = AgeRating.EighteenPlus;
+        _gameService.Setup(x => x.GetByIdAsync(game.Id))
+            .ReturnsAsync(game);
+        _gameController.ControllerContext.HttpContext.Items["Underage"] = true;
+
+        //Act
+        var result = await _gameController.GetById(game.Id);
+
+        //Assert
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+    }
 
     [Test]
-    public async Task CreateGame_ShouldReturnCreatedResult_WhenPublisherIsCreated()
+    public async Task CreateGame_ShouldReturnCreatedResult_WhenGameIsCreated()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -261,7 +303,7 @@ public class GameControllerTests
         
         var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g => g.Price is >= 30 and <= 60 && g.Name.Contains("cyber", StringComparison.InvariantCultureIgnoreCase)).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
@@ -279,7 +321,7 @@ public class GameControllerTests
     {
         // Arrange
         var gameFilter = new GameFilter { MinPrice = 1000000 };
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync(([], 0));
 
         // Act
@@ -297,7 +339,7 @@ public class GameControllerTests
         var gameFilter = new GameFilter { Order = "desc" };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().OrderBy(g => g.Name).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
@@ -317,7 +359,7 @@ public class GameControllerTests
         var gameFilter = new GameFilter { OrderBy = ["price", "rating"] };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().OrderByDescending(g => g.Rating).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
@@ -336,7 +378,7 @@ public class GameControllerTests
         var gameFilter = new GameFilter { Age = [12, 16] };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g => g.AgeRating is AgeRating.TwelvePlus or AgeRating.SixteenPlus).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
@@ -360,7 +402,7 @@ public class GameControllerTests
         var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g =>
             g.ReleaseDate >= new DateTime(2024, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31)).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
@@ -379,7 +421,7 @@ public class GameControllerTests
         var gameFilter = new GameFilter { Page = 2, PageSize = 5 };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().ToList();
         var paginated = gameDtos.Skip(5).Take(5).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
@@ -420,7 +462,7 @@ public class GameControllerTests
             .ThenByDescending(g => g.Price)
             .ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
         
@@ -430,5 +472,94 @@ public class GameControllerTests
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnOkWithFilteredGamesExcludingAdultContentWhenUserIsUnderage()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var gameFilter = new GameFilter 
+        { 
+            MinPrice = 25,
+            MaxPrice = 55,
+            Name = "space"
+        };
+        
+        var gameDtos = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18()
+            .Where(g => g.Price is >= 25 and <= 55 && g.Name.Contains("space", StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+        var paginated = gameDtos.Take(10).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), hideAdultContent))
+            .ReturnsAsync((paginated, gameDtos.Count));
+        
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssertThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_ShouldReturnEmptyListWhenFilteringForAdultOnlyContentAndUserIsUnderage()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var gameFilter = new GameFilter 
+        { 
+            Age = [18]
+        };
+        
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), hideAdultContent))
+            .ReturnsAsync(([], 0));
+        
+        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssertThatStatusCodeIsOk(result);
+        var response = okResult.Value as PaginatedGameListResponseModel;
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response, Is.Empty);
+    }
+    
+    [Test]
+    public async Task GetFiltered_ShouldReturnFilteredGamesSortedByPriceDescWhenUserIsUnderageWithComplexFilter()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var gameFilter = new GameFilter 
+        { 
+            RatingFrom = 4.0,
+            Age = [12, 16, 18],
+            OrderBy = ["price"],
+            Order = "desc",
+            PageSize = 5,
+            Page = 1
+        };
+    
+        var gameDtos = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18()
+            .Where(g => g.Rating >= 4.0 && (g.AgeRating == AgeRating.TwelvePlus || g.AgeRating == AgeRating.SixteenPlus))
+            .OrderByDescending(g => g.Price)
+            .ToList();
+        var paginated = gameDtos.Take(5).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), hideAdultContent))
+            .ReturnsAsync((paginated, gameDtos.Count));
+    
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+
+        // Act
+        var result = await _gameController.GetFiltered(gameFilter);
+
+        // Assert
+        var okResult = AssertThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 5, gameDtos.Count);
     }
 }

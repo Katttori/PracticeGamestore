@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Business.Services.Platform;
+using PracticeGamestore.Extensions;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Platform;
@@ -35,10 +36,11 @@ public class PlatformController(
         return Ok(platform.MapToPlatformModel());
     }
     
+    [BirthdateRestrictionFilter]
     [HttpGet("{platformId:guid}/games")]
     public async Task<IActionResult> GetGamesByPlatform(Guid platformId)
     {
-        var games = await gameService.GetByPlatformAsync(platformId);
+        var games = await platformService.GetGamesAsync(platformId, HttpContext.IsUnderage());
         
         if (games is null)
         {

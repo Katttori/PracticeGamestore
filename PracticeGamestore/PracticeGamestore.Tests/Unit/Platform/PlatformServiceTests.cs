@@ -1,7 +1,10 @@
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.Platform;
+using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Platform;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
@@ -11,6 +14,7 @@ namespace PracticeGamestore.Tests.Unit.Platform;
 public class PlatformServiceTests
 {
     private Mock<IPlatformRepository> _platformRepository;
+    private Mock<IGameRepository> _gameRepository;
     private Mock<IUnitOfWork> _unitOfWork;
     private IPlatformService _platformService;
     
@@ -19,7 +23,8 @@ public class PlatformServiceTests
     {
         _platformRepository = new Mock<IPlatformRepository>();
         _unitOfWork = new Mock<IUnitOfWork>();
-        _platformService = new PlatformService(_platformRepository.Object, _unitOfWork.Object);
+        _gameRepository = new Mock<IGameRepository>();
+        _platformService = new PlatformService(_platformRepository.Object,_gameRepository.Object, _unitOfWork.Object);
     }
     
     [Test]
@@ -218,5 +223,66 @@ public class PlatformServiceTests
         // Assert
         _platformRepository.Verify(p => p.DeleteAsync(platformId), Times.Once);
         _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Test]
+    public async Task GetByPlatformGamesAsync_WhenPlatformExistsAndUserIsAdult_ReturnsAllGames()
+    {
+        //Arrange
+        var hideAdultContent = false;
+        var games = TestData.Game.GenerateGameEntities();
+        var platformId = games[0].GamePlatforms[0].PlatformId;
+        games = games.Where(g => g.GamePlatforms.Any(x => x.PlatformId == platformId)).ToList();
+        _platformRepository.Setup(p => p.ExistsByIdAsync(platformId)).ReturnsAsync(true);
+        _gameRepository.Setup(g => g.GetByPlatformIdAsync(platformId, hideAdultContent)).ReturnsAsync(games);
+        var expected = games.Select(p => p.MapToGameDto()).ToList();
+
+        //Act
+        var result = 
+            (await _platformService.GetGamesAsync(platformId) ?? Array.Empty<GameResponseDto>())
+            .ToList();
+
+        //Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.Not.Empty);
+        Assert.That(result.Count, Is.EqualTo(expected.Count));
+        Assert.That(result.All(game => game.Platforms.Any(p => p.Id == platformId)), Is.True);
+    }
+     
+    [Test]
+    public async Task GetByPlatformGamesAsync_WhenPlatformExistsAndUserIsUnderage_ReturnsGamesWithAgeRatingLessThan18()
+    {
+        //Arrange
+        var hideAdultContent = true;
+        var games = TestData.Game.GenerateGameEntitiesWithAgeRatingLessThan18();
+        var platformId = games[0].GamePlatforms[0].PlatformId;
+        games = games.Where(g => g.GamePlatforms.Any(x => x.PlatformId == platformId)).ToList();
+        _platformRepository.Setup(p => p.ExistsByIdAsync(platformId)).ReturnsAsync(true);
+        _gameRepository.Setup(g => g.GetByPlatformIdAsync(platformId, hideAdultContent)).ReturnsAsync(games);
+        var expected = games.Select(p => p.MapToGameDto()).ToList();
+
+        //Act
+        var result = 
+            (await _platformService.GetGamesAsync(platformId, hideAdultContent) ?? Array.Empty<GameResponseDto>())
+            .ToList();
+
+        //Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.Not.Empty);
+        Assert.That(result.Count, Is.EqualTo(expected.Count));
+        Assert.That(result.All(game => game.Platforms.Any(p => p.Id == platformId)), Is.True);
+    }
+    
+    [Test]
+    public async Task GetByPlatformGamesAsync_WhenPlatformDoesNotExist_ReturnsNull()
+    {
+        //Arrange
+        _platformRepository.Setup(p => p.ExistsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(false);
+
+        //Act
+        var result = await _platformService.GetGamesAsync(It.IsAny<Guid>());
+        
+        //Assert
+        Assert.That(result, Is.Null);
     }
 }

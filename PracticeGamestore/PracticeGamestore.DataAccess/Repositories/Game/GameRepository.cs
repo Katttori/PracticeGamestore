@@ -1,26 +1,28 @@
 using Microsoft.EntityFrameworkCore;
 using PracticeGamestore.DataAccess.Entities;
 using PracticeGamestore.DataAccess.Entities.Filtering;
+using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.DataAccess.Repositories.Game;
 
 public class GameRepository(GamestoreDbContext context) : IGameRepository
 {
-    private readonly IQueryable<Entities.Game> _gamesNoTracking = context.Games.AsNoTracking()
-        .Include(g => g.Publisher)
-        .Include(g => g.GamePlatforms)
-        .ThenInclude(gp => gp.Platform)
-        .Include(g => g.GameGenres)
-        .ThenInclude(gg => gg.Genre);
-
-    public async Task<IEnumerable<Entities.Game>> GetAllAsync()
+    private readonly Func<bool, IQueryable<Entities.Game>> _gamesAsNoTracking = 
+        hideAdultContent => context.Games.AsNoTracking()
+            .Where(g => !hideAdultContent || g.AgeRating != AgeRating.EighteenPlus)
+            .Include(g => g.GamePlatforms)
+            .ThenInclude(gp => gp.Platform)
+            .Include(g => g.GameGenres)
+            .ThenInclude(gg => gg.Genre);
+    
+    public async Task<IEnumerable<Entities.Game>> GetAllAsync(bool hideAdultContent = false)
     {
-        return await _gamesNoTracking.ToListAsync();
+        return await _gamesAsNoTracking.Invoke(hideAdultContent).ToListAsync();
     }
 
-    public async Task<(IEnumerable<Entities.Game>, int)> GetFiltered(GameFilter filter)
+    public async Task<(IEnumerable<Entities.Game>, int)> GetFiltered(GameFilter filter, bool hideAdultContent = false)
     {
-        var query = _gamesNoTracking.AsQueryable();
+        var query = _gamesAsNoTracking.Invoke(hideAdultContent).AsQueryable();
         query = ApplyFiltering(query, filter);
         query = ApplyOrdering(query, filter.OrderByFields, filter.OrderType);
         var totalCount = await query.CountAsync();
@@ -31,12 +33,12 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
    
     public async Task<Entities.Game?> GetByIdAsync(Guid id)
     {
-        return await _gamesNoTracking.FirstOrDefaultAsync(g => g.Id == id);
+        return await _gamesAsNoTracking.Invoke(false).FirstOrDefaultAsync(g => g.Id == id);
     }
-    
-    public async Task<IEnumerable<Entities.Game>> GetByPlatformIdAsync(Guid platformId)
+
+    public async Task<IEnumerable<Entities.Game>> GetByPlatformIdAsync(Guid platformId, bool hideAdultContent = false)
     {
-        return await _gamesNoTracking
+        return await _gamesAsNoTracking.Invoke(hideAdultContent)
             .Where(g => g.GamePlatforms.Any(gp => gp.PlatformId == platformId))
             .ToListAsync();
     }
@@ -70,6 +72,16 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         context.Games.Update(game);
         await UpdateGenreIdsAsync(game.Id, genreIds);
         await UpdatePlatformIdsAsync(game.Id, platformIds);
+    }
+    
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await _gamesAsNoTracking.Invoke(false).AnyAsync(g => g.Name == name);
+    }
+    
+    public async Task<bool> ExistsByKeyAsync(string key)
+    {
+        return await _gamesAsNoTracking.Invoke(false).AnyAsync(g => g.Key == key);
     }
     
     private static IQueryable<Entities.Game> ApplyFiltering(IQueryable<Entities.Game> query, GameFilter filter)
@@ -128,20 +140,16 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         };
     }
     
-    public async Task<IEnumerable<Entities.Game>> GetByPublisherIdAsync(Guid id)
+    public async Task<IEnumerable<Entities.Game>> GetByPublisherIdAsync(Guid id, bool hideAdultContent = false)
     {
-        return await _gamesNoTracking.Where(g => g.PublisherId == id).ToListAsync();
+        return await _gamesAsNoTracking.Invoke(hideAdultContent).Where(g => g.PublisherId == id).ToListAsync();
     }
 
-    public async Task<IEnumerable<Entities.Game>> GetByGenreAndItsChildrenAsync(List<Guid> ids)
+    public async Task<IEnumerable<Entities.Game>> GetByGenreAndItsChildrenAsync(List<Guid> ids, bool hideAdultContent = false)
     {
-        return await _gamesNoTracking.Where(g => g.GameGenres.Any(gg => ids.Contains(gg.GameId))).ToListAsync();
+        return await _gamesAsNoTracking.Invoke(hideAdultContent).Where(g => g.GameGenres.Any(gg => ids.Contains(gg.GameId))).ToListAsync();
     }
-
-    public async Task<IEnumerable<Entities.Game>> GetByGenreAsync(Guid id)
-    {
-        return await _gamesNoTracking.Where(g => g.GameGenres.Any(gg => gg.GenreId == id || gg.Genre.ParentId == id)).ToListAsync();
-    }
+    
 
     private async Task AddPlatformsAsync(Guid gameId, IEnumerable<Guid> platformIds)
     {
@@ -195,15 +203,5 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
         context.GamePlatforms.RemoveRange(platformsToRemove);
     
         await AddPlatformsAsync(gameId, platformIdsToAdd);
-    }
-
-    public async Task<bool> ExistsByNameAsync(string name)
-    {
-        return await _gamesNoTracking.AnyAsync(g => g.Name == name);
-    }
-    
-    public async Task<bool> ExistsByKeyAsync(string key)
-    {
-        return await _gamesNoTracking.AnyAsync(g => g.Key == key);
     }
 }
