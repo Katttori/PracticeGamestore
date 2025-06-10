@@ -2,7 +2,6 @@ namespace PracticeGamestore.Business.Constants;
 
 public static class ErrorMessages
 {
-    
     public static string FailedToCreate(string entityName) => $"Failed to create {entityName}.";
     public static string NotFound(string entityName, Guid id) => $"{entityName} with id {id} does not exist.";
     public static string FailedToUpdate(string entityName, Guid id) => $"Failed to update {entityName} with id {id}.";
@@ -22,9 +21,12 @@ public static class ErrorMessages
         $"OrderBy fields must be one of: {string.Join(", ", ValidationConstants.OrderByFields)}";
 
     public static readonly string IncorrectPictureFormat =
-        $"Picture must be a valid image format ({string.Join(", ", ValidationConstants.AllowedPictureFormats.Keys)}) " +
-        $"and between {ValidationConstants.MinimumPictureSize} and {ValidationConstants.MaximumPictureSize} bytes.";
+        $"Picture must be a valid image format ({string.Join(", ", ValidationConstants.GamePicture.AllowedPictureFormats.Keys)}) " +
+        $"and between {ValidationConstants.GamePicture.MinimumPictureSize} and {ValidationConstants.GamePicture.MaximumPictureSize} bytes.";
 
+    public static readonly string InvalidGameFile = 
+        $"Game file is required and must be between {ValidationConstants.GameFile.MinSize / 1024}KB and {ValidationConstants.GameFile.MaxSize / (1024 * 1024)}MB with one of the following extensions: {string.Join(", ", ValidationConstants.GameFile.AllowedExtensions)}.";
+    
     public const string UnauthorizedAccess = "You don't have permission to perform this action.";
     public const string UnauthenticatedAccess = "You must be logged in to perform this action.";
     public const string IncorrectPageUrl = "Specified page URL is invalid.";
