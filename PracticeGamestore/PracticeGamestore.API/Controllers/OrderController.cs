@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
@@ -8,7 +9,11 @@ using PracticeGamestore.Models.Order;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("orders")]
-public class OrderController(IOrderService orderService, ILogger<OrderController> logger) : ControllerBase
+public class OrderController(
+    IOrderService orderService,
+    ILocationService locationService,
+    IHttpContextAccessor httpContextAccessor,
+    ILogger<OrderController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -35,6 +40,8 @@ public class OrderController(IOrderService orderService, ILogger<OrderController
     [ServiceFilter(typeof(RequestModelValidationFilter))]
     public async Task<IActionResult> Create([FromBody] OrderRequestModel model)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var createdId = await orderService.CreateAsync(model.MapToOrderDto());
         
         if (createdId is null)

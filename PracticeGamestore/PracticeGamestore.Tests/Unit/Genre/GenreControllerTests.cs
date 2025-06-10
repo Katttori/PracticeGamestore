@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Game;
 using PracticeGamestore.Models.Genre;
@@ -15,15 +16,19 @@ namespace PracticeGamestore.Tests.Unit.Genre;
 public class GenreControllerTests
 {
     private Mock<IGenreService> _genreService;
+    private Mock<ILocationService> _locationService;
+    private Mock<IHttpContextAccessor> _httpContextAccessor;
     private Mock<ILogger<GenreController>> _loggerMock;
     private GenreController _genreController;
 
     [SetUp]
     public void Setup()
     {
-        _loggerMock = new Mock<ILogger<GenreController>>();
         _genreService = new Mock<IGenreService>();
-        _genreController = new GenreController(_genreService.Object, _loggerMock.Object);
+        _locationService = new Mock<ILocationService>();
+        _httpContextAccessor = new Mock<IHttpContextAccessor>();
+        _loggerMock = new Mock<ILogger<GenreController>>();
+        _genreController = new GenreController(_genreService.Object, _locationService.Object, _httpContextAccessor.Object, _loggerMock.Object);
     }
 
     [Test]

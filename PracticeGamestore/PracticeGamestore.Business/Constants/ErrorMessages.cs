@@ -32,4 +32,6 @@ public static class ErrorMessages
     public const string IncorrectQueryParameters = "Invalid query parameters";
     public const string InvalidReleaseDate = "Release date cannot be in future";
     public const string IncorrectName = "Name must contain only letters, hyphens, spaces, and apostrophes";
+    public const string MissingLocationHeaders = "Missing headers: X-Location-Country or/and X-User-Email.";
+    public const string BlacklistedUser = "you are banned :)";
 }

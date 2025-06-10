@@ -145,7 +145,7 @@ public class BlacklistServiceTests
     [Test]
     public async Task UpdateAsync_WhenEntityDoesNotExist_ReturnsFalse()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var dto = TestData.Blacklist.GenerateBlacklistDto();
         
@@ -177,7 +177,7 @@ public class BlacklistServiceTests
     [Test]
     public async Task DeleteAsync_CallsDeleteAndSaveChanges()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         
         // Act
@@ -186,5 +186,33 @@ public class BlacklistServiceTests
         // Assert
         _blacklistRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Test]
+    public async Task ExistsByUserEmailAsync_WhenEntityExists_ReturnsTrue()
+    {
+        // Arrange
+        const string userEmail = "test@gamil.com";
+        _blacklistRepositoryMock.Setup(b => b.ExistsByUserEmailAsync(userEmail)).ReturnsAsync(true);
+        
+        // Act
+        var result = await _service.ExistsByUserEmailAsync(userEmail);
+        
+        // Assert
+        Assert.That(result, Is.True);
+    }
+    
+    [Test]
+    public async Task ExistsByUserEmailAsync_WhenEntityDoesNotExist_ReturnsFalse()
+    {
+        // Arrange
+        const string userEmail = "test@gamil.com";
+        _blacklistRepositoryMock.Setup(b => b.ExistsByUserEmailAsync(userEmail)).ReturnsAsync(false);
+        
+        // Act
+        var result = await _service.ExistsByUserEmailAsync(userEmail);
+        
+        // Assert
+        Assert.That(result, Is.False);
     }
 }

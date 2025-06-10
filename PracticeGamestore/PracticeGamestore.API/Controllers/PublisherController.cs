@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
@@ -8,11 +9,17 @@ using PracticeGamestore.Models.Publisher;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("publishers")]
-public class PublisherController(IPublisherService publisherService, ILogger<PublisherController> logger) : ControllerBase
+public class PublisherController(
+    IPublisherService publisherService,
+    ILocationService locationService,
+    IHttpContextAccessor httpContextAccessor,
+    ILogger<PublisherController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var publishers = await publisherService.GetAllAsync();
         return Ok(publishers.Select(p => p.MapToPublisherModel()));
     }
@@ -20,6 +27,8 @@ public class PublisherController(IPublisherService publisherService, ILogger<Pub
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var publisher = await publisherService.GetByIdAsync(id);
         
         if (publisher is null)
@@ -34,6 +43,8 @@ public class PublisherController(IPublisherService publisherService, ILogger<Pub
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetPublisherGames([FromRoute] Guid id)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
          var games = await publisherService.GetGamesAsync(id);
 
          if (games is null)

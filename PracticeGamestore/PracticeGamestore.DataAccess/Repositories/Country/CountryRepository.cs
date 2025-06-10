@@ -16,6 +16,11 @@ public class CountryRepository(GamestoreDbContext context) : ICountryRepository
         return await _countriesNoTracking.FirstOrDefaultAsync(c => c.Id == id);
     }
 
+    public async Task<Entities.Country?> GetByNameAsync(string name)
+    {
+        return await _countriesNoTracking.FirstOrDefaultAsync(c => c.Name == name);
+    }
+
     public async Task<Guid> CreateAsync(Entities.Country country)
     {
         var entity = await context.Countries.AddAsync(country);

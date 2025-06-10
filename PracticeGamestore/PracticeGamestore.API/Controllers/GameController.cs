@@ -3,17 +3,24 @@ using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Models.Game;
 
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("games")]
-public class GameController(IGameService gameService, ILogger<GameController> logger) : ControllerBase
+public class GameController(
+    IGameService gameService,
+    ILocationService locationService,
+    IHttpContextAccessor httpContextAccessor,
+    ILogger<GameController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var games = await gameService.GetAllAsync();
         return Ok(games.Select(g => g.MapToGameModel()));
     }
@@ -21,6 +28,8 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [HttpGet("/filter")]
     public async Task<IActionResult> GetFiltered([FromQuery] GameFilter filter)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var (games, totalCount) = await gameService.GetFilteredAsync(filter);
         return Ok(new PaginatedGameListResponseModel {
             Games = games.Select(g => g.MapToGameModel()).ToList(),
@@ -33,6 +42,8 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var gameDto = await gameService.GetByIdAsync(id);
         
         if (gameDto is null)

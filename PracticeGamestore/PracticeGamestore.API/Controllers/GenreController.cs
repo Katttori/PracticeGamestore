@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Genre;
@@ -8,11 +9,17 @@ using PracticeGamestore.Models.Genre;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("genres")]
-public class GenreController(IGenreService genreService, ILogger<GenreController> logger) : ControllerBase
+public class GenreController(
+    IGenreService genreService,
+    ILocationService locationService,
+    IHttpContextAccessor httpContextAccessor,
+    ILogger<GenreController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var genres = await genreService.GetAllAsync();
         return Ok(genres.Select(g => g.MapToGenreModel()));
     }
@@ -20,6 +27,8 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var genre = await genreService.GetByIdAsync(id);
         
         if (genre is null)
@@ -73,6 +82,8 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetGamesByGenre([FromRoute] Guid id)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var games = await genreService.GetGames(id);
         return games is null
             ? NotFound(ErrorMessages.NotFound("Genre", id))

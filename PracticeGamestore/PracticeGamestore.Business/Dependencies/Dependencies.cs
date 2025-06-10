@@ -9,6 +9,7 @@ using PracticeGamestore.DataAccess;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Country;
@@ -55,5 +56,7 @@ public static class Dependencies
         services.AddScoped<IBlacklistService, BlacklistService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<ILocationService, LocationService>();
+        services.AddHttpContextAccessor();
     }
 }

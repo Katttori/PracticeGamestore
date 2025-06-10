@@ -52,4 +52,9 @@ public class BlacklistService(IBlacklistRepository blacklistRepository, IUnitOfW
         await blacklistRepository.DeleteAsync(id);
         await unitOfWork.SaveChangesAsync();
     }
+
+    public async Task<bool> ExistsByUserEmailAsync(string email)
+    {
+        return await blacklistRepository.ExistsByUserEmailAsync(email);
+    }
 }

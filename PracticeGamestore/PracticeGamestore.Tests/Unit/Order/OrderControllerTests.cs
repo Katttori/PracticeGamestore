@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects.Order;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Order;
@@ -13,6 +15,8 @@ namespace PracticeGamestore.Tests.Unit.Order;
 public class OrderControllerTests
 {
     private Mock<IOrderService> _orderServiceMock;
+    private Mock<ILocationService> _locationServiceMock;
+    private Mock<IHttpContextAccessor> _httpContextAccessorMock;
     private Mock<ILogger<OrderController>> _loggerMock;
     private OrderController _orderController;
     
@@ -23,8 +27,11 @@ public class OrderControllerTests
     public void Setup()
     {
         _orderServiceMock = new Mock<IOrderService>();
+        _locationServiceMock = new Mock<ILocationService>();
+        _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
         _loggerMock = new Mock<ILogger<OrderController>>();
-        _orderController = new OrderController(_orderServiceMock.Object, _loggerMock.Object);
+        _orderController = new OrderController(_orderServiceMock.Object, _locationServiceMock.Object,
+            _httpContextAccessorMock.Object, _loggerMock.Object);
     }
 
     [Test]

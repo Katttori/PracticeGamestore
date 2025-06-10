@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Game;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
@@ -12,11 +13,15 @@ namespace PracticeGamestore.Controllers;
 public class PlatformController(
     IPlatformService platformService,
     IGameService gameService,
+    ILocationService locationService,
+    IHttpContextAccessor httpContextAccessor,
     ILogger<PlatformController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllPlatforms()
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var platforms = await platformService.GetAllAsync();
         return Ok(platforms.Select(p => p.MapToPlatformModel()));
     }
@@ -24,6 +29,8 @@ public class PlatformController(
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetPlatformById(Guid id)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var platform = await platformService.GetByIdAsync(id);
         
         if (platform is null)
@@ -38,6 +45,8 @@ public class PlatformController(
     [HttpGet("{platformId:guid}/games")]
     public async Task<IActionResult> GetGamesByPlatform(Guid platformId)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var games = await gameService.GetByPlatformAsync(platformId);
         
         if (games is null)

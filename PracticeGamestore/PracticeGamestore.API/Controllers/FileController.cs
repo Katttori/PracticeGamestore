@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Services.File;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.File;
 
@@ -7,11 +8,17 @@ namespace PracticeGamestore.Controllers;
 
 [ApiController]
 [Route("files")]
-public class FileController(IFileService fileService, ILogger<FileController> logger) : ControllerBase
+public class FileController(
+    IFileService fileService,
+    ILocationService locationService,
+    IHttpContextAccessor httpContextAccessor,
+    ILogger<FileController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var files = await fileService.GetAllAsync();
         return Ok(files);
     }
@@ -19,6 +26,8 @@ public class FileController(IFileService fileService, ILogger<FileController> lo
     [HttpGet("{id:guid}/download")]
     public async Task<IActionResult> Download(Guid id)
     {
+        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        
         var file  = await fileService.GetByIdAsync(id);
         if (file is null)
         {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -5,6 +6,7 @@ using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Game;
@@ -17,6 +19,8 @@ public class PlatformControllerTests
 {
     private Mock<IPlatformService> _platformService;
     private Mock<IGameService> _gameService;
+    private Mock<ILocationService> _locationService;
+    private Mock<IHttpContextAccessor> _httpContextAccessor;
     private Mock<ILogger<PlatformController>> _loggerMock;
     private PlatformController _platformController;
     
@@ -25,8 +29,11 @@ public class PlatformControllerTests
     {
         _platformService = new Mock<IPlatformService>();
         _gameService = new Mock<IGameService>();
+        _locationService = new Mock<ILocationService>();
+        _httpContextAccessor = new Mock<IHttpContextAccessor>();
         _loggerMock = new Mock<ILogger<PlatformController>>();
-        _platformController = new PlatformController(_platformService.Object, _gameService.Object, _loggerMock.Object);
+        _platformController = new PlatformController(_platformService.Object, _gameService.Object,
+            _locationService.Object, _httpContextAccessor.Object, _loggerMock.Object);
     }
     
     [Test]
