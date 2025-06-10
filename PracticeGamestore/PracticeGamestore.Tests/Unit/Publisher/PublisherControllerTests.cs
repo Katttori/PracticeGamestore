@@ -97,7 +97,7 @@ public class PublisherControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
+        var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.CreateAsync(It.IsAny<PublisherDto>()))
             .ReturnsAsync(id);
 
@@ -118,7 +118,7 @@ public class PublisherControllerTests
     public async Task CreatePublisher_ShouldReturnBadRequest_WhenCreationFails()
     {
         //Arrange
-        var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
+        var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.CreateAsync(It.IsAny<PublisherDto>()))
             .ReturnsAsync(null as Guid?);
 
@@ -134,7 +134,7 @@ public class PublisherControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
+        var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.UpdateAsync(id, It.IsAny<PublisherDto>()))
             .ReturnsAsync(true);
 
@@ -149,7 +149,7 @@ public class PublisherControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
+        var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.UpdateAsync(id, It.IsAny<PublisherDto>()))
             .ReturnsAsync(false);
 

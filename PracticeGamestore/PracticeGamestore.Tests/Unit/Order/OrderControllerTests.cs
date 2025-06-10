@@ -9,6 +9,7 @@ using PracticeGamestore.Models.Order;
 
 namespace PracticeGamestore.Tests.Unit.Order;
 
+[TestFixture]
 public class OrderControllerTests
 {
     private Mock<IOrderService> _orderServiceMock;

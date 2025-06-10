@@ -1,6 +1,9 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using PracticeGamestore.Business.Dependencies;
 using PracticeGamestore.Middlewares;
 using Serilog;
+using PracticeGamestore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +16,12 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<RequestModelValidationFilter>();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
+
+builder.Services.AddControllers();
 builder.Services.AddBusinessServices(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();

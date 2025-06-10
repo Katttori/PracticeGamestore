@@ -12,6 +12,7 @@ using PracticeGamestore.Models.Platform;
 
 namespace PracticeGamestore.Tests.Unit.Platform;
 
+[TestFixture]
 public class PlatformControllerTests
 {
     private Mock<IPlatformService> _platformService;

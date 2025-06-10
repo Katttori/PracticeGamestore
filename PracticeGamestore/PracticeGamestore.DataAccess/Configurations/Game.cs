@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PracticeGamestore.DataAccess.Constants;
 
 namespace PracticeGamestore.DataAccess.Configurations;
 
@@ -18,21 +19,21 @@ public class Game : IEntityTypeConfiguration<Entities.Game>
 
         builder.Property(g => g.Name)
             .HasColumnName("name")
-            .HasMaxLength(255)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
         
         builder.HasIndex(g => g.Name).IsUnique();
 
         builder.Property(g => g.Key)
             .HasColumnName("key")
-            .HasMaxLength(50)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
         
         builder.HasIndex(g => g.Key).IsUnique();
 
         builder.Property(g => g.Description)
             .HasColumnName("description")
-            .HasMaxLength(500);
+            .HasMaxLength(ValidationConstants.StringLength.LongMaximum);
 
         builder.Property(g => g.Price)
             .HasColumnName("price")
@@ -41,7 +42,7 @@ public class Game : IEntityTypeConfiguration<Entities.Game>
 
         builder.Property(g => g.Picture)
             .HasColumnName("picture")
-            .HasColumnType("varbinary(max)");
+            .HasMaxLength(ValidationConstants.MaximumPictureSize);
 
         builder.Property(g => g.Rating)
             .HasColumnName("rating")

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Genre;
 
@@ -23,13 +25,14 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
         if (genre is null)
         {
             logger.LogError("Genre with id: {Id} was not found.", id);
-            return NotFound($"Genre with id: {id} was not found.");
+            return NotFound(ErrorMessages.NotFound("Genre", id));
         }
         
         return Ok(genre.MapToGenreModel());
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(RequestModelValidationFilter))]
     public async Task<IActionResult> Create([FromBody] GenreRequestModel model)
     {
         var createdId = await genreService.CreateAsync(model.MapToGenreDto());
@@ -37,7 +40,7 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
         if (createdId is null)
         {
             logger.LogError("Failed to create genre with model: {Model}", model);
-            return BadRequest("Failed to create genre.");
+            return BadRequest(ErrorMessages.FailedToCreate("genre"));
         }
         
         logger.LogInformation("Created genre with id: {Id}", createdId);
@@ -46,16 +49,17 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
     }
 
     [HttpPut("{id:guid}")]
+    [ServiceFilter(typeof(RequestModelValidationFilter))]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GenreRequestModel model)
     {
         var isUpdated = await genreService.UpdateAsync(id, model.MapToGenreDto());
-        
+
         if (!isUpdated)
         {
             logger.LogError("Genre with id: {Id} was not found for update.", id);
-            return BadRequest($"Update failed. Genre with id: {id} might not exist.");
+            return BadRequest(ErrorMessages.FailedToUpdate("genre", id));
         }
-
+        
         return NoContent();
     }
 
@@ -71,7 +75,7 @@ public class GenreController(IGenreService genreService, ILogger<GenreController
     {
         var games = await genreService.GetGames(id);
         return games is null
-            ? NotFound($"Genre with id {id} was not found.")
+            ? NotFound(ErrorMessages.NotFound("Genre", id))
             : Ok(games.Select(g => g.MapToGameModel()));
     }
 }
