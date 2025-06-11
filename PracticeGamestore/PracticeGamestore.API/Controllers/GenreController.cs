@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Genre;
@@ -12,22 +13,30 @@ namespace PracticeGamestore.Controllers;
 public class GenreController(
     IGenreService genreService,
     ILocationService locationService,
-    IHttpContextAccessor httpContextAccessor,
     ILogger<GenreController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var genres = await genreService.GetAllAsync();
         return Ok(genres.Select(g => g.MapToGenreModel()));
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public async Task<IActionResult> GetById(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var genre = await genreService.GetByIdAsync(id);
         
@@ -80,9 +89,14 @@ public class GenreController(
     }
 
     [HttpGet("{id:guid}/games")]
-    public async Task<IActionResult> GetGamesByGenre([FromRoute] Guid id)
+    public async Task<IActionResult> GetGamesByGenre(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var games = await genreService.GetGames(id);
         return games is null

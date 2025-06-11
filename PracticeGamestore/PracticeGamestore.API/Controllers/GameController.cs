@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Mappers;
@@ -13,22 +14,30 @@ namespace PracticeGamestore.Controllers;
 public class GameController(
     IGameService gameService,
     ILocationService locationService,
-    IHttpContextAccessor httpContextAccessor,
     ILogger<GameController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var games = await gameService.GetAllAsync();
         return Ok(games.Select(g => g.MapToGameModel()));
     }
 
     [HttpGet("/filter")]
-    public async Task<IActionResult> GetFiltered([FromQuery] GameFilter filter)
+    public async Task<IActionResult> GetFiltered(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        [FromQuery] GameFilter filter)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var (games, totalCount) = await gameService.GetFilteredAsync(filter);
         return Ok(new PaginatedGameListResponseModel {
@@ -40,9 +49,14 @@ public class GameController(
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public async Task<IActionResult> GetById(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var gameDto = await gameService.GetByIdAsync(id);
         

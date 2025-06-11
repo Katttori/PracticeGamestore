@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Services.File;
 using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Mappers;
@@ -11,22 +12,30 @@ namespace PracticeGamestore.Controllers;
 public class FileController(
     IFileService fileService,
     ILocationService locationService,
-    IHttpContextAccessor httpContextAccessor,
     ILogger<FileController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var files = await fileService.GetAllAsync();
         return Ok(files);
     }
 
     [HttpGet("{id:guid}/download")]
-    public async Task<IActionResult> Download(Guid id)
+    public async Task<IActionResult> Download(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        Guid id)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var file  = await fileService.GetByIdAsync(id);
         if (file is null)

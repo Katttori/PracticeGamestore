@@ -17,18 +17,19 @@ public class GenreControllerTests
 {
     private Mock<IGenreService> _genreService;
     private Mock<ILocationService> _locationService;
-    private Mock<IHttpContextAccessor> _httpContextAccessor;
     private Mock<ILogger<GenreController>> _loggerMock;
     private GenreController _genreController;
+    
+    private const string CountryHeader = "Ukraine";
+    private const string UserEmailHeader = "test@gmail.com";
 
     [SetUp]
     public void Setup()
     {
         _genreService = new Mock<IGenreService>();
         _locationService = new Mock<ILocationService>();
-        _httpContextAccessor = new Mock<IHttpContextAccessor>();
         _loggerMock = new Mock<ILogger<GenreController>>();
-        _genreController = new GenreController(_genreService.Object, _locationService.Object, _httpContextAccessor.Object, _loggerMock.Object);
+        _genreController = new GenreController(_genreService.Object, _locationService.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -40,7 +41,7 @@ public class GenreControllerTests
         _genreService.Setup(x => x.GetAllAsync()).ReturnsAsync(genreDtos);
         
         // Act
-        var result = await _genreController.GetAll();
+        var result = await _genreController.GetAll(CountryHeader, UserEmailHeader);
         
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -59,7 +60,7 @@ public class GenreControllerTests
         _genreService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as GenreDto);
         
         // Act
-        var result = await _genreController.GetById(Guid.NewGuid());
+        var result = await _genreController.GetById(CountryHeader, UserEmailHeader, Guid.NewGuid());
         
         // Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -74,7 +75,7 @@ public class GenreControllerTests
         _genreService.Setup(x => x.GetByIdAsync(genreDto.Id!.Value)).ReturnsAsync(genreDto);
         
         // Act
-        var result = await _genreController.GetById(genreDto.Id!.Value);
+        var result = await _genreController.GetById(CountryHeader, UserEmailHeader, genreDto.Id!.Value);
         
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -163,7 +164,7 @@ public class GenreControllerTests
             .ReturnsAsync(null as IEnumerable<GameResponseDto>);
         
         // Act
-        var result = await _genreController.GetGamesByGenre(Guid.NewGuid());
+        var result = await _genreController.GetGamesByGenre(CountryHeader, UserEmailHeader, Guid.NewGuid());
         
         // Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -183,7 +184,7 @@ public class GenreControllerTests
             .ReturnsAsync(games);
         
         // Act
-        var result = await _genreController.GetGamesByGenre(actionGenreId);
+        var result = await _genreController.GetGamesByGenre(CountryHeader, UserEmailHeader, actionGenreId);
         
         // Assert
         var okResult = result as OkObjectResult;

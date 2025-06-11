@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Location;
@@ -12,22 +13,30 @@ namespace PracticeGamestore.Controllers;
 public class PublisherController(
     IPublisherService publisherService,
     ILocationService locationService,
-    IHttpContextAccessor httpContextAccessor,
     ILogger<PublisherController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var publishers = await publisherService.GetAllAsync();
         return Ok(publishers.Select(p => p.MapToPublisherModel()));
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public async Task<IActionResult> GetById(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var publisher = await publisherService.GetByIdAsync(id);
         
@@ -41,9 +50,14 @@ public class PublisherController(
     }
 
     [HttpGet("{id:guid}/games")]
-    public async Task<IActionResult> GetPublisherGames([FromRoute] Guid id)
+    public async Task<IActionResult> GetPublisherGames(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
          var games = await publisherService.GetGamesAsync(id);
 

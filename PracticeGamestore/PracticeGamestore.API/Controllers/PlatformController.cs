@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Game;
@@ -14,22 +15,30 @@ public class PlatformController(
     IPlatformService platformService,
     IGameService gameService,
     ILocationService locationService,
-    IHttpContextAccessor httpContextAccessor,
     ILogger<PlatformController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllPlatforms()
+    public async Task<IActionResult> GetAllPlatforms(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var platforms = await platformService.GetAllAsync();
         return Ok(platforms.Select(p => p.MapToPlatformModel()));
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetPlatformById(Guid id)
+    public async Task<IActionResult> GetPlatformById(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        Guid id)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var platform = await platformService.GetByIdAsync(id);
         
@@ -43,9 +52,14 @@ public class PlatformController(
     }
     
     [HttpGet("{platformId:guid}/games")]
-    public async Task<IActionResult> GetGamesByPlatform(Guid platformId)
+    public async Task<IActionResult> GetGamesByPlatform(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        Guid platformId)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var games = await gameService.GetByPlatformAsync(platformId);
         

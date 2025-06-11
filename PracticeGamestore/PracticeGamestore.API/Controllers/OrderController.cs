@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Location;
@@ -12,7 +13,6 @@ namespace PracticeGamestore.Controllers;
 public class OrderController(
     IOrderService orderService,
     ILocationService locationService,
-    IHttpContextAccessor httpContextAccessor,
     ILogger<OrderController> logger) : ControllerBase
 {
     [HttpGet]
@@ -38,9 +38,14 @@ public class OrderController(
 
     [HttpPost]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
-    public async Task<IActionResult> Create([FromBody] OrderRequestModel model)
+    public async Task<IActionResult> Create(
+        [FromHeader(Name = "X-Location-Country"), Required]
+        string country,
+        [FromHeader(Name = "X-User-Email"), Required]
+        string email,
+        [FromBody] OrderRequestModel model)
     {
-        await locationService.HandleLocationAccessAsync(httpContextAccessor.HttpContext!);
+        await locationService.HandleLocationAccessAsync(country, email);
         
         var createdId = await orderService.CreateAsync(model.MapToOrderDto());
         

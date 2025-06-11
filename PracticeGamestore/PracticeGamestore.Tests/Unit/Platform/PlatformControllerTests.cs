@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -20,9 +19,11 @@ public class PlatformControllerTests
     private Mock<IPlatformService> _platformService;
     private Mock<IGameService> _gameService;
     private Mock<ILocationService> _locationService;
-    private Mock<IHttpContextAccessor> _httpContextAccessor;
     private Mock<ILogger<PlatformController>> _loggerMock;
     private PlatformController _platformController;
+    
+    private const string CountryHeader = "Ukraine";
+    private const string UserEmailHeader = "test@gmail.com";
     
     [SetUp]
     public void Setup()
@@ -30,10 +31,9 @@ public class PlatformControllerTests
         _platformService = new Mock<IPlatformService>();
         _gameService = new Mock<IGameService>();
         _locationService = new Mock<ILocationService>();
-        _httpContextAccessor = new Mock<IHttpContextAccessor>();
         _loggerMock = new Mock<ILogger<PlatformController>>();
         _platformController = new PlatformController(_platformService.Object, _gameService.Object,
-            _locationService.Object, _httpContextAccessor.Object, _loggerMock.Object);
+            _locationService.Object, _loggerMock.Object);
     }
     
     [Test]
@@ -45,7 +45,7 @@ public class PlatformControllerTests
         _platformService.Setup(service => service.GetAllAsync()).ReturnsAsync(platforms);
         
         // Act
-        var result = await _platformController.GetAllPlatforms();
+        var result = await _platformController.GetAllPlatforms(CountryHeader, UserEmailHeader);
         
         // Assert
         var okResult = result as OkObjectResult;
@@ -69,7 +69,7 @@ public class PlatformControllerTests
         _platformService.Setup(service => service.GetByIdAsync(platform.MapToPlatformEntity().Id)).ReturnsAsync(platform);
         
         // Act
-        var result = await _platformController.GetPlatformById(platform.MapToPlatformEntity().Id);
+        var result = await _platformController.GetPlatformById(CountryHeader, UserEmailHeader, platform.MapToPlatformEntity().Id);
         
         // Assert
         var okResult = result as OkObjectResult;
@@ -91,7 +91,7 @@ public class PlatformControllerTests
         _platformService.Setup(service => service.GetByIdAsync(platformId)).ReturnsAsync((PlatformDto?)null);
         
         // Act
-        var result = await _platformController.GetPlatformById(platformId);
+        var result = await _platformController.GetPlatformById(CountryHeader, UserEmailHeader, platformId);
         
         // Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -107,7 +107,7 @@ public class PlatformControllerTests
         _gameService.Setup(s => s.GetByPlatformAsync(platformId)).ReturnsAsync(mockGames);
 
         // Act
-        var result = await _platformController.GetGamesByPlatform(platformId);
+        var result = await _platformController.GetGamesByPlatform(CountryHeader, UserEmailHeader, platformId);
 
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -127,7 +127,7 @@ public class PlatformControllerTests
             .ReturnsAsync(null as IEnumerable<GameResponseDto>);
 
         // Act
-        var result = await _platformController.GetGamesByPlatform(platformId);
+        var result = await _platformController.GetGamesByPlatform(CountryHeader, UserEmailHeader, platformId);
 
         // Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());

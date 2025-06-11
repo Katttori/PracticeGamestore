@@ -57,6 +57,5 @@ public static class Dependencies
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<ILocationService, LocationService>();
-        services.AddHttpContextAccessor();
     }
 }

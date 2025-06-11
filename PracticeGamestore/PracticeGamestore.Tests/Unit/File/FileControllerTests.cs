@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -16,20 +15,19 @@ public class FileControllerTests
 {
     private Mock<IFileService> _fileService;
     private Mock<ILocationService> _locationService;
-    private Mock<IHttpContextAccessor> _httpContextAccessor;
     private Mock<ILogger<FileController>> _logger;
     private FileController _controller;
+
+    private const string CountryHeader = "Ukraine";
+    private const string UserEmailHeader = "test@gmail.com";
 
     [SetUp]
     public void Setup()
     {
         _fileService = new Mock<IFileService>();
         _locationService = new Mock<ILocationService>();
-        _httpContextAccessor = new Mock<IHttpContextAccessor>();
         _logger = new Mock<ILogger<FileController>>();
-        _controller = new FileController(_fileService.Object, _locationService.Object, _httpContextAccessor.Object,
-            _logger.Object
-        );
+        _controller = new FileController(_fileService.Object, _locationService.Object, _logger.Object);
     }
 
     [Test]
@@ -38,7 +36,7 @@ public class FileControllerTests
         var dtos = TestData.File.GenerateFileDtos();
         _fileService.Setup(s => s.GetAllAsync()).ReturnsAsync(dtos);
 
-        var result = await _controller.GetAll();
+        var result = await _controller.GetAll(CountryHeader, UserEmailHeader);
         var ok = result as OkObjectResult;
         var value = ok?.Value as IEnumerable<FileDto>;
 
@@ -59,7 +57,7 @@ public class FileControllerTests
         _fileService.Setup(s => s.GetByIdAsync(dto.Id!.Value)).ReturnsAsync(dto);
         _fileService.Setup(s => s.ReadPhysicalFileAsync(dto.Path)).ReturnsAsync(Encoding.UTF8.GetBytes("File content"));
         
-        var result = await _controller.Download(dto.Id.Value);
+        var result = await _controller.Download(CountryHeader, UserEmailHeader, dto.Id.Value);
         var fileResult = result as FileContentResult;
         
         Assert.Multiple(() =>
@@ -78,7 +76,7 @@ public class FileControllerTests
         var id = Guid.NewGuid();
         _fileService.Setup(s => s.GetByIdAsync(id)).ReturnsAsync((FileDto?)null);
 
-        var result = await _controller.Download(id);
+        var result = await _controller.Download(CountryHeader, UserEmailHeader, id);
 
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
     }

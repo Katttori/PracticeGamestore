@@ -16,19 +16,19 @@ public class PublisherControllerTests
 {
     private Mock<IPublisherService> _publisherService;
     private Mock<ILocationService> _locationService;
-    private Mock<IHttpContextAccessor> _httpContextAccessor;
     private Mock<ILogger<PublisherController>> _loggerMock;
     private PublisherController _publisherController;
+    
+    private const string CountryHeader = "Ukraine";
+    private const string UserEmailHeader = "test@gmail.com";
     
     [SetUp]
     public void SetUp()
     {
         _publisherService = new Mock<IPublisherService>();
         _locationService = new Mock<ILocationService>();
-        _httpContextAccessor = new Mock<IHttpContextAccessor>();
         _loggerMock = new Mock<ILogger<PublisherController>>();
-        _publisherController = new PublisherController(_publisherService.Object, _locationService.Object,
-            _httpContextAccessor.Object, _loggerMock.Object);
+        _publisherController = new PublisherController(_publisherService.Object, _locationService.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class PublisherControllerTests
         var expected = publisherDtos.Select(dto => dto.MapToPublisherModel()).ToList();
 
         //Act
-        var result = await _publisherController.GetAll();
+        var result = await _publisherController.GetAll(CountryHeader, UserEmailHeader);
 
         //Assert
         var okResult = result as OkObjectResult;
@@ -70,7 +70,7 @@ public class PublisherControllerTests
         var expected = publisherDto.MapToPublisherModel();
 
         //Act
-        var result = await _publisherController.GetById(id);
+        var result = await _publisherController.GetById(CountryHeader, UserEmailHeader, id);
 
         //Assert
         var okResult = result as OkObjectResult;
@@ -92,7 +92,7 @@ public class PublisherControllerTests
             .ReturnsAsync(null as PublisherDto);
 
         //Act
-        var result = await _publisherController.GetById(Guid.NewGuid());
+        var result = await _publisherController.GetById(CountryHeader, UserEmailHeader, Guid.NewGuid());
 
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -187,7 +187,7 @@ public class PublisherControllerTests
             .ReturnsAsync(null as IEnumerable<GameResponseDto>);
 
         //Act
-        var result = await _publisherController.GetPublisherGames(Guid.NewGuid());
+        var result = await _publisherController.GetPublisherGames(CountryHeader, UserEmailHeader, Guid.NewGuid());
         
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -203,7 +203,7 @@ public class PublisherControllerTests
             .ReturnsAsync(games);
 
         //Act
-        var result = await _publisherController.GetPublisherGames(publisherId);
+        var result = await _publisherController.GetPublisherGames(CountryHeader, UserEmailHeader, publisherId);
         
         //Assert
         var okResult = result as OkObjectResult;

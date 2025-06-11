@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Enums;
@@ -9,11 +8,8 @@ namespace PracticeGamestore.Business.Services.Location;
 
 public class LocationService(ICountryService countryService, IBlacklistService blacklistService) : ILocationService
 {
-    public async Task HandleLocationAccessAsync(HttpContext context)
+    public async Task HandleLocationAccessAsync(string countryName, string userEmail)
     {
-        var countryName = context.Request.Headers["X-Location-Country"].FirstOrDefault();
-        var userEmail = context.Request.Headers["X-User-Email"].FirstOrDefault();
-        
         if (string.IsNullOrWhiteSpace(countryName) || string.IsNullOrWhiteSpace(userEmail))
         {
             throw new ArgumentException(ErrorMessages.MissingLocationHeaders);

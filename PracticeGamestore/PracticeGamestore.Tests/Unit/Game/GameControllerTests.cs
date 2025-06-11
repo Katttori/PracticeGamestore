@@ -18,19 +18,19 @@ public class GameControllerTests
 {
     private Mock<IGameService> _gameService;
     private Mock<ILocationService> _locationService;
-    private Mock<IHttpContextAccessor> _httpContextAccessor;
     private Mock<ILogger<GameController>> _loggerMock;
     private GameController _gameController;
+    
+    private const string CountryHeader = "Ukraine";
+    private const string UserEmailHeader = "test@gmail.com";
 
     [SetUp]
     public void SetUp()
     {
         _gameService = new Mock<IGameService>();
         _locationService = new Mock<ILocationService>();
-        _httpContextAccessor = new Mock<IHttpContextAccessor>();
         _loggerMock = new Mock<ILogger<GameController>>();
-        _gameController = new GameController(_gameService.Object, _locationService.Object, _httpContextAccessor.Object,
-            _loggerMock.Object);
+        _gameController = new GameController(_gameService.Object, _locationService.Object, _loggerMock.Object);
     }
 
     private static bool GameResponseModelsAreTheSame(GameResponseModel dto1, GameResponseModel dto2)
@@ -103,7 +103,7 @@ public class GameControllerTests
         var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
 
         //Act
-        var result = await _gameController.GetAll();
+        var result = await _gameController.GetAll(CountryHeader, UserEmailHeader);
 
         //Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -121,7 +121,7 @@ public class GameControllerTests
         var expected = gameResponseDto.MapToGameModel();
 
         //Act
-        var result = await _gameController.GetById(id);
+        var result = await _gameController.GetById(CountryHeader, UserEmailHeader, id);
 
         //Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -138,7 +138,7 @@ public class GameControllerTests
             .ReturnsAsync(null as GameResponseDto);
 
         //Act
-        var result = await _gameController.GetById(new Guid());
+        var result = await _gameController.GetById(CountryHeader, UserEmailHeader, Guid.NewGuid());
 
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -273,7 +273,7 @@ public class GameControllerTests
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
         // Act
-        var result = await _gameController.GetFiltered(gameFilter);
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
 
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -289,7 +289,7 @@ public class GameControllerTests
             .ReturnsAsync(([], 0));
 
         // Act
-        var result = await _gameController.GetFiltered(gameFilter);
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
 
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -309,7 +309,7 @@ public class GameControllerTests
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
         // Act
-        var result = await _gameController.GetFiltered(gameFilter);
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
 
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -328,7 +328,7 @@ public class GameControllerTests
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
         // Act
-        var result = await _gameController.GetFiltered(gameFilter);
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
 
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -347,7 +347,7 @@ public class GameControllerTests
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
         // Act
-        var result = await _gameController.GetFiltered(gameFilter);
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
 
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -371,7 +371,7 @@ public class GameControllerTests
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
         // Act
-        var result = await _gameController.GetFiltered(gameFilter);
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
 
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -390,7 +390,7 @@ public class GameControllerTests
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
         // Act
-        var result = await _gameController.GetFiltered(gameFilter);
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
 
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
@@ -431,7 +431,7 @@ public class GameControllerTests
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
         
         // Act
-        var result = await _gameController.GetFiltered(gameFilter);
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
 
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
