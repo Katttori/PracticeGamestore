@@ -64,5 +64,4 @@ public static class CommonValidationRules
                 return !string.IsNullOrEmpty(extension) && allowedExtensions.Contains(extension);
             }).WithMessage(ErrorMessages.InvalidGameFile);
     }
-
 }
