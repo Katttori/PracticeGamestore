@@ -42,30 +42,11 @@ public class LocationServiceTests
     }
 
     [Test]
-    public void HandleLocationAccessAsync_WhenHeadersAreMissing_ThrowsArgumentException()
+    public void HandleLocationAccessAsync_WhenLocationHeaderIsMissing_ThrowsArgumentException()
     {
         // Act & Assert
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _locationService.HandleLocationAccessAsync("", ""));
-        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.MissingLocationHeaders));
-    }
-
-    [Test]
-    public void HandleLocationAccessAsync_WhenUserIsBlacklisted_ThrowsUnauthorized()
-    {
-        // Arrange
-        const string countryName = "Canada";
-        const string userEmail = "banned@gmail.com";
-
-        _countryServiceMock.Setup(s => s.GetByNameAsync(countryName))
-            .ReturnsAsync(TestData.Country.GenerateCountryDto());
-        _blacklistServiceMock.Setup(s => s.ExistsByUserEmailAsync(userEmail))
-            .ReturnsAsync(true);
-
-        // Act & Assert
-        var ex = Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-            _locationService.HandleLocationAccessAsync(countryName, userEmail));
-        
-        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.BlacklistedUser));
+        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.MissingLocationHeader));
     }
 
     [Test]
@@ -76,7 +57,6 @@ public class LocationServiceTests
         const string userEmail = "test@gmail.com";
 
         _countryServiceMock.Setup(s => s.GetByNameAsync(bannedCountry.Name)).ReturnsAsync(bannedCountry);
-        _blacklistServiceMock.Setup(s => s.ExistsByUserEmailAsync(userEmail)).ReturnsAsync(false);
 
         // Act & Assert
         var ex = Assert.ThrowsAsync<UnauthorizedAccessException>(() =>

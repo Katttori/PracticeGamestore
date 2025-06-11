@@ -6,7 +6,7 @@ using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
-using PracticeGamestore.Business.Services.Location;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Mappers;
@@ -17,7 +17,7 @@ namespace PracticeGamestore.Tests.Unit.Game;
 public class GameControllerTests
 {
     private Mock<IGameService> _gameService;
-    private Mock<ILocationService> _locationService;
+    private Mock<IHeaderHandleService> _headerHandleService;
     private Mock<ILogger<GameController>> _loggerMock;
     private GameController _gameController;
     
@@ -28,9 +28,9 @@ public class GameControllerTests
     public void SetUp()
     {
         _gameService = new Mock<IGameService>();
-        _locationService = new Mock<ILocationService>();
+        _headerHandleService = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<GameController>>();
-        _gameController = new GameController(_gameService.Object, _locationService.Object, _loggerMock.Object);
+        _gameController = new GameController(_gameService.Object, _headerHandleService.Object, _loggerMock.Object);
     }
 
     private static bool GameResponseModelsAreTheSame(GameResponseModel dto1, GameResponseModel dto2)

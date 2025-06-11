@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.File;
-using PracticeGamestore.Business.Services.Location;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.File;
 
@@ -11,17 +12,15 @@ namespace PracticeGamestore.Controllers;
 [Route("files")]
 public class FileController(
     IFileService fileService,
-    ILocationService locationService,
+    IHeaderHandleService headerHandleService,
     ILogger<FileController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email)
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var files = await fileService.GetAllAsync();
         return Ok(files);
@@ -29,13 +28,11 @@ public class FileController(
 
     [HttpGet("{id:guid}/download")]
     public async Task<IActionResult> Download(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email,
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
         Guid id)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var file  = await fileService.GetByIdAsync(id);
         if (file is null)

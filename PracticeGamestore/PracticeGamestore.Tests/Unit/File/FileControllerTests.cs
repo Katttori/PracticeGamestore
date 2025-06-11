@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.File;
-using PracticeGamestore.Business.Services.Location;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.File;
 
@@ -14,7 +14,7 @@ namespace PracticeGamestore.Tests.Unit.File;
 public class FileControllerTests
 {
     private Mock<IFileService> _fileService;
-    private Mock<ILocationService> _locationService;
+    private Mock<IHeaderHandleService> _headerHandleService;
     private Mock<ILogger<FileController>> _logger;
     private FileController _controller;
 
@@ -25,9 +25,9 @@ public class FileControllerTests
     public void Setup()
     {
         _fileService = new Mock<IFileService>();
-        _locationService = new Mock<ILocationService>();
+        _headerHandleService = new Mock<IHeaderHandleService>();
         _logger = new Mock<ILogger<FileController>>();
-        _controller = new FileController(_fileService.Object, _locationService.Object, _logger.Object);
+        _controller = new FileController(_fileService.Object, _headerHandleService.Object, _logger.Object);
     }
 
     [Test]

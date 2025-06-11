@@ -1,3 +1,4 @@
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
@@ -53,8 +54,12 @@ public class BlacklistService(IBlacklistRepository blacklistRepository, IUnitOfW
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task<bool> ExistsByUserEmailAsync(string email)
+    public async Task HandleUserEmailAccessAsync(string userEmail)
     {
-        return await blacklistRepository.ExistsByUserEmailAsync(email);
+        if (string.IsNullOrWhiteSpace(userEmail))
+            throw new ArgumentException(ErrorMessages.MissingEmailHeader);
+        
+        if (await blacklistRepository.ExistsByUserEmailAsync(userEmail))
+            throw new UnauthorizedAccessException(ErrorMessages.BlacklistedUser);
     }
 }

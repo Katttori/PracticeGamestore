@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
-using PracticeGamestore.Business.Services.Location;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
@@ -12,17 +12,15 @@ namespace PracticeGamestore.Controllers;
 [ApiController, Route("publishers")]
 public class PublisherController(
     IPublisherService publisherService,
-    ILocationService locationService,
+    IHeaderHandleService headerHandleService,
     ILogger<PublisherController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email)
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var publishers = await publisherService.GetAllAsync();
         return Ok(publishers.Select(p => p.MapToPublisherModel()));
@@ -30,13 +28,11 @@ public class PublisherController(
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email,
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
         [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var publisher = await publisherService.GetByIdAsync(id);
         
@@ -51,13 +47,11 @@ public class PublisherController(
 
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetPublisherGames(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email,
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
         [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
          var games = await publisherService.GetGamesAsync(id);
 

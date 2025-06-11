@@ -5,7 +5,7 @@ using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Business.Mappers;
-using PracticeGamestore.Business.Services.Location;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Game;
@@ -18,7 +18,7 @@ public class PlatformControllerTests
 {
     private Mock<IPlatformService> _platformService;
     private Mock<IGameService> _gameService;
-    private Mock<ILocationService> _locationService;
+    private Mock<IHeaderHandleService> _headerHandleService;
     private Mock<ILogger<PlatformController>> _loggerMock;
     private PlatformController _platformController;
     
@@ -30,10 +30,10 @@ public class PlatformControllerTests
     {
         _platformService = new Mock<IPlatformService>();
         _gameService = new Mock<IGameService>();
-        _locationService = new Mock<ILocationService>();
+        _headerHandleService = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<PlatformController>>();
         _platformController = new PlatformController(_platformService.Object, _gameService.Object,
-            _locationService.Object, _loggerMock.Object);
+            _headerHandleService.Object, _loggerMock.Object);
     }
     
     [Test]

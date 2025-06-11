@@ -1,5 +1,6 @@
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -187,32 +188,26 @@ public class BlacklistServiceTests
         _blacklistRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
-
+    
     [Test]
-    public async Task ExistsByUserEmailAsync_WhenEntityExists_ReturnsTrue()
+    public void HandleUserEmailAccessAsync_WhenEmailHeaderIsMissing_ThrowsArgumentException()
     {
-        // Arrange
-        const string userEmail = "test@gamil.com";
-        _blacklistRepositoryMock.Setup(b => b.ExistsByUserEmailAsync(userEmail)).ReturnsAsync(true);
-        
-        // Act
-        var result = await _service.ExistsByUserEmailAsync(userEmail);
-        
-        // Assert
-        Assert.That(result, Is.True);
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<ArgumentException>(() => _service.HandleUserEmailAccessAsync(""));
+        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.MissingEmailHeader));
     }
     
     [Test]
-    public async Task ExistsByUserEmailAsync_WhenEntityDoesNotExist_ReturnsFalse()
+    public void HandleUserEmailAccessAsync_WhenUserIsBlacklisted_ThrowsUnauthorized()
     {
         // Arrange
-        const string userEmail = "test@gamil.com";
-        _blacklistRepositoryMock.Setup(b => b.ExistsByUserEmailAsync(userEmail)).ReturnsAsync(false);
+        const string userEmail = "banned@gmail.com";
         
-        // Act
-        var result = await _service.ExistsByUserEmailAsync(userEmail);
+        _blacklistRepositoryMock.Setup(s => s.ExistsByUserEmailAsync(userEmail)).ReturnsAsync(true);
+
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.HandleUserEmailAccessAsync(userEmail));
         
-        // Assert
-        Assert.That(result, Is.False);
+        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.BlacklistedUser));
     }
 }

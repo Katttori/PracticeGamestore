@@ -4,7 +4,7 @@ using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
-using PracticeGamestore.Business.Services.Location;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Models.Game;
 
@@ -13,17 +13,15 @@ namespace PracticeGamestore.Controllers;
 [ApiController, Route("games")]
 public class GameController(
     IGameService gameService,
-    ILocationService locationService,
+    IHeaderHandleService headerHandleService,
     ILogger<GameController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email)
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var games = await gameService.GetAllAsync();
         return Ok(games.Select(g => g.MapToGameModel()));
@@ -31,13 +29,11 @@ public class GameController(
 
     [HttpGet("/filter")]
     public async Task<IActionResult> GetFiltered(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email,
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
         [FromQuery] GameFilter filter)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var (games, totalCount) = await gameService.GetFilteredAsync(filter);
         return Ok(new PaginatedGameListResponseModel {
@@ -50,13 +46,11 @@ public class GameController(
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email,
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
         [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var gameDto = await gameService.GetByIdAsync(id);
         

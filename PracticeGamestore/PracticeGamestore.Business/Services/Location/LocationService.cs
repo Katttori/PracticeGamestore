@@ -10,10 +10,8 @@ public class LocationService(ICountryService countryService, IBlacklistService b
 {
     public async Task HandleLocationAccessAsync(string countryName, string userEmail)
     {
-        if (string.IsNullOrWhiteSpace(countryName) || string.IsNullOrWhiteSpace(userEmail))
-        {
-            throw new ArgumentException(ErrorMessages.MissingLocationHeaders);
-        }
+        if (string.IsNullOrWhiteSpace(countryName))
+            throw new ArgumentException(ErrorMessages.MissingLocationHeader);
         
         var country = await countryService.GetByNameAsync(countryName);
 
@@ -21,11 +19,6 @@ public class LocationService(ICountryService countryService, IBlacklistService b
         {
             await countryService.CreateAsync(new CountryDto(null, countryName, CountryStatus.Allowed));
             return;
-        }
-
-        if (await blacklistService.ExistsByUserEmailAsync(userEmail))
-        {
-            throw new UnauthorizedAccessException(ErrorMessages.BlacklistedUser);
         }
 
         if (country.Status == CountryStatus.Banned)

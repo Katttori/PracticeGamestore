@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Services.Location;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Mappers;
@@ -15,7 +15,7 @@ namespace PracticeGamestore.Tests.Unit.Publisher;
 public class PublisherControllerTests
 {
     private Mock<IPublisherService> _publisherService;
-    private Mock<ILocationService> _locationService;
+    private Mock<IHeaderHandleService> _headerHandleService;
     private Mock<ILogger<PublisherController>> _loggerMock;
     private PublisherController _publisherController;
     
@@ -26,9 +26,9 @@ public class PublisherControllerTests
     public void SetUp()
     {
         _publisherService = new Mock<IPublisherService>();
-        _locationService = new Mock<ILocationService>();
+        _headerHandleService = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<PublisherController>>();
-        _publisherController = new PublisherController(_publisherService.Object, _locationService.Object, _loggerMock.Object);
+        _publisherController = new PublisherController(_publisherService.Object, _headerHandleService.Object, _loggerMock.Object);
     }
 
     [Test]

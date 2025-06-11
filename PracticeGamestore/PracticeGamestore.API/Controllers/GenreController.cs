@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Genre;
-using PracticeGamestore.Business.Services.Location;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Genre;
@@ -12,17 +12,15 @@ namespace PracticeGamestore.Controllers;
 [ApiController, Route("genres")]
 public class GenreController(
     IGenreService genreService,
-    ILocationService locationService,
+    IHeaderHandleService headerHandleService,
     ILogger<GenreController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email)
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var genres = await genreService.GetAllAsync();
         return Ok(genres.Select(g => g.MapToGenreModel()));
@@ -30,13 +28,11 @@ public class GenreController(
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email,
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
         [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var genre = await genreService.GetByIdAsync(id);
         
@@ -90,13 +86,11 @@ public class GenreController(
 
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetGamesByGenre(
-        [FromHeader(Name = "X-Location-Country"), Required]
-        string country,
-        [FromHeader(Name = "X-User-Email"), Required]
-        string email,
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
         [FromRoute] Guid id)
     {
-        await locationService.HandleLocationAccessAsync(country, email);
+        await headerHandleService.CheckAccessAsync(country, email);
         
         var games = await genreService.GetGames(id);
         return games is null
