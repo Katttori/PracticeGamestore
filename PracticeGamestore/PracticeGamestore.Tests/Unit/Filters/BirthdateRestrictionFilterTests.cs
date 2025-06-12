@@ -26,7 +26,7 @@ public class BirthdateRestrictionFilterTests
     }
 
     [Test]
-    public void OnActionExecuting_ShouldSetUnderageValueToFalseInHttpContextIfUserIsAdultBasedOnProvidedXBirthdateHeader()
+    public void OnActionExecuting_WhenUserIsAdultBasedOnProvidedXBirthdateHeader_ShouldSetUnderageValueToFalseInHttpContext()
     {
         // Arrange
         _context.HttpContext.Request.Headers.Append("X-Birthdate", "2000-02-02");
@@ -40,7 +40,7 @@ public class BirthdateRestrictionFilterTests
     }
     
     [Test]
-    public void OnActionExecuting_ShouldSetUnderageValueToTrueInHttpContextIfUserIsNotAdultBasedOnProvidedXBirthdateHeader()
+    public void OnActionExecuting_WhenUserIsNotAdultBasedOnProvidedXBirthdateHeader_ShouldSetUnderageValueToTrueInHttpContext()
     {
         // Arrange
         var childBirthDate = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -56,7 +56,7 @@ public class BirthdateRestrictionFilterTests
     
     
     [Test]
-    public void OnActionExecuting_ShouldSetUnderageValueToTrueInHttpContextIfXBirthdateHeaderNotProvided()
+    public void OnActionExecuting_WhenXBirthdateHeaderNotProvided_ShouldSetUnderageValueToTrueInHttpContext()
     {
         // Arrange
         
@@ -69,7 +69,7 @@ public class BirthdateRestrictionFilterTests
     }
     
     [Test]
-    public void OnActionExecuting_ShouldSetUnderageValueToTrueInHttpContextIfXBirthdateHeaderValueIsNotValidDate()
+    public void OnActionExecuting_WhenXBirthdateHeaderValueIsNotValidDate_ShouldSetUnderageValueToTrueInHttpContext()
     {
         // Arrange
         _context.HttpContext.Request.Headers.Append("X-Birthdate", "I am an adult!!!");

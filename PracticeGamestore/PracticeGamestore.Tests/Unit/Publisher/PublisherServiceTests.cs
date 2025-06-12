@@ -225,7 +225,7 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public async Task GetByPublisherGamesAsync_WhenPublisherExistsAndUserIsAdult_ReturnsAllGames()
+    public async Task GetByPublisherGamesAsync_WhenPublisherExistsAndUserIsAdult_ShouldReturnAllGames()
     {
         //Arrange
         var publisherId = Guid.NewGuid();
@@ -247,7 +247,7 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public async Task GetByPublisherGamesAsync_WhenPublisherExistAndUserIsUnderage_ReturnsGamesWithAgeRatingLessThan18()
+    public async Task GetByPublisherGamesAsync_WhenPublisherExistAndUserIsUnderage_ShouldReturnGamesWithAgeRatingLessThan18()
     {
         //Arrange
         var publisherId = Guid.NewGuid();
@@ -269,7 +269,7 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public async Task GetByPublisherGamesAsync_WhenPublisherDoesNotExist_ReturnsNull()
+    public async Task GetByPublisherGamesAsync_WhenPublisherDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         _publisherRepository.Setup(x => x.ExistsAsync(It.IsAny<Guid>()))

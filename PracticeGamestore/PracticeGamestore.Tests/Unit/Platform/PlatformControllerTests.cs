@@ -97,7 +97,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task GetGamesByPlatformAsync_ReturnsOkWithAllGamesIfUserIsAdult()
+    public async Task GetGamesByPlatformAsync_WhenUserIsAdult_ShouldReturnOkWithAllGames()
     {
         // Arrange
         var platformId = Guid.NewGuid();
@@ -117,7 +117,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task GetGamesByPlatformAsync_ReturnsOkWithGamesOfAgeRatingLessThan18IfUserIsUnderage()
+    public async Task GetGamesByPlatformAsync_WhenUserIsUnderage_ShouldReturnOkWithGamesOfAgeRatingLessThan18()
     {
         // Arrange
         var platformId = Guid.NewGuid();
@@ -136,7 +136,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task GetGamesByPlatformAsync_WhenNoGames_ReturnsNotFound()
+    public async Task GetGamesByPlatformAsync_WhenNoGames_ShouldReturnNotFound()
     {
         // Arrange
         var platformId = Guid.NewGuid();

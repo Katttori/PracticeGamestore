@@ -84,7 +84,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetAllAsync_ShouldReturnAllGamesWhenUserIsAdult()
+    public async Task GetAllAsync_WhenUserIsAdult_ShouldReturnAllGames()
     {
         //Arrange
         var hideAdultContent = false;
@@ -100,7 +100,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetAllAsync_ShouldReturnOnlyGamesWithAgeRatingLessThan18WhenUserIsUnderage()
+    public async Task GetAllAsync_WhenUserIsUnderage_ShouldReturnOnlyGamesWithAgeRatingLessThan18()
     {
         //Arrange
         var hideAdultContent = true;
@@ -117,7 +117,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_WhenGameExists_ReturnsGameDto()
+    public async Task GetByIdAsync_WhenGameExists_ShouldReturnGameDto()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -137,7 +137,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_WhenGameDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_WhenGameDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         _gameRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -151,7 +151,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_WhenGameExistsAndSpecifiedRelationsExistAndChangesSavedSuccessfully_ReturnsTrue()
+    public async Task UpdateAsync_WhenGameExistsAndSpecifiedRelationsExistAndChangesSavedSuccessfully_ShouldReturnTrue()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -171,7 +171,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenGameDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenGameDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -189,7 +189,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void UpdateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -208,7 +208,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public void UpdateAsync_WhenKeyAlreadyExists_ThrowsArgumentException()
+    public void UpdateAsync_WhenKeyAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -227,7 +227,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenSpecifiedPublisherDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenSpecifiedPublisherDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -246,7 +246,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_WhenSpecifiedGenreDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenSpecifiedGenreDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -266,7 +266,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenSpecifiedPlatformDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenSpecifiedPlatformDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -285,7 +285,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_ShouldReturnFalse_WhenChangesNotSaved()
+    public async Task UpdateAsync_WhenChangesNotSaved_ShouldReturnFalse()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -307,7 +307,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldAddGame_WhenChangesSavedSuccessfullyAndSpecifiedRealtionsAreCorrect()
+    public async Task CreateAsync_WhenChangesSavedSuccessfullyAndSpecifiedRelationsAreCorrect_ShouldAddGame()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -333,7 +333,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void CreateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -348,7 +348,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public void CreateAsync_WhenKeyAlreadyExists_ThrowsArgumentException()
+    public void CreateAsync_WhenKeyAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -363,7 +363,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenSpecifiedPublisherDoesNotExist()
+    public async Task CreateAsync_WhenSpecifiedPublisherDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -388,7 +388,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenSpecifiedGenreDoesNotExist()
+    public async Task CreateAsync_WhenSpecifiedGenreDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -414,7 +414,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenSpecifiedPlatformDoesNotExist()
+    public async Task CreateAsync_WhenSpecifiedPlatformDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -439,7 +439,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
+    public async Task CreateAsync_WhenChangesNotSaved_ShouldReturnNull()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -483,7 +483,7 @@ public class GameServiceTests
 
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnUpToTenGamesOrderedByNameAscOnFirstPageWhenNoQueryParamsProvided()
+    public async Task GetFilteredAsync_WhenNoQueryParamsProvided_ShouldReturnUpToTenGamesOrderedByNameAscOnFirstPage()
     {
         //Arrange
         var games = TestData.Game.GenerateGameEntities().OrderBy(g => g.Name).ToList();
@@ -502,7 +502,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesFilteredByName_WhenNameProvided()
+    public async Task GetFilteredAsync_WhenNameProvided_ShouldReturnGamesFilteredByName()
     {
         //Arrange
         var searchName = "cyber";
@@ -522,7 +522,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnEmptyList_WhenNameNotFound()
+    public async Task GetFilteredAsync_WhenNameNotFound_ShouldReturnEmptyList()
     {
         //Arrange
         var gameFilter = new GameFilter { Name = "NonExistingName" };
@@ -538,7 +538,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesWithinPriceRange_WhenMinAndMaxPriceProvided()
+    public async Task GetFilteredAsync_WhenMinAndMaxPriceProvided_ShouldReturnGamesWithinPriceRange()
     {
         //Arrange
         var minPrice = 30;
@@ -559,7 +559,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesAboveMinPrice_WhenOnlyMinPriceProvided()
+    public async Task GetFilteredAsync_WhenOnlyMinPriceProvided_ShouldReturnGamesAboveMinPrice()
     {
         //Arrange
         var minPrice = 50;
@@ -579,7 +579,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesBelowMaxPrice_WhenOnlyMaxPriceProvided()
+    public async Task GetFilteredAsync_WhenOnlyMaxPriceProvided_ShouldReturnGamesBelowMaxPrice()
     {
         //Arrange
         var maxPrice = 40;
@@ -599,7 +599,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesWithinRatingRange_WhenRatingRangeProvided()
+    public async Task GetFilteredAsync_WhenRatingRangeProvided_ShouldReturnGamesWithinRatingRange()
     {
         //Arrange
         var minRating = 4.0;
@@ -620,7 +620,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesWithSpecificAgeRatings_WhenAgeRatingsProvided()
+    public async Task GetFilteredAsync_WhenAgeRatingsProvided_ShouldReturnGamesWithSpecificAgeRatings()
     {
         // Arrange
         List<AgeRating> ageRatings = [AgeRating.TwelvePlus, AgeRating.SixteenPlus];
@@ -640,7 +640,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesForThreePlusAge_WhenThreePlusAgeRatingProvided()
+    public async Task GetFilteredAsync_WhenThreePlusAgeRatingProvided_ShouldReturnGamesForThreePlusAge()
     {
         // Arrange
         var ageRatings = new List<AgeRating> { AgeRating.ThreePlus };
@@ -660,7 +660,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesWithinDateRange_WhenReleaseDateRangeProvided()
+    public async Task GetFilteredAsync_WhenReleaseDateRangeProvided_ShouldReturnGamesWithinDateRange()
     {
         // Arrange
         var startDate = new DateTime(2024, 1, 1);
@@ -681,7 +681,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesAfterStartDate_WhenOnlyStartDateProvided()
+    public async Task GetFilteredAsync_WhenOnlyStartDateProvided_ShouldReturnGamesAfterStartDate()
     {
         // Arrange
         var startDate = new DateTime(2024, 5, 1);
@@ -701,7 +701,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnSecondPageOfResults_WhenPageNumberIsTwo()
+    public async Task GetFilteredAsync_WhenPageNumberIsTwo_ShouldReturnSecondPageOfResults()
     {
         // Arrange
         var games = TestData.Game.GenerateGameEntities().OrderBy(g => g.Name).ToList();
@@ -720,7 +720,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnFiveGames_WhenPageSizeIsFive()
+    public async Task GetFilteredAsync_WhenPageSizeIsFive_ShouldReturnFiveGames()
     {
         // Arrange
         var games = TestData.Game.GenerateGameEntities();
@@ -739,7 +739,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesOrderedByPriceAsc_WhenSortByPriceAsc()
+    public async Task GetFilteredAsync_WhenSortByPriceAsc_ShouldReturnGamesOrderedByPriceAsc()
     {
         // Arrange
         var games = TestData.Game.GenerateGameEntities().OrderBy(g => g.Price).ToList();
@@ -758,7 +758,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesOrderedByRatingDesc_WhenSortByRatingDesc()
+    public async Task GetFilteredAsync_WhenSortByRatingDesc_ShouldReturnGamesOrderedByRatingDesc()
     {
         // Arrange
         var games = TestData.Game.GenerateGameEntities().OrderByDescending(g => g.Rating).ToList();
@@ -777,7 +777,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesOrderedByReleaseDateDesc_WhenSortByReleaseDateDesc()
+    public async Task GetFilteredAsync_WhenSortByReleaseDateDesc_ShouldReturnGamesOrderedByReleaseDateDesc()
     {
         // Arrange
         var games = TestData.Game.GenerateGameEntities().OrderByDescending(g => g.ReleaseDate).ToList();
@@ -796,7 +796,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnFilteredAndSortedGames_WhenMultipleFiltersApplied()
+    public async Task GetFilteredAsync_WhenMultipleFiltersApplied_ShouldReturnFilteredAndSortedGames()
     {
         // Arrange
         var games = TestData.Game.GenerateGameEntities()
@@ -832,7 +832,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnEmptyList_WhenNoGamesMatchFilter()
+    public async Task GetFilteredAsync_WhenNoGamesMatchFilter_ShouldReturnEmptyList()
     {
         // Arrange
         var gameFilter = new GameFilter { MinPrice = 10000000 };
@@ -848,7 +848,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesFileteredByDefaultWithAgeRatingLessThan18_WhenUserIsUnderageAndNoQueryParams()
+    public async Task GetFilteredAsync_WhenUserIsUnderageAndNoQueryParams_ShouldReturnGamesFileteredByDefaultWithAgeRatingLessThan18()
     {
         // Arrange
         var hideAdultContent = true;
@@ -870,7 +870,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnEmptyListIfAskedForAgeRatingOf18_WhenUserIsUnderageBu()
+    public async Task GetFilteredAsync_WhenUserIsUnderage_ShouldReturnEmptyListIfAskedForAgeRatingOf18()
     {
         // Arrange
         var hideAdultContent = true;
@@ -891,7 +891,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnFilteredGamesExcludingAdultContent_WhenUserIsUnderageWithComplexFilter()
+    public async Task GetFilteredAsync_WhenUserIsUnderageWithComplexFilter_ShouldReturnFilteredGamesExcludingAdultContent()
     {
         // Arrange
         var hideAdultContent = true;

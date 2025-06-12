@@ -156,7 +156,7 @@ public class GenreControllerTests
     }
 
     [Test]
-    public async Task GetGamesByGenre_ShouldReturnNotFound_WhenGenreDoesNotExist()
+    public async Task GetGamesByGenre_WhenGenreDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
         _genreService.Setup(x => x.GetGamesAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
@@ -170,7 +170,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task GetGamesByGenre_ReturnsAllGamesWithThisGenreOrItsChildren_WhenGenreExistAndUserIsAdult()
+    public async Task GetGamesByGenre_WhenGenreExistAndUserIsAdult_ShouldReturnAllGamesWithThisGenreOrItsChildren()
     {
         // Arrange
         var hideAdultContent = false;
@@ -196,7 +196,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task GetGamesByGenre_ReturnsGamesWithThisGenreOrItsChildrenAndAgeRatingLessThan18_WhenGenreExistAndUserIsUnderage()
+    public async Task GetGamesByGenre_WhenGenreExistAndUserIsUnderage_ShouldReturnsGamesWithThisGenreOrItsChildrenAndAgeRatingLessThan18()
     {
         // Arrange
         var hideAdultContent = true;

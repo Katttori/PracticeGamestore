@@ -92,7 +92,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetAll_ReturnsOkWithAllGamesIfUserIsAdult()
+    public async Task GetAll_ShouldReturnOkWithAllGamesIfUserIsAdult()
     {
         //Arrange
         var hideAdultContent = false;
@@ -111,7 +111,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetAll_ReturnsOkWithGamesOfAgeRatingLessThan18IfUserIsUnderage()
+    public async Task GetAll_ShouldReturnOkWithGamesOfAgeRatingLessThan18IfUserIsUnderage()
     {
         //Arrange
         var hideAdultContent = true;
@@ -130,7 +130,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetGameById_ShouldReturnOkResult_WhenGameExists()
+    public async Task GetGameById_WhenGameExists_ShouldReturnOkResult()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -150,7 +150,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetGameById_ShouldReturnNotFound_WhenGameDoesNotExist()
+    public async Task GetGameById_WhenGameDoesNotExist_ShouldReturnNotFound()
     {
         //Arrange
         _gameService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -164,7 +164,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetGameById_ShouldReturnNotFound_WhenGameHasAgeRatingEighteenPlusAndUserIsUnderage()
+    public async Task GetGameById_WhenGameHasAgeRatingEighteenPlusAndUserIsUnderage_ShouldReturnNotFound()
     {
         //Arrange
         var game = TestData.Game.GenerateGameResponseDto();
@@ -181,7 +181,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task CreateGame_ShouldReturnCreatedResult_WhenGameIsCreated()
+    public async Task CreateGame_WhenGameIsCreated_ShouldReturnCreatedResult()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -203,7 +203,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task CreateGame_ShouldReturnBadRequest_WhenCreationFails()
+    public async Task CreateGame_WhenCreationFails_ShouldReturnBadRequest()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -218,7 +218,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task CreateGame_ShouldReturnBadRequest_WhenProvidedAgeRatingIsIncorrect()
+    public async Task CreateGame_WhenProvidedAgeRatingIsIncorrect_ShouldReturnBadRequest()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -232,7 +232,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnNoContent_WhenGameIsUpdated()
+    public async Task Update_WhenGameIsUpdated_ShouldReturnNoContent()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -248,7 +248,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
+    public async Task Update_WhenUpdateFails_ShouldReturnBadRequest()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -264,7 +264,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task Update_ShouldReturnBadRequest_WhenProvidedAgeRatingIsIncorrect()
+    public async Task Update_WhenProvidedAgeRatingIsIncorrect_ShouldReturnBadRequest()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -278,7 +278,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task Delete_ShouldReturnNoContent_WhenGameIsDeleted()
+    public async Task Delete_WhenGameIsDeleted_ShouldReturnNoContent()
     {
         //Arrange
         _gameService.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
@@ -291,7 +291,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithFilteredGames_WhenValidFilterProvided()
+    public async Task GetFiltered_WhenValidFilterProvided_ShouldReturnOkWithFilteredGames()
     {
         // Arrange
         var gameFilter = new GameFilter 
@@ -317,7 +317,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithEmptyList_WhenNoGamesMatchFilter()
+    public async Task GetFiltered_WhenNoGamesMatchFilter_ShouldReturnOkWithEmptyList()
     {
         // Arrange
         var gameFilter = new GameFilter { MinPrice = 1000000 };
@@ -333,7 +333,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkAndGames_WhenValidOrderDirectionProvided()
+    public async Task GetFiltered_WhenValidOrderDirectionProvided_ShouldReturnOkAndGames()
     {
         // Arrange
         var gameFilter = new GameFilter { Order = "desc" };
@@ -353,7 +353,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidOrderByFieldsProvided()
+    public async Task GetFiltered_WhenValidOrderByFieldsProvided_ShouldReturnOkWithGames()
     {
         // Arrange
         var gameFilter = new GameFilter { OrderBy = ["price", "rating"] };
@@ -372,7 +372,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidAgeRatingsProvided()
+    public async Task GetFiltered_WhenValidAgeRatingsProvided_ShouldReturnOkWithGames()
     {
         // Arrange
         var gameFilter = new GameFilter { Age = [12, 16] };
@@ -391,7 +391,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenValidDateRangeProvided()
+    public async Task GetFiltered_WhenValidDateRangeProvided_ShouldReturnOk()
     {
         // Arrange
         var gameFilter = new GameFilter 
@@ -415,7 +415,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenValidPaginationProvided()
+    public async Task GetFiltered_WhenValidPaginationProvided_ShouldReturnOk()
     {
         // Arrange
         var gameFilter = new GameFilter { Page = 2, PageSize = 5 };
@@ -434,7 +434,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenComplexValidFilterProvided()
+    public async Task GetFiltered_WhenComplexValidFilterProvided_ShouldReturnOk()
     {
         // Arrange
         var gameFilter = new GameFilter 
@@ -475,7 +475,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithFilteredGamesExcludingAdultContentWhenUserIsUnderage()
+    public async Task GetFiltered_WhenUserIsUnderage_ShouldReturnOkWithFilteredGamesExcludingAdultContent()
     {
         // Arrange
         var hideAdultContent = true;
@@ -505,7 +505,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnEmptyListWhenFilteringForAdultOnlyContentAndUserIsUnderage()
+    public async Task GetFiltered_WhenFilteringForAdultOnlyContentAndUserIsUnderage_ShouldReturnEmptyList()
     {
         // Arrange
         var hideAdultContent = true;
@@ -530,7 +530,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetFiltered_ShouldReturnFilteredGamesSortedByPriceDescWhenUserIsUnderageWithComplexFilter()
+    public async Task GetFiltered_WhenUserIsUnderageWithComplexFilter_ShouldReturnFilteredGamesSortedByPriceDesc()
     {
         // Arrange
         var hideAdultContent = true;

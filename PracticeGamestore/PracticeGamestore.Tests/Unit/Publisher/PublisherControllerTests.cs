@@ -181,7 +181,7 @@ public class PublisherControllerTests
     }
     
     [Test]
-    public async Task GetPublisherGames_ShouldReturnNotFound_WhenPublisherDoesNotExist()
+    public async Task GetPublisherGames_WhenPublisherDoesNotExist_ShouldReturnNotFound()
     {
         //Arrange
         _publisherService.Setup(x => x.GetGamesAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
@@ -195,7 +195,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task GetPublisherGames_ShouldReturnAllPublisherGames_WhenPublisherExistAndUserIsAdult()
+    public async Task GetPublisherGames_WhenPublisherExistAndUserIsAdult_ShouldReturnAllPublisherGames()
     {
         //Arrange
         var hideAdultContent = false;
@@ -220,7 +220,7 @@ public class PublisherControllerTests
     }
     
     [Test]
-    public async Task GetPublisherGames_ReturnPublisherGamesWithAgeRatingLessThan18_WhenPublisherExistAndUserIsUnderage()
+    public async Task GetPublisherGames_WhenPublisherExistAndUserIsUnderage_ShouldReturnPublisherGamesWithAgeRatingLessThan18()
     {
         //Arrange
         var hideAdultContent = true;

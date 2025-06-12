@@ -226,7 +226,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public async Task GetByPlatformGamesAsync_WhenPlatformExistsAndUserIsAdult_ReturnsAllGames()
+    public async Task GetByPlatformGamesAsync_WhenPlatformExistsAndUserIsAdult_ShouldReturnAllGames()
     {
         //Arrange
         var hideAdultContent = false;
@@ -250,7 +250,7 @@ public class PlatformServiceTests
     }
      
     [Test]
-    public async Task GetByPlatformGamesAsync_WhenPlatformExistsAndUserIsUnderage_ReturnsGamesWithAgeRatingLessThan18()
+    public async Task GetByPlatformGamesAsync_WhenPlatformExistsAndUserIsUnderage_ShouldReturnGamesWithAgeRatingLessThan18()
     {
         //Arrange
         var hideAdultContent = true;
@@ -274,7 +274,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public async Task GetByPlatformGamesAsync_WhenPlatformDoesNotExist_ReturnsNull()
+    public async Task GetByPlatformGamesAsync_WhenPlatformDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         _platformRepository.Setup(p => p.ExistsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(false);

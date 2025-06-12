@@ -233,7 +233,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task GetByGenreGamesAsync_WhenGenreExistAndUserIsAdult_ReturnsAllGames()
+    public async Task GetByGenreGamesAsync_WhenGenreExistAndUserIsAdult_ShouldReturnAllGames()
     {
         // Arrange
         var actionGenreId = TestData.Genre.GenerateActionGenre().Id;
@@ -255,7 +255,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task GetByGenreGamesAsync_WhenGenreExistAndUserIsUnderage_ReturnsGamesWithAgeRatingLessThan18()
+    public async Task GetByGenreGamesAsync_WhenGenreExistAndUserIsUnderage_ShouldReturnGamesWithAgeRatingLessThan18()
     {
         // Arrange
         var actionGenreId = TestData.Genre.GenerateActionGenre().Id;
@@ -277,7 +277,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task GetByGenreGamesAsync_WhenGenreDoesNotExist_ReturnsNull()
+    public async Task GetByGenreGamesAsync_WhenGenreDoesNotExist_ShouldReturnNull()
     {
         // Arrange
         _genreRepository.Setup(x => x.ExistsAsync(It.IsAny<Guid>()))
