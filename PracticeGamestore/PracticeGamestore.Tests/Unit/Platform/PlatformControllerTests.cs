@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -26,7 +27,12 @@ public class PlatformControllerTests
         _platformService = new Mock<IPlatformService>();
         _gameService = new Mock<IGameService>();
         _loggerMock = new Mock<ILogger<PlatformController>>();
-        _platformController = new PlatformController(_platformService.Object, _gameService.Object, _loggerMock.Object);
+        _platformController = new PlatformController(_platformService.Object, _gameService.Object, _loggerMock.Object)   {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext() 
+            }
+        };;
     }
     
     [Test]
@@ -91,13 +97,14 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task GetGamesByPlatformAsync_ReturnsOkWithGames()
+    public async Task GetGamesByPlatformAsync_WhenUserIsAdult_ShouldReturnOkWithAllGames()
     {
         // Arrange
         var platformId = Guid.NewGuid();
+        var hideAdultContent = false;
         var mockGames = TestData.Game.GenerateGameResponseDtos();
-
-        _gameService.Setup(s => s.GetByPlatformAsync(platformId)).ReturnsAsync(mockGames);
+        _platformService.Setup(s => s.GetGamesAsync(platformId, hideAdultContent)).ReturnsAsync(mockGames);
+        _platformController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
 
         // Act
         var result = await _platformController.GetGamesByPlatform(platformId);
@@ -110,13 +117,30 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task GetGamesByPlatformAsync_WhenNoGames_ReturnsNotFound()
+    public async Task GetGamesByPlatformAsync_WhenUserIsUnderage_ShouldReturnOkWithGamesOfAgeRatingLessThan18()
     {
         // Arrange
         var platformId = Guid.NewGuid();
+        var hideAdultContent = true;
+        var mockGames = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18();
+        _platformService.Setup(s => s.GetGamesAsync(platformId, hideAdultContent)).ReturnsAsync(mockGames);
+        _platformController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        // Act
+        var result = await _platformController.GetGamesByPlatform(platformId);
 
-        _gameService
-            .Setup(s => s.GetByPlatformAsync(platformId))
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        var responseModels = (okResult?.Value as IEnumerable<GameResponseModel> ?? []).ToList();
+        Assert.That(responseModels.Count, Is.EqualTo(mockGames.Count));
+    }
+    
+    [Test]
+    public async Task GetGamesByPlatformAsync_WhenNoGames_ShouldReturnNotFound()
+    {
+        // Arrange
+        var platformId = Guid.NewGuid();
+        _platformService.Setup(s => s.GetGamesAsync(platformId, It.IsAny<bool>()))
             .ReturnsAsync(null as IEnumerable<GameResponseDto>);
 
         // Act

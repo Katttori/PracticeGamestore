@@ -65,11 +65,11 @@ public class PublisherService(IPublisherRepository publisherRepository, IGameRep
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<GameResponseDto>?> GetGamesAsync(Guid id)
+    public async Task<IEnumerable<GameResponseDto>?> GetGamesAsync(Guid id, bool hideAdultContent = false)
     {
         var publisherExists = await publisherRepository.ExistsAsync(id);
         if (!publisherExists) return null;
-        var games = await gameRepository.GetByPublisherIdAsync(id);
+        var games = await gameRepository.GetByPublisherIdAsync(id, hideAdultContent);
         return games.Select(g => g.MapToGameDto());
     }
 }

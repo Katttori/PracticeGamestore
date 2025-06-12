@@ -13,15 +13,15 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
     IGenreRepository genreRepository, IPlatformRepository platformRepository, 
     IUnitOfWork unitOfWork) : IGameService
 {
-    public async Task<IEnumerable<GameResponseDto>> GetAllAsync()
+    public async Task<IEnumerable<GameResponseDto>> GetAllAsync(bool hideAdultContent = false)
     {
-        var entities = await gameRepository.GetAllAsync();
+        var entities = await gameRepository.GetAllAsync(hideAdultContent);
         return entities.Select(e => e.MapToGameDto());
     }
 
-    public async Task<(IEnumerable<GameResponseDto>, int)> GetFilteredAsync(GameFilter filter)
+    public async Task<(IEnumerable<GameResponseDto>, int)> GetFilteredAsync(GameFilter filter, bool hideAdultContent = false)
     {
-        var (games, totalCount) = await gameRepository.GetFiltered(filter.MapToDataAccessGameFilter());
+        var (games, totalCount) = await gameRepository.GetFiltered(filter.MapToDataAccessGameFilter(), hideAdultContent);
         return (games.Select(e => e.MapToGameDto()), totalCount);
     }
 
@@ -81,15 +81,6 @@ public class GameService(IGameRepository gameRepository, IPublisherRepository pu
         return game?.MapToGameDto();
     }
     
-    public async Task<IEnumerable<GameResponseDto>?> GetByPlatformAsync(Guid platformId)
-    {
-        var platformExists = await platformRepository.ExistsByIdAsync(platformId);
-        if (!platformExists) return null;
-
-        var games = await gameRepository.GetByPlatformIdAsync(platformId);
-        return games.Select(g => g.MapToGameDto());
-    }
-
     public async Task DeleteAsync(Guid id)
     {
         await gameRepository.DeleteAsync(id);

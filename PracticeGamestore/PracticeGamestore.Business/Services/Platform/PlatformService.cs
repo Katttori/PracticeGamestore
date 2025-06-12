@@ -1,11 +1,12 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Platform;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Platform;
 
-public class PlatformService(IPlatformRepository repository, IUnitOfWork unitOfWork) : IPlatformService
+public class PlatformService(IPlatformRepository repository, IGameRepository gameRepository, IUnitOfWork unitOfWork) : IPlatformService
 {
     
     public async Task<IEnumerable<PlatformDto>> GetAllAsync()
@@ -58,4 +59,14 @@ public class PlatformService(IPlatformRepository repository, IUnitOfWork unitOfW
         await repository.DeleteAsync(id);
         await unitOfWork.SaveChangesAsync();
     }
+    
+    public async Task<IEnumerable<GameResponseDto>?> GetGamesAsync(Guid platformId, bool hideAdultContent = false)
+    {
+        var platformExists = await repository.ExistsByIdAsync(platformId);
+        if (!platformExists) return null;
+
+        var games = await gameRepository.GetByPlatformIdAsync(platformId, hideAdultContent);
+        return games.Select(g => g.MapToGameDto());
+    }
+
 }

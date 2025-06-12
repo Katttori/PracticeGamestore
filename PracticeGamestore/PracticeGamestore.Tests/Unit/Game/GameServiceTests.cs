@@ -84,11 +84,12 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetAllAsync_ShouldReturnAllGames()
+    public async Task GetAllAsync_WhenUserIsAdult_ShouldReturnAllGames()
     {
         //Arrange
+        var hideAdultContent = false;
         var games = TestData.Game.GenerateGameEntities();
-        _gameRepository.Setup(x => x.GetAllAsync()).ReturnsAsync(games);
+        _gameRepository.Setup(x => x.GetAllAsync(hideAdultContent)).ReturnsAsync(games);
         var expected = games.Select(p => p.MapToGameDto()).ToList();
         
         //Act
@@ -97,9 +98,26 @@ public class GameServiceTests
         //Assert
         AssertThatResultListOfGamesIsEqualToExpectedList(result, expected);
     }
+    
+    [Test]
+    public async Task GetAllAsync_WhenUserIsUnderage_ShouldReturnOnlyGamesWithAgeRatingLessThan18()
+    {
+        //Arrange
+        var hideAdultContent = true;
+        var games = TestData.Game.GenerateGameEntitiesWithAgeRatingLessThan18();
+        _gameRepository.Setup(x => x.GetAllAsync(hideAdultContent)).ReturnsAsync(games);
+        var expected = games.Select(p => p.MapToGameDto()).ToList();
+        
+        
+        //Act
+        var result = (await _gameService.GetAllAsync(hideAdultContent)).ToList();
+        
+        //Assert
+        AssertThatResultListOfGamesIsEqualToExpectedList(result, expected);
+    }
 
     [Test]
-    public async Task GetByIdAsync_WhenGameExists_ReturnsGameDto()
+    public async Task GetByIdAsync_WhenGameExists_ShouldReturnGameDto()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -119,7 +137,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_WhenGameDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_WhenGameDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         _gameRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -131,46 +149,9 @@ public class GameServiceTests
         //Assert
         Assert.That(result, Is.Null);
     }
-    
-    [Test]
-    public async Task GetByPlatformAsync_WhenPlatformExists_ReturnsGames()
-    {
-        //Arrange
-        var platformId = Guid.NewGuid();
-        var games = TestData.Game.GenerateGameEntities();
-        var expected = games.Select(p => p.MapToGameDto()).ToList();
-        
-        _platformRepository.Setup(p => p.ExistsByIdAsync(platformId)).ReturnsAsync(true);
-        _gameRepository.Setup(g => g.GetByPlatformIdAsync(platformId)).ReturnsAsync(games);
-
-        //Act
-        var result = 
-            (await _gameService.GetByPlatformAsync(platformId) ?? Array.Empty<GameResponseDto>())
-            .ToList();
-
-        //Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.Not.Empty);
-        Assert.That(result.Count, Is.EqualTo(expected.Count));
-        var elementsAreTheSame = expected.Zip(result, GameResponseDtosAreTheSame).All(equal => equal);
-        Assert.That(elementsAreTheSame, Is.True);
-    }
-    
-    [Test]
-    public async Task GetByPlatformAsync_WhenPlatformDoesNotExist_ReturnsNull()
-    {
-        //Arrange
-        _platformRepository.Setup(p => p.ExistsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(false);
-
-        //Act
-        var result = await _gameService.GetByPlatformAsync(It.IsAny<Guid>());
-        
-        //Assert
-        Assert.That(result, Is.Null);
-    }
 
     [Test]
-    public async Task UpdateAsync_WhenGameExistsAndSpecifiedRelationsExistAndChangesSavedSuccessfully_ReturnsTrue()
+    public async Task UpdateAsync_WhenGameExistsAndSpecifiedRelationsExistAndChangesSavedSuccessfully_ShouldReturnTrue()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -190,7 +171,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenGameDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenGameDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -208,7 +189,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void UpdateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -227,7 +208,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public void UpdateAsync_WhenKeyAlreadyExists_ThrowsArgumentException()
+    public void UpdateAsync_WhenKeyAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -246,7 +227,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenSpecifiedPublisherDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenSpecifiedPublisherDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -265,7 +246,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_WhenSpecifiedGenreDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenSpecifiedGenreDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -285,7 +266,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenSpecifiedPlatformDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenSpecifiedPlatformDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -304,7 +285,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_ShouldReturnFalse_WhenChangesNotSaved()
+    public async Task UpdateAsync_WhenChangesNotSaved_ShouldReturnFalse()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -326,7 +307,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldAddGame_WhenChangesSavedSuccessfullyAndSpecifiedRealtionsAreCorrect()
+    public async Task CreateAsync_WhenChangesSavedSuccessfullyAndSpecifiedRelationsAreCorrect_ShouldAddGame()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -352,7 +333,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void CreateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -367,7 +348,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public void CreateAsync_WhenKeyAlreadyExists_ThrowsArgumentException()
+    public void CreateAsync_WhenKeyAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -382,7 +363,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenSpecifiedPublisherDoesNotExist()
+    public async Task CreateAsync_WhenSpecifiedPublisherDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -407,7 +388,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenSpecifiedGenreDoesNotExist()
+    public async Task CreateAsync_WhenSpecifiedGenreDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -433,7 +414,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenSpecifiedPlatformDoesNotExist()
+    public async Task CreateAsync_WhenSpecifiedPlatformDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -458,7 +439,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
+    public async Task CreateAsync_WhenChangesNotSaved_ShouldReturnNull()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -502,13 +483,14 @@ public class GameServiceTests
 
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnUpToTenGamesOrderedByNameAscOnFirstPageWhenNoQueryParamsProvided()
+    public async Task GetFilteredAsync_WhenNoQueryParamsProvided_ShouldReturnUpToTenGamesOrderedByNameAscOnFirstPage()
     {
         //Arrange
         var games = TestData.Game.GenerateGameEntities().OrderBy(g => g.Name).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter();
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
         //Act
@@ -520,14 +502,15 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesFilteredByName_WhenNameProvided()
+    public async Task GetFilteredAsync_WhenNameProvided_ShouldReturnGamesFilteredByName()
     {
         //Arrange
         var searchName = "cyber";
         var games = TestData.Game.GenerateGameEntities().Where(g => g.Name.ToLowerInvariant().Contains(searchName)).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { Name = searchName };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
         //Act
@@ -539,11 +522,12 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnEmptyList_WhenNameNotFound()
+    public async Task GetFilteredAsync_WhenNameNotFound_ShouldReturnEmptyList()
     {
         //Arrange
         var gameFilter = new GameFilter { Name = "NonExistingName" };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync(([], 0));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync(([], 0));
         
         //Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
@@ -554,7 +538,7 @@ public class GameServiceTests
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesWithinPriceRange_WhenMinAndMaxPriceProvided()
+    public async Task GetFilteredAsync_WhenMinAndMaxPriceProvided_ShouldReturnGamesWithinPriceRange()
     {
         //Arrange
         var minPrice = 30;
@@ -562,7 +546,8 @@ public class GameServiceTests
         var games = TestData.Game.GenerateGameEntities().Where(g => g.Price >= minPrice && g.Price <= maxPrice).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { MinPrice = minPrice, MaxPrice = maxPrice };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
         //Act
@@ -574,14 +559,15 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesAboveMinPrice_WhenOnlyMinPriceProvided()
+    public async Task GetFilteredAsync_WhenOnlyMinPriceProvided_ShouldReturnGamesAboveMinPrice()
     {
         //Arrange
         var minPrice = 50;
         var games = TestData.Game.GenerateGameEntities().Where(g => g.Price >= minPrice).ToList();
         var gameFilter = new GameFilter { MinPrice = minPrice };
         var paginated = games.Take(10).ToList();
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
         //Act
@@ -593,14 +579,15 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesBelowMaxPrice_WhenOnlyMaxPriceProvided()
+    public async Task GetFilteredAsync_WhenOnlyMaxPriceProvided_ShouldReturnGamesBelowMaxPrice()
     {
         //Arrange
         var maxPrice = 40;
         var games = TestData.Game.GenerateGameEntities().Where(g => g.Price <= maxPrice).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { MaxPrice = maxPrice };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
         //Act
@@ -612,7 +599,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesWithinRatingRange_WhenRatingRangeProvided()
+    public async Task GetFilteredAsync_WhenRatingRangeProvided_ShouldReturnGamesWithinRatingRange()
     {
         //Arrange
         var minRating = 4.0;
@@ -620,7 +607,8 @@ public class GameServiceTests
         var games = TestData.Game.GenerateGameEntities().Where(g => g.Rating >= minRating && g.Rating <= maxRating).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { RatingFrom = minRating, RatingTo = maxRating };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
         //Act
@@ -632,176 +620,185 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesWithSpecificAgeRatings_WhenAgeRatingsProvided()
+    public async Task GetFilteredAsync_WhenAgeRatingsProvided_ShouldReturnGamesWithSpecificAgeRatings()
     {
-        //Arrange
+        // Arrange
         List<AgeRating> ageRatings = [AgeRating.TwelvePlus, AgeRating.SixteenPlus];
         var games = TestData.Game.GenerateGameEntities().Where(g => ageRatings.Contains(g.AgeRating)).ToList();
         var gameFilter = new GameFilter { Age = [12, 16] };
         var paginated = games.Take(10).ToList();
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesForThreePlusAge_WhenThreePlusAgeRatingProvided()
+    public async Task GetFilteredAsync_WhenThreePlusAgeRatingProvided_ShouldReturnGamesForThreePlusAge()
     {
-        //Arrange
+        // Arrange
         var ageRatings = new List<AgeRating> { AgeRating.ThreePlus };
         var games = TestData.Game.GenerateGameEntities().Where(g => ageRatings.Contains(g.AgeRating)).ToList();
         var gameFilter = new GameFilter { Age = [3] };
         var paginated = games.Take(10).ToList();
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesWithinDateRange_WhenReleaseDateRangeProvided()
+    public async Task GetFilteredAsync_WhenReleaseDateRangeProvided_ShouldReturnGamesWithinDateRange()
     {
-        //Arrange
+        // Arrange
         var startDate = new DateTime(2024, 1, 1);
         var endDate = new DateTime(2024, 6, 30);
         var games = TestData.Game.GenerateGameEntities().Where(g => g.ReleaseDate >= startDate && g.ReleaseDate <= endDate).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { ReleaseDateStart = startDate, ReleaseDateEnd = endDate };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesAfterStartDate_WhenOnlyStartDateProvided()
+    public async Task GetFilteredAsync_WhenOnlyStartDateProvided_ShouldReturnGamesAfterStartDate()
     {
-        //Arrange
+        // Arrange
         var startDate = new DateTime(2024, 5, 1);
         var games = TestData.Game.GenerateGameEntities().Where(g => g.ReleaseDate >= startDate).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { ReleaseDateStart = startDate };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();   
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnSecondPageOfResults_WhenPageNumberIsTwo()
+    public async Task GetFilteredAsync_WhenPageNumberIsTwo_ShouldReturnSecondPageOfResults()
     {
-        //Arrange
+        // Arrange
         var games = TestData.Game.GenerateGameEntities().OrderBy(g => g.Name).ToList();
         var paginated = games.Skip(10).Take(10).ToList();
         var gameFilter = new GameFilter { Page = 2, PageSize = 10 };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnFiveGames_WhenPageSizeIsFive()
+    public async Task GetFilteredAsync_WhenPageSizeIsFive_ShouldReturnFiveGames()
     {
-        //Arrange
+        // Arrange
         var games = TestData.Game.GenerateGameEntities();
         var paginated = games.Take(5).ToList();
         var gameFilter = new GameFilter { PageSize = 5 };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesOrderedByPriceAsc_WhenSortByPriceAsc()
+    public async Task GetFilteredAsync_WhenSortByPriceAsc_ShouldReturnGamesOrderedByPriceAsc()
     {
-        //Arrange
+        // Arrange
         var games = TestData.Game.GenerateGameEntities().OrderBy(g => g.Price).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { OrderBy = ["price"], Order = "asc" };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesOrderedByRatingDesc_WhenSortByRatingDesc()
+    public async Task GetFilteredAsync_WhenSortByRatingDesc_ShouldReturnGamesOrderedByRatingDesc()
     {
-        //Arrange
+        // Arrange
         var games = TestData.Game.GenerateGameEntities().OrderByDescending(g => g.Rating).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { OrderBy = ["rating"], Order = "desc" };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
 
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnGamesOrderedByReleaseDateDesc_WhenSortByReleaseDateDesc()
+    public async Task GetFilteredAsync_WhenSortByReleaseDateDesc_ShouldReturnGamesOrderedByReleaseDateDesc()
     {
-        //Arrange
+        // Arrange
         var games = TestData.Game.GenerateGameEntities().OrderByDescending(g => g.ReleaseDate).ToList();
         var paginated = games.Take(10).ToList();
         var gameFilter = new GameFilter { OrderBy = ["release-date"], Order = "desc" };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnFilteredAndSortedGames_WhenMultipleFiltersApplied()
+    public async Task GetFilteredAsync_WhenMultipleFiltersApplied_ShouldReturnFilteredAndSortedGames()
     {
-        //Arrange
+        // Arrange
         var games = TestData.Game.GenerateGameEntities()
             .Where(g => g.Price is >= 30 and <= 60)
             .Where(g => g.Rating >= 4.0)
@@ -822,29 +819,123 @@ public class GameServiceTests
             PageSize = 5
         };
         
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync((paginated, games.Count));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync((paginated, games.Count));
         var expected = paginated.Select(p => p.MapToGameDto()).ToList();
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultCount, Is.EqualTo(games.Count));
         AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
     
     [Test]
-    public async Task GetFilteredAsync_ShouldReturnEmptyList_WhenNoGamesMatchFilter()
+    public async Task GetFilteredAsync_WhenNoGamesMatchFilter_ShouldReturnEmptyList()
     {
-        //Arrange
+        // Arrange
         var gameFilter = new GameFilter { MinPrice = 10000000 };
-        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>())).ReturnsAsync(([], 0));
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), false))
+            .ReturnsAsync(([], 0));
         
-        //Act
+        // Act
         var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter);
         
-        //Assert
+        // Assert
         Assert.That(resultGames.ToList(), Is.Not.Null);
         Assert.That(resultCount, Is.EqualTo(0));
+    }
+
+    [Test]
+    public async Task GetFilteredAsync_WhenUserIsUnderageAndNoQueryParams_ShouldReturnGamesFileteredByDefaultWithAgeRatingLessThan18()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var games = TestData.Game.GenerateGameEntitiesWithAgeRatingLessThan18().OrderBy(g => g.Name).Take(10).ToList();
+        var paginated = games.ToList();
+        var gameFilter = new GameFilter();
+        
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), hideAdultContent))
+            .ReturnsAsync((paginated, games.Count));
+        
+        var expected = paginated.Select(p => p.MapToGameDto()).ToList();
+        
+        // Act
+        var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter, hideAdultContent);
+        
+        // Assert
+        Assert.That(resultCount, Is.EqualTo(games.Count));
+        AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
+    }
+    
+    [Test]
+    public async Task GetFilteredAsync_WhenUserIsUnderage_ShouldReturnEmptyListIfAskedForAgeRatingOf18()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var gameFilter = new GameFilter
+        {
+            Age = [18]
+        };
+        
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), hideAdultContent))
+            .ReturnsAsync(([], 0));
+        
+        // Act
+        var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter, hideAdultContent);
+        
+        // Assert
+        Assert.That(resultCount, Is.EqualTo(0));
+        Assert.That(resultGames.ToList(), Is.Empty);
+    }
+    
+    [Test]
+    public async Task GetFilteredAsync_WhenUserIsUnderageWithComplexFilter_ShouldReturnFilteredGamesExcludingAdultContent()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var minPrice = 25m;
+        var maxPrice = 55m;
+        var minRating = 4.0;
+        var searchName = "space";
+        var startDate = new DateTime(2024, 1, 1);
+        var endDate = new DateTime(2024, 12, 31);
+        
+        var games = TestData.Game.GenerateGameEntitiesWithAgeRatingLessThan18()
+            .Where(g => g.Price >= minPrice && g.Price <= maxPrice)
+            .Where(g => g.Rating >= minRating)
+            .Where(g => g.Name.ToLowerInvariant().Contains(searchName))
+            .Where(g => g.ReleaseDate >= startDate && g.ReleaseDate <= endDate)
+            .OrderBy(g => g.Name)
+            .Take(10)
+            .ToList();
+        
+        var gameFilter = new GameFilter
+        {
+            Name = searchName,
+            MinPrice = minPrice,
+            MaxPrice = maxPrice,
+            RatingFrom = minRating,
+            ReleaseDateStart = startDate,
+            ReleaseDateEnd = endDate,
+            Age = [3, 7, 12, 16, 18],
+            OrderBy = ["name"],
+            Order = "asc",
+            PageSize = 10,
+            Page = 1
+        };
+        
+        _gameRepository.Setup(x => x.GetFiltered(It.IsAny<DataAccess.Entities.Filtering.GameFilter>(), hideAdultContent))
+            .ReturnsAsync((games, games.Count));
+        
+        var expected = games.Select(p => p.MapToGameDto()).ToList();
+        
+        // Act
+        var (resultGames, resultCount) = await _gameService.GetFilteredAsync(gameFilter, hideAdultContent);
+        
+        // Assert
+        Assert.That(resultCount, Is.EqualTo(games.Count));
+        AssertThatResultListOfGamesIsEqualToExpectedList(resultGames.ToList(), expected);
     }
 }

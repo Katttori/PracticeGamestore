@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Publisher;
+using PracticeGamestore.Extensions;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Publisher;
@@ -30,11 +31,12 @@ public class PublisherController(IPublisherService publisherService, ILogger<Pub
         
         return Ok(publisher.MapToPublisherModel());
     }
-
+    
+    [BirthdateRestrictionFilter]
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetPublisherGames([FromRoute] Guid id)
     {
-         var games = await publisherService.GetGamesAsync(id);
+         var games = await publisherService.GetGamesAsync(id, HttpContext.IsUnderage());
 
          if (games is null)
          {
