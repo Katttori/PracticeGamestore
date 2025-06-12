@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.File;
+using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.File;
 
@@ -13,6 +14,7 @@ namespace PracticeGamestore.Tests.Unit.File;
 public class FileControllerTests
 {
     private Mock<IFileService> _fileService;
+    private Mock<IGameService> _gameService; 
     private Mock<ILogger<FileController>> _logger;
     private FileController _controller;
 
@@ -20,8 +22,9 @@ public class FileControllerTests
     public void Setup()
     {
         _fileService = new Mock<IFileService>();
+        _gameService = new Mock<IGameService>();
         _logger = new Mock<ILogger<FileController>>();
-        _controller = new FileController(_fileService.Object, _logger.Object);
+        _controller = new FileController(_fileService.Object, _gameService.Object, _logger.Object);
     }
 
     [Test]
@@ -80,6 +83,7 @@ public class FileControllerTests
     {
         var dto = TestData.File.GenerateFileDto();
         var model = new FileRequestModel { GameId = dto.GameId, File = dto.File };
+        _gameService.Setup(s => s.GetByIdAsync(dto.GameId)).ReturnsAsync(TestData.Game.GenerateGameResponseDto());
         _fileService.Setup(s => s.UploadAsync(It.IsAny<FileDto>())).ReturnsAsync(dto.Id);
 
         var result = await _controller.Upload(model);
@@ -98,6 +102,8 @@ public class FileControllerTests
     {
         var dto = TestData.File.GenerateFileDto();
         var model = new FileRequestModel { GameId = dto.GameId, File = dto.File };
+        
+        _gameService.Setup(s => s.GetByIdAsync(dto.GameId)).ReturnsAsync(TestData.Game.GenerateGameResponseDto());
         _fileService.Setup(s => s.UploadAsync(It.IsAny<FileDto>())).ReturnsAsync((Guid?)null);
 
         var result = await _controller.Upload(model);

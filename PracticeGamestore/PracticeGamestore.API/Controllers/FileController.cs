@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Services.File;
+using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.File;
 
@@ -7,7 +8,7 @@ namespace PracticeGamestore.Controllers;
 
 [ApiController]
 [Route("files")]
-public class FileController(IFileService fileService, ILogger<FileController> logger) : ControllerBase
+public class FileController(IFileService fileService, IGameService gameService, ILogger<FileController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -33,6 +34,21 @@ public class FileController(IFileService fileService, ILogger<FileController> lo
     [HttpPost]
     public async Task<IActionResult> Upload([FromForm] FileRequestModel request)
     {
+        // Check if GameId is valid
+        
+        if (request.GameId == Guid.Empty)
+        {
+            logger.LogError("Invalid GameId: {GameId}", request.GameId);
+            return BadRequest("Invalid GameId.");
+        }
+        
+        var game = await gameService.GetByIdAsync(request.GameId);
+        if (game is null)
+        {
+            logger.LogError("Game with id: {GameId} was not found.", request.GameId);
+            return NotFound($"Game with id: {request.GameId} was not found.");
+        }
+        
         var id = await fileService.UploadAsync(request.MapToFileDto());
         if (id is null)
         {
