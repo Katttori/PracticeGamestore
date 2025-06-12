@@ -12,7 +12,7 @@ public static class ErrorMessages
         => $"{first} cannot be greater than {second}";
     
     public static string IncorrectGameRating =>
-        $"Age rating must be between {ValidationConstants.GameRating.Min} and {ValidationConstants.GameRating.Max} inclusive.";
+        $"Game rating must be between {ValidationConstants.GameRating.Min} and {ValidationConstants.GameRating.Max} inclusive.";
 
     public static string InvalidAgeRating =>
         $"Age rating must be one of: {string.Join(", ", ValidationConstants.AgeRatingValues)}";
@@ -35,4 +35,5 @@ public static class ErrorMessages
     public const string InvalidReleaseDate = "Release date cannot be in future";
     public const string IncorrectName = "Name must contain only letters, hyphens, spaces, and apostrophes";
     public const string FailedFileUpload = "Failed to upload the file.";
+    public const string GlobalError = "something happened?";
 }

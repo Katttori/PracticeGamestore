@@ -135,7 +135,7 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
 
     public async Task<IEnumerable<Entities.Game>> GetByGenreAndItsChildrenAsync(List<Guid> ids)
     {
-        return await _gamesNoTracking.Where(g => g.GameGenres.Any(gg => ids.Contains(gg.GameId))).ToListAsync();
+        return await _gamesNoTracking.Where(g => g.GameGenres.Any(gg => ids.Contains(gg.GenreId))).ToListAsync();
     }
 
     public async Task<IEnumerable<Entities.Game>> GetByGenreAsync(Guid id)

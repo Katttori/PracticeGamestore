@@ -1,3 +1,5 @@
+using PracticeGamestore.Business.Constants;
+
 namespace PracticeGamestore.Middlewares;
 
 public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
@@ -25,7 +27,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             else
             {
                 statusCode = StatusCodes.Status500InternalServerError;
-                message = "something happened?";
+                message = ErrorMessages.GlobalError;
             }
             
             context.Response.StatusCode = statusCode;
