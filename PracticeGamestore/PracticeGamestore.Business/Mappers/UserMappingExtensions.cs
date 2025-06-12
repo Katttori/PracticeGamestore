@@ -27,7 +27,7 @@ public static class UserMappingExtensions
             UserName = userDto.UserName,
             Email = userDto.Email,
             PhoneNumber = userDto.PhoneNumber,
-            PasswordHash = userDto.PasswordHash,
+            PasswordHash = userDto.Password,
             Role = userDto.Role,
             Status = userDto.Status,
             CountryId = userDto.CountryId,
