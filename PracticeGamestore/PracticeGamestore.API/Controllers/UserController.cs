@@ -24,7 +24,7 @@ public class UserController(
         if (user is null)
         {
             logger.LogWarning("User with ID {Id} not found", id);
-            return NotFound();
+            return NotFound("User not found");
         }
         return Ok(user.MapToUserResponseModel());
     }
@@ -41,7 +41,7 @@ public class UserController(
         }
         
         logger.LogInformation("User created with ID {Id}", id);
-        return CreatedAtAction(nameof(GetById), new { id }, request);
+        return CreatedAtAction(nameof(GetById), new { id }, id);
     }
     
     [HttpPut("{id:guid}")]
@@ -52,7 +52,7 @@ public class UserController(
         if (!updated)
         {
             logger.LogWarning("Failed to update user with ID {Id}", id);
-            return NotFound();
+            return BadRequest("User update failed. User might not exist or email might already be in use.");
         }
         
         return NoContent();
@@ -71,6 +71,6 @@ public class UserController(
         var user = await userService.BanUserAsync(id);
         if (user) return NoContent();
         logger.LogWarning("Failed to ban user with ID {Id}", id);
-        return NotFound();
+        return BadRequest("User ban failed. User might not exist or is already banned.");
     }
 }
