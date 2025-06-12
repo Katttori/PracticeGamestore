@@ -34,8 +34,15 @@ public class FileController(IFileService fileService, IGameService gameService, 
     [HttpPost]
     public async Task<IActionResult> Upload([FromForm] FileRequestModel request)
     {
-        // Check if GameId is valid
         
+        // Check if file is provided
+        if (request.File.Length == 0)
+        {
+            logger.LogError("No file provided in the request.");
+            return BadRequest("No file provided.");
+        }
+        
+        // Check if GameId is valid
         if (request.GameId == Guid.Empty)
         {
             logger.LogError("Invalid GameId: {GameId}", request.GameId);
