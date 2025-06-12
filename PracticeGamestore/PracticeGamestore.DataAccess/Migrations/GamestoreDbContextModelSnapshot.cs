@@ -267,103 +267,103 @@ namespace PracticeGamestore.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2e9c9ea1-2466-4204-960d-6b79ad9b3903"),
+                            Id = new Guid("a025e51c-a22f-413d-9da4-da31d2a930b5"),
                             Description = "Strategic thinking and planning games",
                             Name = "Strategy"
                         },
                         new
                         {
-                            Id = new Guid("c9931a1a-7cad-478b-90f7-ca085c6345a3"),
+                            Id = new Guid("26469173-62e3-4613-979f-6c262ae61c7f"),
                             Description = "Role-playing games",
                             Name = "RPG"
                         },
                         new
                         {
-                            Id = new Guid("794f1267-55bf-40e5-a10b-3da378ccf380"),
+                            Id = new Guid("c5481ef9-2ff5-4c54-9be4-bbda1b015cb3"),
                             Description = "Sports simulation and arcade games",
                             Name = "Sports"
                         },
                         new
                         {
-                            Id = new Guid("cb63ed19-0e05-4116-a394-18466bb3e6b2"),
+                            Id = new Guid("8bd9e184-4bc2-4e8d-9f77-e1218ff1e30b"),
                             Description = "Fast-paced action games",
                             Name = "Action"
                         },
                         new
                         {
-                            Id = new Guid("5a4c8183-1633-4d95-a872-e257a10d0fc7"),
+                            Id = new Guid("b249ac00-9a17-43c4-a66e-c89e8f51c794"),
                             Description = "Brain teasers and skill-based games",
                             Name = "Puzzle & Skill"
                         },
                         new
                         {
-                            Id = new Guid("8640e546-69e2-4834-8264-ab730355223b"),
+                            Id = new Guid("9fb1d009-af4b-46fb-b5fe-1cce27db7317"),
                             Description = "Real-time strategy",
                             Name = "RTS",
-                            ParentId = new Guid("2e9c9ea1-2466-4204-960d-6b79ad9b3903")
+                            ParentId = new Guid("a025e51c-a22f-413d-9da4-da31d2a930b5")
                         },
                         new
                         {
-                            Id = new Guid("aa85ba5f-c971-4e0e-ba76-8b6f75b1db03"),
+                            Id = new Guid("635b44c9-35ad-4ef4-8111-cc66fbedbebd"),
                             Description = "Turn-based strategy",
                             Name = "TBS",
-                            ParentId = new Guid("2e9c9ea1-2466-4204-960d-6b79ad9b3903")
+                            ParentId = new Guid("a025e51c-a22f-413d-9da4-da31d2a930b5")
                         },
                         new
                         {
-                            Id = new Guid("8c9d6820-4648-4123-ad7a-b4d37a2de1ff"),
+                            Id = new Guid("5d3b2a63-05a8-4052-9cda-c7489ccda0f6"),
                             Description = "Racing games",
                             Name = "Races",
-                            ParentId = new Guid("794f1267-55bf-40e5-a10b-3da378ccf380")
+                            ParentId = new Guid("c5481ef9-2ff5-4c54-9be4-bbda1b015cb3")
                         },
                         new
                         {
-                            Id = new Guid("11bea5e9-4fdb-45dc-ac99-812158dd31af"),
+                            Id = new Guid("37dd51b8-7de8-4318-b7e0-5b4ec5c51c64"),
                             Description = "Rally racing",
                             Name = "Rally",
-                            ParentId = new Guid("794f1267-55bf-40e5-a10b-3da378ccf380")
+                            ParentId = new Guid("c5481ef9-2ff5-4c54-9be4-bbda1b015cb3")
                         },
                         new
                         {
-                            Id = new Guid("ff3da955-da79-45fc-8849-c02766d3f4d9"),
+                            Id = new Guid("d4d79430-70f2-4bf3-b887-6e3f2bac1319"),
                             Description = "Arcade sports",
                             Name = "Arcade",
-                            ParentId = new Guid("794f1267-55bf-40e5-a10b-3da378ccf380")
+                            ParentId = new Guid("c5481ef9-2ff5-4c54-9be4-bbda1b015cb3")
                         },
                         new
                         {
-                            Id = new Guid("835d8a46-79bb-44ab-803d-5497fe16d7f5"),
+                            Id = new Guid("516196c9-5346-4113-8b4b-8ddc8b06d783"),
                             Description = "Formula racing",
                             Name = "Formula",
-                            ParentId = new Guid("794f1267-55bf-40e5-a10b-3da378ccf380")
+                            ParentId = new Guid("c5481ef9-2ff5-4c54-9be4-bbda1b015cb3")
                         },
                         new
                         {
-                            Id = new Guid("ae11acb8-c92e-4b2b-9b17-82f85669b195"),
+                            Id = new Guid("04ed175d-20d6-47c4-91b0-691bd055c7b3"),
                             Description = "Off-road racing",
                             Name = "Off-road",
-                            ParentId = new Guid("794f1267-55bf-40e5-a10b-3da378ccf380")
+                            ParentId = new Guid("c5481ef9-2ff5-4c54-9be4-bbda1b015cb3")
                         },
                         new
                         {
-                            Id = new Guid("c85d17f6-cbfd-487a-8bb7-9e3d717c0291"),
+                            Id = new Guid("17acd49b-a60e-411f-92b9-868a2aeff43a"),
                             Description = "First-person shooter",
                             Name = "FPS",
-                            ParentId = new Guid("cb63ed19-0e05-4116-a394-18466bb3e6b2")
+                            ParentId = new Guid("8bd9e184-4bc2-4e8d-9f77-e1218ff1e30b")
                         },
                         new
                         {
-                            Id = new Guid("08abf0d4-493f-4db8-9afd-5acad9b9a690"),
+                            Id = new Guid("ff18cbc5-38a1-4a9d-b233-f6e4e56caacf"),
                             Description = "Third-person shooter",
                             Name = "TPS",
-                            ParentId = new Guid("cb63ed19-0e05-4116-a394-18466bb3e6b2")
+                            ParentId = new Guid("8bd9e184-4bc2-4e8d-9f77-e1218ff1e30b")
                         },
                         new
                         {
-                            Id = new Guid("617cf8cf-18d7-4b4c-933f-1188af4f5bcb"),
+                            Id = new Guid("72925e1a-776e-43e4-b109-d3c42f988009"),
                             Description = "Action adventure games",
                             Name = "Adventure",
-                            ParentId = new Guid("cb63ed19-0e05-4116-a394-18466bb3e6b2")
+                            ParentId = new Guid("8bd9e184-4bc2-4e8d-9f77-e1218ff1e30b")
                         });
                 });
 
@@ -424,25 +424,25 @@ namespace PracticeGamestore.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a794e53e-019c-46cb-a936-514f163ed046"),
+                            Id = new Guid("8bf5630a-0416-4733-9d95-34a5c0afc8ec"),
                             Description = "",
                             Name = "Android"
                         },
                         new
                         {
-                            Id = new Guid("0d375684-d47f-40df-85e8-c3987846aad5"),
+                            Id = new Guid("8be1c775-f13f-4d02-a57c-6786661d19ee"),
                             Description = "",
                             Name = "IOS"
                         },
                         new
                         {
-                            Id = new Guid("674a2a3e-81a5-4924-9935-4a9663181a5a"),
+                            Id = new Guid("619faf9d-aefb-466b-8df2-b0b05164a018"),
                             Description = "",
                             Name = "Windows"
                         },
                         new
                         {
-                            Id = new Guid("7032bd7f-c11a-4570-8e11-f992f7992ad4"),
+                            Id = new Guid("8e79ec69-43d2-4504-a0f2-3f6bc80b9df0"),
                             Description = "",
                             Name = "VR"
                         });
@@ -482,6 +482,68 @@ namespace PracticeGamestore.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("publishers", (string)null);
+                });
+
+            modelBuilder.Entity("PracticeGamestore.DataAccess.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("birth_date");
+
+                    b.Property<Guid>("CountryId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("country_id");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)")
+                        .HasColumnName("phone_number");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("User")
+                        .HasColumnName("role");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Active")
+                        .HasColumnName("status");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("username");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("PracticeGamestore.DataAccess.Entities.Blacklist", b =>
@@ -582,6 +644,17 @@ namespace PracticeGamestore.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("PracticeGamestore.DataAccess.Entities.User", b =>
+                {
+                    b.HasOne("PracticeGamestore.DataAccess.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("PracticeGamestore.DataAccess.Entities.Country", b =>
