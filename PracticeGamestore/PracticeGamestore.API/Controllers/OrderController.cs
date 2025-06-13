@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
@@ -8,7 +10,10 @@ using PracticeGamestore.Models.Order;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("orders")]
-public class OrderController(IOrderService orderService, ILogger<OrderController> logger) : ControllerBase
+public class OrderController(
+    IOrderService orderService,
+    IHeaderHandleService headerHandleService,
+    ILogger<OrderController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -33,8 +38,13 @@ public class OrderController(IOrderService orderService, ILogger<OrderController
 
     [HttpPost]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
-    public async Task<IActionResult> Create([FromBody] OrderRequestModel model)
+    public async Task<IActionResult> Create(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        [FromBody] OrderRequestModel model)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var createdId = await orderService.CreateAsync(model.MapToOrderDto());
         
         if (createdId is null)
