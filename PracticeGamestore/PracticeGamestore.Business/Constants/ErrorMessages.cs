@@ -2,7 +2,6 @@ namespace PracticeGamestore.Business.Constants;
 
 public static class ErrorMessages
 {
-    
     public static string FailedToCreate(string entityName) => $"Failed to create {entityName}.";
     public static string NotFound(string entityName, Guid id) => $"{entityName} with id {id} does not exist.";
     public static string FailedToUpdate(string entityName, Guid id) => $"Failed to update {entityName} with id {id}.";

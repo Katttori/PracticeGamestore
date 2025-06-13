@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Business.Mappers;
@@ -104,7 +105,7 @@ public class PlatformControllerTests
         var hideAdultContent = false;
         var mockGames = TestData.Game.GenerateGameResponseDtos();
         _platformService.Setup(s => s.GetGamesAsync(platformId, hideAdultContent)).ReturnsAsync(mockGames);
-        _platformController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _platformController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
 
         // Act
         var result = await _platformController.GetGamesByPlatform(platformId);
@@ -124,7 +125,7 @@ public class PlatformControllerTests
         var hideAdultContent = true;
         var mockGames = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18();
         _platformService.Setup(s => s.GetGamesAsync(platformId, hideAdultContent)).ReturnsAsync(mockGames);
-        _platformController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _platformController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
         // Act
         var result = await _platformController.GetGamesByPlatform(platformId);
 

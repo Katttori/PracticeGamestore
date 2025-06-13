@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Controllers;
@@ -180,7 +181,7 @@ public class GenreControllerTests
             .Where(game => game.Genres.Any(genre => children.Contains(genre.Id!.Value))).ToList();
         _genreService.Setup(x => x.GetGamesAsync(actionGenreId, hideAdultContent))
             .ReturnsAsync(games);
-        _genreController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _genreController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
         
         // Act
         var result = await _genreController.GetGamesByGenre(actionGenreId);
@@ -206,7 +207,7 @@ public class GenreControllerTests
             .Where(game => game.Genres.Any(genre => children.Contains(genre.Id!.Value))).ToList();
         _genreService.Setup(x => x.GetGamesAsync(actionGenreId, hideAdultContent))
             .ReturnsAsync(games);
-        _genreController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _genreController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
         
         // Act
         var result = await _genreController.GetGamesByGenre(actionGenreId);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Controllers;
@@ -204,7 +205,7 @@ public class PublisherControllerTests
             .Where(g => g.Publisher.Id == publisherId).ToList();
         _publisherService.Setup(x => x.GetGamesAsync(publisherId, hideAdultContent))
             .ReturnsAsync(games);
-        _publisherController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _publisherController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
 
         //Act
         var result = await _publisherController.GetPublisherGames(publisherId);
@@ -229,7 +230,7 @@ public class PublisherControllerTests
             .Where(g => g.Publisher.Id == publisherId).ToList();
         _publisherService.Setup(x => x.GetGamesAsync(publisherId, hideAdultContent))
             .ReturnsAsync(games);
-        _publisherController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _publisherController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
 
         //Act
         var result = await _publisherController.GetPublisherGames(publisherId);

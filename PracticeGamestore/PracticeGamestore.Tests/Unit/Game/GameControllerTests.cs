@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
@@ -100,7 +101,7 @@ public class GameControllerTests
         _gameService.Setup(x => x.GetAllAsync(hideAdultContent))
             .ReturnsAsync(gameDtos);
         var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
-        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
         
         //Act
         var result = await _gameController.GetAll();
@@ -119,7 +120,7 @@ public class GameControllerTests
         _gameService.Setup(x => x.GetAllAsync(hideAdultContent))
             .ReturnsAsync(gameDtos);
         var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
-        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
         
         //Act
         var result = await _gameController.GetAll();
@@ -494,7 +495,7 @@ public class GameControllerTests
             .ReturnsAsync((paginated, gameDtos.Count));
         
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
-        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
@@ -517,7 +518,7 @@ public class GameControllerTests
         _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), hideAdultContent))
             .ReturnsAsync(([], 0));
         
-        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);
@@ -553,7 +554,7 @@ public class GameControllerTests
             .ReturnsAsync((paginated, gameDtos.Count));
     
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
-        _gameController.ControllerContext.HttpContext.Items["Underage"] = hideAdultContent;
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
 
         // Act
         var result = await _gameController.GetFiltered(gameFilter);

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Filters;
+using PracticeGamestore.Business.Constants;
 
 namespace PracticeGamestore.Filters;
 
@@ -7,7 +8,7 @@ public class BirthdateRestrictionFilter: ActionFilterAttribute
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         var underage = true;
-        if (context.HttpContext.Request.Headers.TryGetValue("X-Birthdate", out var value)
+        if (context.HttpContext.Request.Headers.TryGetValue(HeaderNames.Birthdate, out var value)
             && !string.IsNullOrEmpty(value) && DateOnly.TryParse(value, out var birthdate))
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
@@ -16,6 +17,6 @@ public class BirthdateRestrictionFilter: ActionFilterAttribute
             underage = age < 18;
 
         }
-        context.HttpContext.Items["Underage"] = underage;
+        context.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = underage;
     }
 }

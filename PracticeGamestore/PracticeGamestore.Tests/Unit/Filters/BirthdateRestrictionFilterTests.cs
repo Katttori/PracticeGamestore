@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Filters;
 
 namespace PracticeGamestore.Tests.Unit.Filters;
@@ -29,13 +30,13 @@ public class BirthdateRestrictionFilterTests
     public void OnActionExecuting_WhenUserIsAdultBasedOnProvidedXBirthdateHeader_ShouldSetUnderageValueToFalseInHttpContext()
     {
         // Arrange
-        _context.HttpContext.Request.Headers.Append("X-Birthdate", "2000-02-02");
+        _context.HttpContext.Request.Headers.Append(HeaderNames.Birthdate, "2000-02-02");
         
         // Act
         _filter.OnActionExecuting(_context);
         
         // Assert
-        var isAdult = _context.HttpContext.Items["Underage"] as bool? ?? false;
+        var isAdult = _context.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] as bool? ?? false;
         Assert.That(isAdult, Is.False);
     }
     
@@ -44,13 +45,13 @@ public class BirthdateRestrictionFilterTests
     {
         // Arrange
         var childBirthDate = DateOnly.FromDateTime(DateTime.UtcNow);
-        _context.HttpContext.Request.Headers.Append("X-Birthdate", childBirthDate.ToString());
+        _context.HttpContext.Request.Headers.Append(HeaderNames.Birthdate, childBirthDate.ToString());
         
         // Act
         _filter.OnActionExecuting(_context);
         
         // Assert
-        var underage = _context.HttpContext.Items["Underage"] as bool? ?? false;
+        var underage = _context.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] as bool? ?? false;
         Assert.That(underage, Is.True);
     }
     
@@ -64,7 +65,7 @@ public class BirthdateRestrictionFilterTests
         _filter.OnActionExecuting(_context);
         
         // Assert
-        var underage = _context.HttpContext.Items["Underage"] as bool? ?? false;
+        var underage = _context.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] as bool? ?? false;
         Assert.That(underage, Is.True);
     }
     
@@ -72,13 +73,13 @@ public class BirthdateRestrictionFilterTests
     public void OnActionExecuting_WhenXBirthdateHeaderValueIsNotValidDate_ShouldSetUnderageValueToTrueInHttpContext()
     {
         // Arrange
-        _context.HttpContext.Request.Headers.Append("X-Birthdate", "I am an adult!!!");
+        _context.HttpContext.Request.Headers.Append(HeaderNames.Birthdate, "I am an adult!!!");
 
         // Act
         _filter.OnActionExecuting(_context);
         
         // Assert
-        var isAdult = _context.HttpContext.Items["Underage"] as bool? ?? false;
+        var isAdult = _context.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] as bool? ?? false;
         Assert.That(isAdult, Is.True);
     }
 }
