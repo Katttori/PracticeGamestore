@@ -49,7 +49,7 @@ public static class Publisher
 
     }
     
-    public static PublisherRequestModel CreatePublisherRequestModel()
+    public static PublisherRequestModel GeneratePublisherRequestModel()
     {
         return new()
         {

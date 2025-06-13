@@ -7,6 +7,7 @@ using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Tests.Unit.Platform;
 
+[TestFixture]
 public class PlatformServiceTests
 {
     private Mock<IPlatformRepository> _platformRepository;

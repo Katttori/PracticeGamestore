@@ -9,6 +9,8 @@ using PracticeGamestore.DataAccess;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.Business.Services.HeaderHandle;
+using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
@@ -58,6 +60,11 @@ public static class Dependencies
         services.AddScoped<IBlacklistService, BlacklistService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IFileService, FileService>();
+<<<<<<< feature/user-crud
         services.AddScoped<IUserService, UserService>();
+=======
+        services.AddScoped<ILocationService, LocationService>();
+        services.AddScoped<IHeaderHandleService, HeaderHandleService>();
+>>>>>>> main
     }
 }

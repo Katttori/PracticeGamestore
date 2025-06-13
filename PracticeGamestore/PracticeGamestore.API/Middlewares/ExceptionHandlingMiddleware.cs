@@ -17,15 +17,20 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             int statusCode;
             string message;
 
-            if (e is ArgumentException)
+            switch (e)
             {
-                statusCode = StatusCodes.Status400BadRequest;
-                message = e.Message;
-            }
-            else
-            {
-                statusCode = StatusCodes.Status500InternalServerError;
-                message = "something happened?";
+                case ArgumentException:
+                    statusCode = StatusCodes.Status400BadRequest;
+                    message = e.Message;
+                    break;
+                case UnauthorizedAccessException:
+                    statusCode = StatusCodes.Status403Forbidden;
+                    message = e.Message;
+                    break;
+                default:
+                    statusCode = StatusCodes.Status500InternalServerError;
+                    message = "something happened?";
+                    break;
             }
             
             context.Response.StatusCode = statusCode;

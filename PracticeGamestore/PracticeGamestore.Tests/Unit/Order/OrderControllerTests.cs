@@ -3,27 +3,34 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects.Order;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.Order;
 
 namespace PracticeGamestore.Tests.Unit.Order;
 
+[TestFixture]
 public class OrderControllerTests
 {
     private Mock<IOrderService> _orderServiceMock;
+    private Mock<IHeaderHandleService> _headerHandleServiceMock;
     private Mock<ILogger<OrderController>> _loggerMock;
     private OrderController _orderController;
     
     private readonly List<OrderResponseDto> _orderDtos = TestData.Order.GenerateOrderResponseDtos();
     private readonly OrderRequestModel _orderRequestModel = TestData.Order.GenerateOrderRequestModel();
+    
+    private const string CountryHeader = "Ukraine";
+    private const string UserEmailHeader = "test@gmail.com";
 
     [SetUp]
     public void Setup()
     {
         _orderServiceMock = new Mock<IOrderService>();
+        _headerHandleServiceMock = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<OrderController>>();
-        _orderController = new OrderController(_orderServiceMock.Object, _loggerMock.Object);
+        _orderController = new OrderController(_orderServiceMock.Object, _headerHandleServiceMock.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -92,7 +99,7 @@ public class OrderControllerTests
             .ReturnsAsync(null as Guid?);
         
         // Act
-        var result = await _orderController.Create(_orderRequestModel);
+        var result = await _orderController.Create(CountryHeader, UserEmailHeader, _orderRequestModel);
         
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -107,7 +114,7 @@ public class OrderControllerTests
         _orderServiceMock.Setup(x => x.CreateAsync(It.IsAny<OrderRequestDto>())).ReturnsAsync(newId);
         
         // Act
-        var result = await _orderController.Create(_orderRequestModel);
+        var result = await _orderController.Create(CountryHeader, UserEmailHeader, _orderRequestModel);
         
         // Assert
         Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());

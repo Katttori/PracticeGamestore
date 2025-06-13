@@ -1,5 +1,6 @@
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -145,7 +146,7 @@ public class BlacklistServiceTests
     [Test]
     public async Task UpdateAsync_WhenEntityDoesNotExist_ReturnsFalse()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var dto = TestData.Blacklist.GenerateBlacklistDto();
         
@@ -177,7 +178,7 @@ public class BlacklistServiceTests
     [Test]
     public async Task DeleteAsync_CallsDeleteAndSaveChanges()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         
         // Act
@@ -186,5 +187,27 @@ public class BlacklistServiceTests
         // Assert
         _blacklistRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Test]
+    public void HandleUserEmailAccessAsync_WhenEmailHeaderIsMissing_ThrowsArgumentException()
+    {
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<ArgumentException>(() => _service.HandleUserEmailAccessAsync(""));
+        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.MissingEmailHeader));
+    }
+    
+    [Test]
+    public void HandleUserEmailAccessAsync_WhenUserIsBlacklisted_ThrowsUnauthorized()
+    {
+        // Arrange
+        const string userEmail = "banned@gmail.com";
+        
+        _blacklistRepositoryMock.Setup(s => s.ExistsByUserEmailAsync(userEmail)).ReturnsAsync(true);
+
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.HandleUserEmailAccessAsync(userEmail));
+        
+        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.BlacklistedUser));
     }
 }

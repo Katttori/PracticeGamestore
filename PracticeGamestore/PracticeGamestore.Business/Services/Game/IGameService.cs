@@ -1,5 +1,5 @@
 using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Filtering;
+using PracticeGamestore.Business.DataTransferObjects.Filtering;
 
 namespace PracticeGamestore.Business.Services.Game;
 

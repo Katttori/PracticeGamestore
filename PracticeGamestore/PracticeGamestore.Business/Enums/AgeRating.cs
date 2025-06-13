@@ -2,9 +2,9 @@ namespace PracticeGamestore.Business.Enums;
 
 public enum AgeRating
 {
-    ThreePlus = 3,
-    SevenPlus = 7,
-    TwelvePlus = 12,
-    SixteenPlus = 16,
-    EighteenPlus = 18
+    ThreePlus = DataAccess.Enums.AgeRating.ThreePlus,
+    SevenPlus = DataAccess.Enums.AgeRating.SevenPlus,
+    TwelvePlus = DataAccess.Enums.AgeRating.ThreePlus,
+    SixteenPlus = DataAccess.Enums.AgeRating.SixteenPlus,
+    EighteenPlus = DataAccess.Enums.AgeRating.EighteenPlus
 }

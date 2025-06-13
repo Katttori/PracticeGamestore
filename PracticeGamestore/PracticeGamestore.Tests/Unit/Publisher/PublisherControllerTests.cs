@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Mappers;
@@ -14,15 +15,20 @@ namespace PracticeGamestore.Tests.Unit.Publisher;
 public class PublisherControllerTests
 {
     private Mock<IPublisherService> _publisherService;
+    private Mock<IHeaderHandleService> _headerHandleService;
     private Mock<ILogger<PublisherController>> _loggerMock;
     private PublisherController _publisherController;
+    
+    private const string CountryHeader = "Ukraine";
+    private const string UserEmailHeader = "test@gmail.com";
     
     [SetUp]
     public void SetUp()
     {
         _publisherService = new Mock<IPublisherService>();
+        _headerHandleService = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<PublisherController>>();
-        _publisherController = new PublisherController(_publisherService.Object, _loggerMock.Object);
+        _publisherController = new PublisherController(_publisherService.Object, _headerHandleService.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -36,7 +42,7 @@ public class PublisherControllerTests
         var expected = publisherDtos.Select(dto => dto.MapToPublisherModel()).ToList();
 
         //Act
-        var result = await _publisherController.GetAll();
+        var result = await _publisherController.GetAll(CountryHeader, UserEmailHeader);
 
         //Assert
         var okResult = result as OkObjectResult;
@@ -64,7 +70,7 @@ public class PublisherControllerTests
         var expected = publisherDto.MapToPublisherModel();
 
         //Act
-        var result = await _publisherController.GetById(id);
+        var result = await _publisherController.GetById(CountryHeader, UserEmailHeader, id);
 
         //Assert
         var okResult = result as OkObjectResult;
@@ -86,7 +92,7 @@ public class PublisherControllerTests
             .ReturnsAsync(null as PublisherDto);
 
         //Act
-        var result = await _publisherController.GetById(Guid.NewGuid());
+        var result = await _publisherController.GetById(CountryHeader, UserEmailHeader, Guid.NewGuid());
 
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -97,7 +103,7 @@ public class PublisherControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
+        var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.CreateAsync(It.IsAny<PublisherDto>()))
             .ReturnsAsync(id);
 
@@ -118,7 +124,7 @@ public class PublisherControllerTests
     public async Task CreatePublisher_ShouldReturnBadRequest_WhenCreationFails()
     {
         //Arrange
-        var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
+        var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.CreateAsync(It.IsAny<PublisherDto>()))
             .ReturnsAsync(null as Guid?);
 
@@ -134,7 +140,7 @@ public class PublisherControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
+        var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.UpdateAsync(id, It.IsAny<PublisherDto>()))
             .ReturnsAsync(true);
 
@@ -149,7 +155,7 @@ public class PublisherControllerTests
     {
         //Arrange
         var id = Guid.NewGuid();
-        var publisherRequestModel = TestData.Publisher.CreatePublisherRequestModel();
+        var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
         _publisherService.Setup(x => x.UpdateAsync(id, It.IsAny<PublisherDto>()))
             .ReturnsAsync(false);
 
@@ -181,7 +187,7 @@ public class PublisherControllerTests
             .ReturnsAsync(null as IEnumerable<GameResponseDto>);
 
         //Act
-        var result = await _publisherController.GetPublisherGames(Guid.NewGuid());
+        var result = await _publisherController.GetPublisherGames(CountryHeader, UserEmailHeader, Guid.NewGuid());
         
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -197,7 +203,7 @@ public class PublisherControllerTests
             .ReturnsAsync(games);
 
         //Act
-        var result = await _publisherController.GetPublisherGames(publisherId);
+        var result = await _publisherController.GetPublisherGames(CountryHeader, UserEmailHeader, publisherId);
         
         //Assert
         var okResult = result as OkObjectResult;

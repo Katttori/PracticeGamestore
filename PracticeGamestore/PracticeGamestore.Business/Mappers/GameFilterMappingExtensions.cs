@@ -1,11 +1,12 @@
+using PracticeGamestore.DataAccess.Constants;
+using PracticeGamestore.DataAccess.Entities.Filtering;
 using PracticeGamestore.DataAccess.Enums;
-using PracticeGamestore.DataAccess.Filtering;
 
 namespace PracticeGamestore.Business.Mappers;
 
 public static class GameFilterMappingExtensions
 {
-    public static GameFilter MapToDataAccessGameFilter(this Filtering.GameFilter filter)
+    public static GameFilter MapToDataAccessGameFilter(this DataTransferObjects.Filtering.GameFilter filter)
     {
         return new ()
         {
@@ -20,7 +21,7 @@ public static class GameFilterMappingExtensions
             ReleaseDateStart = filter.ReleaseDateStart,
             ReleaseDateEnd = filter.ReleaseDateEnd,
             Page = filter.Page ?? 1,
-            PageSize = filter.PageSize ?? 10
+            PageSize = filter.PageSize ?? ValidationConstants.PageSize
         };
     }
     

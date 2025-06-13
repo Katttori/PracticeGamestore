@@ -9,4 +9,5 @@ public interface IBlacklistService
     Task<Guid?> CreateAsync(BlacklistDto model);
     Task<bool> UpdateAsync(Guid id, BlacklistDto model);
     Task DeleteAsync(Guid id);
+    Task HandleUserEmailAccessAsync(string userEmail);
 }

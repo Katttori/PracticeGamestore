@@ -1,4 +1,4 @@
-using PracticeGamestore.DataAccess.Filtering;
+using PracticeGamestore.DataAccess.Entities.Filtering;
 
 namespace PracticeGamestore.DataAccess.Repositories.Game;
 

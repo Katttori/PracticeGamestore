@@ -1,6 +1,6 @@
-using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.Business.Enums;
 
-namespace PracticeGamestore.API.Models;
+namespace PracticeGamestore.Models.Country;
 
 public class CountryResponseModel
 {
