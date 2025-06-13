@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.User;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.User;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -183,7 +184,7 @@ public class UserServiceTests
         var result = await _userService.CreateAsync(userDto);
 
         // Assert
-        Assert.That(userDto.Status, Is.EqualTo("Banned"));
+        Assert.That(userDto.Status, Is.EqualTo(UserStatus.Banned));
     }
 
     [Test]
