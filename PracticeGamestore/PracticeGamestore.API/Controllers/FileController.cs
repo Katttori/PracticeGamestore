@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.File;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.File;
 
@@ -8,18 +10,30 @@ namespace PracticeGamestore.Controllers;
 
 [ApiController]
 [Route("files")]
-public class FileController(IFileService fileService, ILogger<FileController> logger) : ControllerBase
+public class FileController(
+    IFileService fileService,
+    IHeaderHandleService headerHandleService,
+    ILogger<FileController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var files = await fileService.GetAllAsync();
         return Ok(files);
     }
 
     [HttpGet("{id:guid}/download")]
-    public async Task<IActionResult> Download(Guid id)
+    public async Task<IActionResult> Download(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        Guid id)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var file  = await fileService.GetByIdAsync(id);
         if (file is null)
         {

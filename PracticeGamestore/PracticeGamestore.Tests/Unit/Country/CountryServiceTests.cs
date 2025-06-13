@@ -73,6 +73,37 @@ public class CountryServiceTests
     }
     
     [Test]
+    public async Task GetByNameAsync_WhenCountryExists_ReturnsCountryDto()
+    {
+        // Arrange
+        var country = TestData.Country.GenerateCountryEntity();
+        
+        _countryRepository.Setup(repo => repo.GetByNameAsync(country.Name)).ReturnsAsync(country);
+        
+        // Act
+        var result = await _countryService.GetByNameAsync(country.Name);
+        
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result?.Id, Is.EqualTo(country.Id));
+        Assert.That(result?.Name, Is.EqualTo(country.Name));
+    }
+    
+    [Test]
+    public async Task GetByNameAsync_WhenCountryDoesNotExist_ReturnsNull()
+    {
+        // Arrange
+        _countryRepository.Setup(repo => repo.GetByNameAsync(It.IsAny<string>()))
+            .ReturnsAsync(null as DataAccess.Entities.Country);
+        
+        // Act
+        var result = await _countryService.GetByNameAsync(It.IsAny<string>());
+        
+        // Assert
+        Assert.That(result, Is.Null);
+    }
+    
+    [Test]
     public async Task CreateAsync_ShouldAddCountry_WhenChangesSavedSuccessfully()
     {
         // Arrange

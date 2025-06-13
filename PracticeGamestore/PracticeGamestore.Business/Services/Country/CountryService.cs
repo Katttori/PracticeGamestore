@@ -19,7 +19,13 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
         var country = await countryRepository.GetByIdAsync(id);
         return country?.MapToCountryDto();
     }
-    
+
+    public async Task<CountryDto?> GetByNameAsync(string name)
+    {
+        var country = await countryRepository.GetByNameAsync(name);
+        return country?.MapToCountryDto();
+    }
+
     public async Task<Guid?> CreateAsync(CountryDto country)
     {
         if (await countryRepository.ExistsByNameAsync(country.Name))

@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Game;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Platform;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
@@ -12,18 +14,28 @@ namespace PracticeGamestore.Controllers;
 public class PlatformController(
     IPlatformService platformService,
     IGameService gameService,
+    IHeaderHandleService headerHandleService,
     ILogger<PlatformController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllPlatforms()
+    public async Task<IActionResult> GetAllPlatforms(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var platforms = await platformService.GetAllAsync();
         return Ok(platforms.Select(p => p.MapToPlatformModel()));
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetPlatformById(Guid id)
+    public async Task<IActionResult> GetPlatformById(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        Guid id)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var platform = await platformService.GetByIdAsync(id);
         
         if (platform is null)
@@ -36,8 +48,13 @@ public class PlatformController(
     }
     
     [HttpGet("{platformId:guid}/games")]
-    public async Task<IActionResult> GetGamesByPlatform(Guid platformId)
+    public async Task<IActionResult> GetGamesByPlatform(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        Guid platformId)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var games = await gameService.GetByPlatformAsync(platformId);
         
         if (games is null)

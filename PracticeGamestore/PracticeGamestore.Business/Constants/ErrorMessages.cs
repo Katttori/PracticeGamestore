@@ -36,4 +36,7 @@ public static class ErrorMessages
     public const string IncorrectName = "Name must contain only letters, hyphens, spaces, and apostrophes";
     public const string FailedFileUpload = "Failed to upload the file.";
     public const string GlobalError = "something happened?";
+    public const string MissingEmailHeader = "Missing X-User-Email header.";
+    public const string MissingLocationHeader = "Missing X-Location-Country header.";
+    public const string BlacklistedUser = "you are banned :)";
 }
