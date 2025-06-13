@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PracticeGamestore.DataAccess.Constants;
 using PracticeGamestore.DataAccess.Entities;
 
 namespace PracticeGamestore.DataAccess.Configurations;
@@ -23,7 +24,7 @@ public class BlackList : IEntityTypeConfiguration<Blacklist>
 
         builder.Property(b => b.UserEmail)
             .HasColumnName("user_email")
-            .HasMaxLength(100)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
         
         builder.HasIndex(b => b.UserEmail).IsUnique();

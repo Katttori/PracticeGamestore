@@ -1,6 +1,7 @@
+using PracticeGamestore.DataAccess.Constants;
 using PracticeGamestore.DataAccess.Enums;
 
-namespace PracticeGamestore.DataAccess.Filtering;
+namespace PracticeGamestore.DataAccess.Entities.Filtering;
 
 public class GameFilter
 {
@@ -15,5 +16,5 @@ public class GameFilter
     public string OrderType { get; set; } = "asc";
     public List<string> OrderByFields { get; set; } = ["name"];
     public int Page { get; set; } = 1;
-    public int PageSize { get; set; } = 10;
+    public int PageSize { get; set; } = ValidationConstants.PageSize;
 }

@@ -1,3 +1,4 @@
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Models.Game;
@@ -32,7 +33,7 @@ public static class Game
                 Name = "Cyber Warriors 2077",
                 Key = "4uiru78rh6x84",
                 Price = 59.99m,
-                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
+                Picture = CreateGamePicture(),
                 Description = "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
                 Rating = 4.5,
                 AgeRating = AgeRating.EighteenPlus,
@@ -86,7 +87,7 @@ public static class Game
                 Name = "Dragon's Legacy",
                 Key = "dragon-legacy-2024",
                 Price = 69.99m,
-                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0B],
+                Picture = CreateGamePicture(),
                 Description = "An epic fantasy RPG where you embark on a quest to save the realm from an ancient dragon threat.",
                 Rating = 4.8,
                 AgeRating = AgeRating.SixteenPlus,
@@ -132,7 +133,7 @@ public static class Game
                 Name = "FIFA Champions 2025",
                 Key = "fifa-champions-2025",
                 Price = 59.99m,
-                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0C],
+                Picture = CreateGamePicture(),
                 Description = "The ultimate football simulation with realistic gameplay and all your favorite teams.",
                 Rating = 4.1,
                 AgeRating = AgeRating.ThreePlus,
@@ -174,7 +175,7 @@ public static class Game
                 Name = "Haunted Mansion Mystery",
                 Key = "haunted-mansion-mystery",
                 Price = 24.99m,
-                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0D],
+                Picture = CreateGamePicture(),
                 Description = "Explore a cursed mansion and uncover dark secrets in this spine-chilling horror adventure.",
                 Rating = 4.0,
                 AgeRating = AgeRating.EighteenPlus,
@@ -219,7 +220,7 @@ public static class Game
                 Name = "Galactic Warfare",
                 Key = "galactic-warfare-2024",
                 Price = 54.99m,
-                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0E],
+                Picture = CreateGamePicture(),
                 Description = "Command vast space fleets in epic battles across the galaxy in this real-time strategy masterpiece.",
                 Rating = 4.7,
                 AgeRating = AgeRating.TwelvePlus,
@@ -269,7 +270,7 @@ public static class Game
                 Name = "Cyber Shooter Arena",
                 Key = "cyber-shooter-arena",
                 Price = 29.99m,
-                Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0F],
+                Picture = CreateGamePicture(),
                 Description = "Fast-paced multiplayer FPS set in a neon-lit cyberpunk world with advanced weaponry.",
                 Rating = 4.2,
                 AgeRating = AgeRating.SixteenPlus,
@@ -300,7 +301,7 @@ public static class Game
             Name = "Cyber Warriors 2077",
             Key = "4uiru78rh6x84",
             Price = 59.99m,
-            Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
+            Picture = CreateGamePicture(),
             Description =
                 "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
             Rating = 4.5,
@@ -344,7 +345,7 @@ public static class Game
                 "Cyber Warriors 2077",
                 "4uiru78rh6x84",
                 59.99m,
-                [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
+                CreateGamePicture(),
                 "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
                 4.5,
                 AgeRating.EighteenPlus,
@@ -392,7 +393,7 @@ public static class Game
             "Cyber Warriors 2077",
             "4uiru78rh6x84",
             59.99m,
-            [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
+            CreateGamePicture(),
             "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
             4.5,
             AgeRating.EighteenPlus,
@@ -410,7 +411,7 @@ public static class Game
             Name = "Cyber Warriors 2077",
             Key = "4uiru78rh6x84",
             Price = 59.99m,
-            Picture = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
+            Picture = CreateGamePicture(),
             Description = "A futuristic action RPG set in a dystopian cyberpunk world where you fight against corporate overlords.",
             Rating = 4.5,
             AgeRating = (int)AgeRating.EighteenPlus,
@@ -420,5 +421,12 @@ public static class Game
             PlatformIds = [Guid.NewGuid(), Guid.NewGuid()]
         };
     }
-    
+
+    public static byte[] CreateGamePicture(byte[]? signature = null)
+    {
+        var validSizePicture = new byte[ValidationConstants.MinimumPictureSize];
+        signature ??= ValidationConstants.AllowedPictureFormats["PNG"][0];
+        Array.Copy(signature, validSizePicture, signature.Length);
+        return validSizePicture;
+    }
 }

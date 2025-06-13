@@ -1,8 +1,9 @@
-using PracticeGamestore.API.Models;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.Models.Country;
+using CountryStatus = PracticeGamestore.Business.Enums.CountryStatus;
 
-namespace PracticeGamestore.API.Mappers;
+namespace PracticeGamestore.Mappers;
 
 public static class CountryMappingExtensions
 {

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.File;
-using PracticeGamestore.Business.Services.Game;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.File;
 
@@ -8,18 +10,30 @@ namespace PracticeGamestore.Controllers;
 
 [ApiController]
 [Route("files")]
-public class FileController(IFileService fileService, IGameService gameService, ILogger<FileController> logger) : ControllerBase
+public class FileController(
+    IFileService fileService,
+    IHeaderHandleService headerHandleService,
+    ILogger<FileController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var files = await fileService.GetAllAsync();
         return Ok(files);
     }
 
     [HttpGet("{id:guid}/download")]
-    public async Task<IActionResult> Download(Guid id)
+    public async Task<IActionResult> Download(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        Guid id)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var file  = await fileService.GetByIdAsync(id);
         if (file is null)
         {
@@ -34,28 +48,6 @@ public class FileController(IFileService fileService, IGameService gameService, 
     [HttpPost]
     public async Task<IActionResult> Upload([FromForm] FileRequestModel request)
     {
-        
-        // Check if file is provided
-        if (request.File.Length == 0)
-        {
-            logger.LogError("No file provided in the request.");
-            return BadRequest("No file provided.");
-        }
-        
-        // Check if GameId is valid
-        if (request.GameId == Guid.Empty)
-        {
-            logger.LogError("Invalid GameId: {GameId}", request.GameId);
-            return BadRequest("Invalid GameId.");
-        }
-        
-        var game = await gameService.GetByIdAsync(request.GameId);
-        if (game is null)
-        {
-            logger.LogError("Game with id: {GameId} was not found.", request.GameId);
-            return NotFound($"Game with id: {request.GameId} was not found.");
-        }
-        
         var id = await fileService.UploadAsync(request.MapToFileDto());
         if (id is null)
         {

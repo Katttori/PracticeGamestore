@@ -1,5 +1,6 @@
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Country;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
@@ -18,7 +19,13 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
         var country = await countryRepository.GetByIdAsync(id);
         return country?.MapToCountryDto();
     }
-    
+
+    public async Task<CountryDto?> GetByNameAsync(string name)
+    {
+        var country = await countryRepository.GetByNameAsync(name);
+        return country?.MapToCountryDto();
+    }
+
     public async Task<Guid?> CreateAsync(CountryDto country)
     {
         if (await countryRepository.ExistsByNameAsync(country.Name))
@@ -43,7 +50,7 @@ public class CountryService(ICountryRepository countryRepository, IUnitOfWork un
         }
 
         entity.Name = country.Name;
-        entity.CountryStatus = country.Status;
+        entity.CountryStatus = (CountryStatus)country.Status;
         
         countryRepository.Update(entity);
         var changes = await unitOfWork.SaveChangesAsync();

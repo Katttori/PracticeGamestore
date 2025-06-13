@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PracticeGamestore.DataAccess.Constants;
 
 namespace PracticeGamestore.DataAccess.Configurations;
 
@@ -18,14 +19,14 @@ public class Genre : IEntityTypeConfiguration<Entities.Genre>
 
         builder.Property(g => g.Name)
             .HasColumnName("name")
-            .HasMaxLength(50)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
         
         builder.HasIndex(g => g.Name).IsUnique();
 
         builder.Property(g => g.Description)
             .HasColumnName("description")
-            .HasMaxLength(255);
+            .HasMaxLength(ValidationConstants.StringLength.LongMaximum);
 
         builder.Property(g => g.ParentId)
             .HasColumnName("parent_id");

@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.File;
-using PracticeGamestore.Business.Services.Game;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Models.File;
 
@@ -14,17 +14,20 @@ namespace PracticeGamestore.Tests.Unit.File;
 public class FileControllerTests
 {
     private Mock<IFileService> _fileService;
-    private Mock<IGameService> _gameService; 
+    private Mock<IHeaderHandleService> _headerHandleService;
     private Mock<ILogger<FileController>> _logger;
     private FileController _controller;
+
+    private const string CountryHeader = "Ukraine";
+    private const string UserEmailHeader = "test@gmail.com";
 
     [SetUp]
     public void Setup()
     {
         _fileService = new Mock<IFileService>();
-        _gameService = new Mock<IGameService>();
+        _headerHandleService = new Mock<IHeaderHandleService>();
         _logger = new Mock<ILogger<FileController>>();
-        _controller = new FileController(_fileService.Object, _gameService.Object, _logger.Object);
+        _controller = new FileController(_fileService.Object, _headerHandleService.Object, _logger.Object);
     }
 
     [Test]
@@ -33,7 +36,7 @@ public class FileControllerTests
         var dtos = TestData.File.GenerateFileDtos();
         _fileService.Setup(s => s.GetAllAsync()).ReturnsAsync(dtos);
 
-        var result = await _controller.GetAll();
+        var result = await _controller.GetAll(CountryHeader, UserEmailHeader);
         var ok = result as OkObjectResult;
         var value = ok?.Value as IEnumerable<FileDto>;
 
@@ -54,7 +57,7 @@ public class FileControllerTests
         _fileService.Setup(s => s.GetByIdAsync(dto.Id!.Value)).ReturnsAsync(dto);
         _fileService.Setup(s => s.ReadPhysicalFileAsync(dto.Path)).ReturnsAsync(Encoding.UTF8.GetBytes("File content"));
         
-        var result = await _controller.Download(dto.Id.Value);
+        var result = await _controller.Download(CountryHeader, UserEmailHeader, dto.Id.Value);
         var fileResult = result as FileContentResult;
         
         Assert.Multiple(() =>
@@ -73,7 +76,7 @@ public class FileControllerTests
         var id = Guid.NewGuid();
         _fileService.Setup(s => s.GetByIdAsync(id)).ReturnsAsync((FileDto?)null);
 
-        var result = await _controller.Download(id);
+        var result = await _controller.Download(CountryHeader, UserEmailHeader, id);
 
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
     }
@@ -83,7 +86,6 @@ public class FileControllerTests
     {
         var dto = TestData.File.GenerateFileDto();
         var model = new FileRequestModel { GameId = dto.GameId, File = dto.File };
-        _gameService.Setup(s => s.GetByIdAsync(dto.GameId)).ReturnsAsync(TestData.Game.GenerateGameResponseDto());
         _fileService.Setup(s => s.UploadAsync(It.IsAny<FileDto>())).ReturnsAsync(dto.Id);
 
         var result = await _controller.Upload(model);
@@ -102,8 +104,6 @@ public class FileControllerTests
     {
         var dto = TestData.File.GenerateFileDto();
         var model = new FileRequestModel { GameId = dto.GameId, File = dto.File };
-        
-        _gameService.Setup(s => s.GetByIdAsync(dto.GameId)).ReturnsAsync(TestData.Game.GenerateGameResponseDto());
         _fileService.Setup(s => s.UploadAsync(It.IsAny<FileDto>())).ReturnsAsync((Guid?)null);
 
         var result = await _controller.Upload(model);

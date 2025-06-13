@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using PracticeGamestore.API.Mappers;
-using PracticeGamestore.API.Models;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Country;
-using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.Filters;
+using PracticeGamestore.Mappers;
+using PracticeGamestore.Models.Country;
 
 namespace PracticeGamestore.Controllers;
 
@@ -21,26 +23,27 @@ public class CountryController(ICountryService countryService, ILogger<CountryCo
     public async Task<IActionResult> GetCountryById(Guid id)
     {
         var country = await countryService.GetByIdAsync(id);
-        
+
         if (country is null)
         {
             logger.LogError("Country with id: {Id} not found.", id);
-            return NotFound($"Country with id {id} not found");
+            return NotFound(ErrorMessages.NotFound("Country", id));
         }
-        
+
         return Ok(country.MapToCountryModel());
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateCountry([FromBody] CountryCreateRequestModel countryCreateRequestModel)
+    [ServiceFilter(typeof(RequestModelValidationFilter))]
+    public async Task<IActionResult> CreateCountry([FromBody] CountryCreateRequestModel model)
     {
-        var countryDto = new CountryDto(null, countryCreateRequestModel.Name, CountryStatus.Allowed);
+        var countryDto = new CountryDto(null, model.Name, CountryStatus.Allowed);
         var id = await countryService.CreateAsync(countryDto);
         
         if (id is null)
         {
-            logger.LogError("Failed to create country with model: {Model}", countryCreateRequestModel);
-            return BadRequest("Failed to create country.");
+            logger.LogError("Failed to create country with model: {Model}", model);
+            return BadRequest(ErrorMessages.FailedToCreate("country"));
         }
         
         countryDto.Id = id.Value;
@@ -49,17 +52,18 @@ public class CountryController(ICountryService countryService, ILogger<CountryCo
     }
     
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateCountry(Guid id, [FromBody] CountryUpdateRequestModel countryUpdateRequestModel)
+    [ServiceFilter(typeof(RequestModelValidationFilter))]
+    public async Task<IActionResult> UpdateCountry(Guid id, [FromBody] CountryUpdateRequestModel model)
     {
-        var countryDto = countryUpdateRequestModel.MapToCountryDto();
+        var countryDto = model.MapToCountryDto();
         countryDto.Id = id;
         
-        var updated = await countryService.UpdateAsync(countryDto);
-        
-        if (!updated)
+        var isUpdated = await countryService.UpdateAsync(countryDto);
+
+        if (!isUpdated)
         {
             logger.LogError("Country with id: {Id} not found for update.", id);
-            return BadRequest($"Country with id {id} not found");
+            return BadRequest(ErrorMessages.FailedToUpdate("country", id));
         }
         
         return NoContent();

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PracticeGamestore.DataAccess.Constants;
 using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.DataAccess.Configurations;
@@ -19,7 +20,7 @@ public class Country : IEntityTypeConfiguration<Entities.Country>
 
         builder.Property(c => c.Name)
             .HasColumnName("name")
-            .HasMaxLength(100)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
         
         builder.HasIndex(c => c.Name).IsUnique();
