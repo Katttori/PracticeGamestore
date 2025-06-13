@@ -53,16 +53,15 @@ public static class CommonValidationRules
             .Must(ids => ids != null &&ids.All(id => id != Guid.Empty))
             .WithMessage(ErrorMessages.HasIncorrectIds);
     }
-<<<<<<< feature/user-crud
-    
-    public static IRuleBuilderOptions<T, string>  HasValidPhoneNumber<T>(this IRuleBuilder<T, string> ruleBuilder)
+
+    public static IRuleBuilderOptions<T, string> HasValidPhoneNumber<T>(this IRuleBuilder<T, string> ruleBuilder)
     {
         return ruleBuilder
             .NotEmpty()
             .Matches(@"^\+?[0-9\s-]+$")
             .WithMessage(ErrorMessages.IncorrectPhoneNumber)
             .Length(10, ValidationConstants.StringLength.ShortMaximum);
-=======
+    }
 
     public static IRuleBuilderOptions<T, IFormFile?> IsValidFile<T>(this IRuleBuilder<T, IFormFile?> ruleBuilder, List<string> allowedExtensions)
     {
@@ -73,6 +72,5 @@ public static class CommonValidationRules
                 var extension = Path.GetExtension(x.FileName)?.ToLowerInvariant();
                 return !string.IsNullOrEmpty(extension) && allowedExtensions.Contains(extension);
             }).WithMessage(ErrorMessages.InvalidGameFile);
->>>>>>> main
     }
 }
