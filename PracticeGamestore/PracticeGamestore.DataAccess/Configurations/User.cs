@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.DataAccess.Configurations;
 
@@ -44,9 +45,9 @@ public class User : IEntityTypeConfiguration<Entities.User>
         
         builder.Property(x => x.Status)
             .HasColumnName("status")
-            .HasMaxLength(50)
+            .HasConversion<int>()
             .IsRequired()
-            .HasDefaultValue("Active"); // Default status is Active
+            .HasDefaultValue(UserStatus.Active);
         
         builder.Property(x => x.CountryId)
             .HasColumnName("country_id")

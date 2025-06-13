@@ -1,4 +1,5 @@
 ﻿using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Models.User;
 
 namespace PracticeGamestore.Mappers;
@@ -14,7 +15,7 @@ public static class UserMappingExtensions
             model.PhoneNumber, 
             model.Password,
             model.Role,
-            "Active",
+            UserStatus.Active,
             model.CountryId,
             model.BirthDate
         );

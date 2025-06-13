@@ -1,4 +1,5 @@
 ﻿using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.DataAccess.Entities;
 
 namespace PracticeGamestore.Business.Mappers;
@@ -14,7 +15,7 @@ public static class UserMappingExtensions
             user.PhoneNumber,
             user.PasswordHash,
             user.Role,
-            user.Status,
+            (UserStatus)user.Status,
             user.CountryId,
             user.BirthDate
             );
@@ -29,7 +30,7 @@ public static class UserMappingExtensions
             PhoneNumber = userDto.PhoneNumber,
             PasswordHash = userDto.Password,
             Role = userDto.Role,
-            Status = userDto.Status,
+            Status = (DataAccess.Enums.UserStatus)userDto.Status,
             CountryId = userDto.CountryId,
             BirthDate = userDto.BirthDate
         };

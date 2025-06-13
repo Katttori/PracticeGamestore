@@ -1,4 +1,5 @@
 ﻿using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.User;
@@ -27,12 +28,12 @@ public class UserService(
     {
         var isInBlacklist = await blacklistRepository.ExistsByUserEmailAsync(dto.Email);
 
-        dto.Status = isInBlacklist ? "Banned" : "Active";
+        dto.Status = isInBlacklist ? UserStatus.Banned : UserStatus.Active;
 
         var blacklistCountries = await blacklistRepository.GetAllAsync();
         if (blacklistCountries.Any(b => b.UserEmail == dto.Email && b.CountryId != dto.CountryId))
         {
-            dto.Status = "Banned";
+            dto.Status = UserStatus.Banned;
         }
         
         dto.Role = string.IsNullOrWhiteSpace(dto.Role) ? "User" : dto.Role;

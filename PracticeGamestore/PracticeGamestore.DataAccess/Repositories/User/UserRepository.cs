@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.DataAccess.Repositories.User;
 
@@ -9,7 +10,7 @@ public class UserRepository(GamestoreDbContext context) : IUserRepository
     public async Task<IEnumerable<Entities.User>> GetAllAsync()
     {
         return await _usersNoTracking
-            .Where(u => u.Status != "Deleted")
+            .Where(u => u.Status != UserStatus.Deleted)
             .ToListAsync();
     }
 
@@ -26,9 +27,9 @@ public class UserRepository(GamestoreDbContext context) : IUserRepository
 
         if (existingUser != null)
         {
-            if (existingUser.Status == "Deleted")
+            if (existingUser.Status == UserStatus.Deleted)
             {
-                existingUser.Status = "Active";
+                existingUser.Status = UserStatus.Active;
                 existingUser.UserName = user.UserName;
                 existingUser.PhoneNumber = user.PhoneNumber;
                 existingUser.PasswordHash = user.PasswordHash;
@@ -57,7 +58,7 @@ public class UserRepository(GamestoreDbContext context) : IUserRepository
         var user = await context.Users.FindAsync(id);
         if (user is not null)
         {
-            user.Status = "Deleted";
+            user.Status = UserStatus.Deleted;
             context.Users.Update(user);
         }
     }
@@ -65,12 +66,12 @@ public class UserRepository(GamestoreDbContext context) : IUserRepository
     public async Task<bool> BanAsync(Guid id)
     {
         var user = await context.Users.FindAsync(id);
-        if (user is null || user.Status == "Banned")
+        if (user is null || user.Status == UserStatus.Banned)
         {
             return false; // User not found or already banned
         }
         
-        user.Status = "Banned";
+        user.Status = UserStatus.Banned;
         context.Users.Update(user);
         return true;
     }

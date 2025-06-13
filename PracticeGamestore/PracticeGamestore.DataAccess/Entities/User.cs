@@ -1,4 +1,6 @@
-﻿namespace PracticeGamestore.DataAccess.Entities;
+﻿using PracticeGamestore.DataAccess.Enums;
+
+namespace PracticeGamestore.DataAccess.Entities;
 
 public class User
 {
@@ -8,7 +10,7 @@ public class User
     public string PhoneNumber { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string Role { get; set; } = "User"; // Default role is User
-    public string Status { get; set; } = "Active";
+    public UserStatus Status { get; set; } = UserStatus.Active;
     public Guid CountryId { get; set; }
     public DateTime BirthDate { get; set; }
     public Country Country { get; set; } = null!;
