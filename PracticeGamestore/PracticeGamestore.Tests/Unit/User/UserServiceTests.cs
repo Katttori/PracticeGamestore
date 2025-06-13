@@ -160,7 +160,7 @@ public class UserServiceTests
         
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(userDto.Status, Is.EqualTo("Banned"));
+        Assert.That(userDto.Status, Is.EqualTo(UserStatus.Banned));
     }
     
     [Test]
