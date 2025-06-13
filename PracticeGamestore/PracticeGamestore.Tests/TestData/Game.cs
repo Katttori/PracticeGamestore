@@ -424,8 +424,8 @@ public static class Game
 
     public static byte[] CreateGamePicture(byte[]? signature = null)
     {
-        var validSizePicture = new byte[ValidationConstants.MinimumPictureSize];
-        signature ??= ValidationConstants.AllowedPictureFormats["PNG"][0];
+        var validSizePicture = new byte[ValidationConstants.GamePicture.MinimumPictureSize];
+        signature ??= ValidationConstants.GamePicture.AllowedPictureFormats["PNG"][0];
         Array.Copy(signature, validSizePicture, signature.Length);
         return validSizePicture;
     }

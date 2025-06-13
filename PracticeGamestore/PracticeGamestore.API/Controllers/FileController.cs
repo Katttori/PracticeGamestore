@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.File;
 using PracticeGamestore.Business.Services.HeaderHandle;
@@ -38,7 +38,7 @@ public class FileController(
         if (file is null)
         {
             logger.LogError("File with id: {Id} was not found.", id);
-            return NotFound($"File with id: {id} was not found.");
+            return NotFound(ErrorMessages.NotFound("File", id));
         }
         
         var bytes = await fileService.ReadPhysicalFileAsync(file.Path);
@@ -52,7 +52,7 @@ public class FileController(
         if (id is null)
         {
             logger.LogError("Failed to upload file for request: {Request}", request);
-            return BadRequest("Failed to upload file.");
+            return BadRequest(ErrorMessages.FailedFileUpload);
         }
         
         logger.LogInformation("Uploaded file with id: {Id}", id);
@@ -66,7 +66,7 @@ public class FileController(
         if (file is null)
         {
             logger.LogError("File with id: {Id} was not found.", id);
-            return NotFound($"File with id: {id} was not found.");
+            return NotFound(ErrorMessages.NotFound("File", id));
         }
         
         await fileService.DeleteAsync(id);

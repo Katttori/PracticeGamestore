@@ -53,4 +53,15 @@ public static class CommonValidationRules
             .Must(ids => ids != null &&ids.All(id => id != Guid.Empty))
             .WithMessage(ErrorMessages.HasIncorrectIds);
     }
+
+    public static IRuleBuilderOptions<T, IFormFile?> IsValidFile<T>(this IRuleBuilder<T, IFormFile?> ruleBuilder, List<string> allowedExtensions)
+    {
+        return ruleBuilder
+            .Must(x =>
+            {
+                if (x == null || x.Length < ValidationConstants.GameFile.MinSize || x.Length > ValidationConstants.GameFile.MaxSize) return false;
+                var extension = Path.GetExtension(x.FileName)?.ToLowerInvariant();
+                return !string.IsNullOrEmpty(extension) && allowedExtensions.Contains(extension);
+            }).WithMessage(ErrorMessages.InvalidGameFile);
+    }
 }
