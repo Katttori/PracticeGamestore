@@ -28,17 +28,17 @@ public class UserControllerTests
     [Test]
     public async Task GetAll_ReturnsOkWithUsers()
     {
-        //Arrange
+        // Arrange
         var userDtos = TestData.User.GenerateUserDtos();
         
         _userService.Setup(x => x.GetAllAsync())
             .ReturnsAsync(userDtos);
         var expected = userDtos.Select(dto => dto.MapToUserResponseModel()).ToList();
 
-        //Act
+        // Act
         var result = await _userController.GetAll();
 
-        //Assert
+        // Assert
         var okResult = result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
@@ -50,17 +50,17 @@ public class UserControllerTests
     [Test]
     public async Task GetUserById_ShouldReturnOkResult_WhenUserExists()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var userDto = TestData.User.GenerateUserDto();
         _userService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(userDto);
         var expected = userDto.MapToUserResponseModel();
         
-        //Act
+        // Act
         var result = await _userController.GetById(id);
         
-        //Assert
+        // Assert
         var okResult = result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
@@ -72,30 +72,30 @@ public class UserControllerTests
     [Test]
     public async Task GetUserById_ShouldReturnNotFound_WhenUserDoesNotExist()
     {
-        //Arrange
+        // Arrange
         _userService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as UserDto);
         
-        //Act
+        // Act
         var result = await _userController.GetById(Guid.NewGuid());
         
-        //Assert
+        // Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
     }
 
     [Test]
     public async Task CreateUser_ShouldReturnCreatedResult_WhenUserIsCreated()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var userRequestModel = TestData.User.GenerateUserRequestModel();
         _userService.Setup(x => x.CreateAsync(It.IsAny<UserDto>()))
             .ReturnsAsync(id);
         
-        //Act
+        // Act
         var result = await _userController.Create(userRequestModel);
         
-        //Assert
+        // Assert
         var createdResult = result as CreatedAtActionResult;
         Assert.That(createdResult, Is.Not.Null);
         Assert.That(createdResult!.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
@@ -107,28 +107,28 @@ public class UserControllerTests
     [Test]
     public async Task CreateUser_ShouldReturnBadRequest_WhenCreationFails()
     {
-        //Arrange
+        // Arrange
         var userRequestModel = TestData.User.GenerateUserRequestModel();
         _userService.Setup(x => x.CreateAsync(It.IsAny<UserDto>()))
             .ReturnsAsync(null as Guid?);
         
-        //Act
+        // Act
         var result = await _userController.Create(userRequestModel);
         
-        //Assert
+        // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
 
     [Test]
     public async Task Update_ShouldReturnNoContent_WhenUserIsUpdated()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var userRequestModel = TestData.User.GenerateUserRequestModel();
         _userService.Setup(x => x.UpdateAsync(id, It.IsAny<UserDto>()))
             .ReturnsAsync(true);
         
-        //Act
+        // Act
         var result = await _userController.Update(id, userRequestModel);
         
         Assert.That(result, Is.InstanceOf<NoContentResult>());
@@ -137,51 +137,57 @@ public class UserControllerTests
     [Test]
     public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var userRequestModel = TestData.User.GenerateUserRequestModel();
         _userService.Setup(x => x.UpdateAsync(id, It.IsAny<UserDto>()))
             .ReturnsAsync(false);
         
-        //Act
+        // Act
         var result = await _userController.Update(id, userRequestModel);
         
-        //Assert
+        // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
 
     [Test]
     public async Task Delete_ShouldReturnNoContent_WhenUserIsDeleted()
     {
-        //Arrange
+        // Arrange
         _userService.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
         
-        //Act
+        // Act
         var result = await _userController.Delete(Guid.NewGuid());
         
-        //Assert
+        // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
     
     [Test]
     public async Task BanUser_ShouldReturnNoContent_WhenUserIsBanned()
     {
+        // Arrange
         var id = Guid.NewGuid();
         _userService.Setup(s => s.BanUserAsync(id)).ReturnsAsync(true);
-
+        
+        // Act
         var result = await _userController.Ban(id);
 
+        // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
     
     [Test]
     public async Task BanUser_ShouldReturnBadRequest_WhenBanFails()
     {
+        // Arrange
         var id = Guid.NewGuid();
         _userService.Setup(s => s.BanUserAsync(id)).ReturnsAsync(false);
 
+        // Act
         var result = await _userController.Ban(id);
 
+        // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
 }

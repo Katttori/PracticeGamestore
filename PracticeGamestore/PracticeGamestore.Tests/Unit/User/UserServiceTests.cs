@@ -27,15 +27,15 @@ public class UserServiceTests
     [Test]
     public async Task GetAllAsync_ShouldReturnAllUsers()
     {
-        //Arrange
+        // Arrange
         var users = TestData.User.GenerateUserEntities();
         _userRepository.Setup(x => x.GetAllAsync()).ReturnsAsync(users);
         var expected = users.Select(p => p.MapToUserDto()).ToList();
         
-        //Act
+        // Act
         var result = (await _userService.GetAllAsync()).ToList();
         
-        //Assert
+        // Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.Not.Empty);
         Assert.That(result.Count, Is.EqualTo(expected.Count));
@@ -44,16 +44,16 @@ public class UserServiceTests
     [Test]
     public async Task GetByIdAsync_WhenUserExists_ReturnsUserDto()
      {
-        //Arrange
+        // Arrange
         var user = TestData.User.GenerateUserEntity();
         _userRepository.Setup(x => x.GetByIdAsync(user.Id))
             .ReturnsAsync(user);
         var expected = user.MapToUserDto();
         
-        //Act
+        // Act
         var result = await _userService.GetByIdAsync(user.Id);
         
-        //Assert
+        // Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.Id, Is.EqualTo(expected.Id));
         Assert.That(result.UserName, Is.EqualTo(expected.UserName));
@@ -63,64 +63,64 @@ public class UserServiceTests
     [Test]
     public async Task GetByIdAsync_WhenUserDoesNotExist_ReturnsNull()
     {
-        //Arrange
+        // Arrange
         _userRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.User);
         
-        //Act
+        // Act
         var result = await _userService.GetByIdAsync(Guid.NewGuid());
         
-        //Assert
+        // Assert
         Assert.That(result, Is.Null);
     }
 
     [Test]
     public async Task UpdateAsync_WhenUserExistsAndChangesSavedSuccessfully_ReturnsTrue()
     {
-        //Arrange
+        // Arrange
         var user = TestData.User.GenerateUserEntity();
         _userRepository.Setup(x => x.GetByIdAsync(user.Id))
             .ReturnsAsync(user);
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
-        //Act
+        // Act
         var result = await _userService.UpdateAsync(user.Id, user.MapToUserDto());
         
-        //Assert
+        // Assert
         Assert.That(result, Is.True);
     }
     
     [Test]
     public async Task UpdateAsync_WhenUserDoesNotExist_ReturnsFalse()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         var user = TestData.User.GenerateUserEntity();
         _userRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(null as DataAccess.Entities.User);
         
-        //Act
+        // Act
         var result = await _userService.UpdateAsync(id, user.MapToUserDto());
         
-        //Assert
+        // Assert
         Assert.That(result, Is.False);
     }
 
     [Test]
     public async Task CreateAsync_ShouldAddUser_WhenChangesSavedSuccessfully()
     {
-        //Arrange
+        // Arrange
         var user = TestData.User.GenerateUserEntity();
         _userRepository.Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.User>()))
             .ReturnsAsync(user.Id);
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
-        //Act
+        // Act
         var result = await _userService.CreateAsync(user.MapToUserDto());
         
-        //Assert
+        // Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.EqualTo(user.Id));
     }
@@ -128,24 +128,24 @@ public class UserServiceTests
     [Test]
     public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
     {
-        //Arrange
+        // Arrange
         var user = TestData.User.GenerateUserEntity();
         _userRepository.Setup(x => x.CreateAsync(It.IsAny<DataAccess.Entities.User>()))
             .ReturnsAsync(user.Id); 
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);
         
-        //Act
+        // Act
         var result = await _userService.CreateAsync(user.MapToUserDto());
         
-        //Assert
+        // Assert
         Assert.That(result, Is.Null);
     }
     
     [Test]
     public async Task CreateAsync_ShouldReturnStatusBanned_WhenUserInBlacklist()
     {
-        //Arrange
+        // Arrange
         var userDto = TestData.User.GenerateUserDto();
         
         _blacklistRepository.Setup(x => x.ExistsByUserEmailAsync(userDto.Email))
@@ -154,10 +154,10 @@ public class UserServiceTests
         _userRepository.Setup(r => r.CreateAsync(It.IsAny<DataAccess.Entities.User>())).ReturnsAsync(Guid.NewGuid());
         _unitOfWork.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
         
-        //Act
+        // Act
         var result = await _userService.CreateAsync(userDto);
         
-        //Assert
+        // Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(userDto.Status, Is.EqualTo("Banned"));
     }
@@ -189,17 +189,17 @@ public class UserServiceTests
     [Test]
     public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
     {
-        //Arrange
+        // Arrange
         var id = Guid.NewGuid();
         _userRepository.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .Returns(Task.CompletedTask);
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
-        //Act
+        // Act
         await _userService.DeleteAsync(id);
         
-        //Assert
+        // Assert
         _userRepository.Verify(x => x.DeleteAsync(id), Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -207,23 +207,29 @@ public class UserServiceTests
     [Test]
     public async Task BanUserAsync_ShouldReturnTrue_WhenUserIsBannedSuccessfully()
     {
+        // Arrange
         var userId = Guid.NewGuid();
         _userRepository.Setup(r => r.BanAsync(userId)).ReturnsAsync(true);
         _unitOfWork.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
+        // Act
         var result = await _userService.BanUserAsync(userId);
 
+        // Assert
         Assert.That(result, Is.True);
     }
     
     [Test]
     public async Task BanUserAsync_ShouldReturnFalse_WhenUserNotFoundOrAlreadyBanned()
     {
+        // Arrange
         var userId = Guid.NewGuid();
         _userRepository.Setup(r => r.BanAsync(userId)).ReturnsAsync(false);
 
+        // Act
         var result = await _userService.BanUserAsync(userId);
 
+        // Assert
         Assert.That(result, Is.False);
     }
 }
