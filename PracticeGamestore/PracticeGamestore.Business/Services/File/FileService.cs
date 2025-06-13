@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Repositories.File;
@@ -39,7 +40,7 @@ public class FileService(
         var game = await gameRepository.GetByIdAsync(fileDto.GameId);
         if (game == null)
         {
-            logger.LogError("Game with id: {GameId} not found.", fileDto.GameId);
+            logger.LogError(ErrorMessages.NotFound("Game", fileDto.GameId));
             return null;
         }
         
