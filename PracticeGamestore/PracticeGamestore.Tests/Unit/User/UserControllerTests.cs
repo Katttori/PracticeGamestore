@@ -48,7 +48,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task GetUserById_ShouldReturnOkResult_WhenUserExists()
+    public async Task GetUserById_WhenUserExists_ShouldReturnOkResult()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -70,7 +70,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task GetUserById_ShouldReturnNotFound_WhenUserDoesNotExist()
+    public async Task GetUserById_WhenUserDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
         _userService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -84,7 +84,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task CreateUser_ShouldReturnCreatedResult_WhenUserIsCreated()
+    public async Task CreateUser_WhenUserIsCreated_ShouldReturnCreatedResult()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -105,7 +105,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task CreateUser_ShouldReturnBadRequest_WhenCreationFails()
+    public async Task CreateUser_WhenCreationFails_ShouldReturnBadRequest()
     {
         // Arrange
         var userRequestModel = TestData.User.GenerateUserRequestModel();
@@ -120,7 +120,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnNoContent_WhenUserIsUpdated()
+    public async Task Update_WhenUserIsUpdated_ShouldReturnNoContent()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -135,7 +135,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
+    public async Task Update_WhenUpdateFails_ShouldReturnBadRequest()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -151,7 +151,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task Delete_ShouldReturnNoContent_WhenUserIsDeleted()
+    public async Task Delete_WhenUserIsDeleted_ShouldReturnNoContent()
     {
         // Arrange
         _userService.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
@@ -164,7 +164,7 @@ public class UserControllerTests
     }
     
     [Test]
-    public async Task BanUser_ShouldReturnNoContent_WhenUserIsBanned()
+    public async Task BanUser_WhenUserIsBanned_ShouldReturnNoContent()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -178,7 +178,7 @@ public class UserControllerTests
     }
     
     [Test]
-    public async Task BanUser_ShouldReturnBadRequest_WhenBanFails()
+    public async Task BanUser_WhenBanFails_ShouldReturnBadRequest()
     {
         // Arrange
         var id = Guid.NewGuid();

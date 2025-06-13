@@ -109,7 +109,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldAddUser_WhenChangesSavedSuccessfully()
+    public async Task CreateAsync_WhenChangesSavedSuccessfully_ShouldAddUser()
     {
         // Arrange
         var user = TestData.User.GenerateUserEntity();
@@ -127,7 +127,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
+    public async Task CreateAsync_WhenChangesNotSaved_ShouldReturnNull()
     {
         // Arrange
         var user = TestData.User.GenerateUserEntity();
@@ -144,7 +144,7 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldReturnStatusBanned_WhenUserInBlacklist()
+    public async Task CreateAsync_WhenUserInBlacklist_ShouldReturnStatusBanned()
     {
         // Arrange
         var userDto = TestData.User.GenerateUserDto();
@@ -164,7 +164,7 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldSetStatusBanned_WhenCountryMismatchInBlacklist()
+    public async Task CreateAsync_WhenCountryMismatchInBlacklist_ShouldSetStatusBanned()
     {
         // Arrange
         var userDto = TestData.User.GenerateUserDto();
@@ -206,7 +206,7 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task BanUserAsync_ShouldReturnTrue_WhenUserIsBannedSuccessfully()
+    public async Task BanUserAsync_WhenUserIsBannedSuccessfully_ShouldReturnTrue()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -221,7 +221,7 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task BanUserAsync_ShouldReturnFalse_WhenUserNotFoundOrAlreadyBanned()
+    public async Task BanUserAsync_WhenUserNotFoundOrAlreadyBanned_ShouldReturnFalse()
     {
         // Arrange
         var userId = Guid.NewGuid();
