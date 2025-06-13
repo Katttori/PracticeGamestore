@@ -30,8 +30,7 @@ public class UserService(
 
         dto.Status = isInBlacklist ? UserStatus.Banned : UserStatus.Active;
 
-        var blacklistCountries = await blacklistRepository.GetAllAsync();
-        if (blacklistCountries.Any(b => b.UserEmail == dto.Email && b.CountryId != dto.CountryId))
+        if (await blacklistRepository.IsInBlacklistAsync(dto.Email, dto.CountryId))
         {
             dto.Status = UserStatus.Banned;
         }
