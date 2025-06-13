@@ -35,4 +35,5 @@ public static class ErrorMessages
     public const string MissingEmailHeader = "Missing X-User-Email header.";
     public const string MissingLocationHeader = "Missing X-Location-Country header.";
     public const string BlacklistedUser = "you are banned :)";
+    public const string IncorrectPhoneNumber = "Phone number must be in the format +1234567890 or 1234567890, and must not contain letters or special characters.";
 }
