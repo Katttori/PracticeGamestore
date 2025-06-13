@@ -36,7 +36,7 @@ public class OrderControllerTests
     [Test]
     public async Task GetAll_ReturnsOkWithOrders()
     {
-        //Arrange
+        // Arrange
         _orderServiceMock.Setup(x => x.GetAllAsync()).ReturnsAsync(_orderDtos);
         
         // Act
@@ -60,7 +60,7 @@ public class OrderControllerTests
     [Test]
     public async Task GetById_WhenOrderIsNull_ReturnsNotFound()
     {
-        //Arrange
+        // Arrange
         _orderServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as OrderResponseDto);
         
         // Act
@@ -73,7 +73,7 @@ public class OrderControllerTests
     [Test]
     public async Task GetById_WhenOrderFound_ReturnsOkWithOrder()
     {
-        //Arrange
+        // Arrange
         _orderServiceMock.Setup(x => x.GetByIdAsync(_orderDtos[0].Id!.Value)).ReturnsAsync(_orderDtos[0]);
         
         // Act
@@ -93,7 +93,7 @@ public class OrderControllerTests
     [Test]
     public async Task Create_WhenOperationFailed_ReturnsBadRequest()
     {
-        //Arrange
+        // Arrange
         _orderServiceMock
             .Setup(x => x.CreateAsync(It.IsAny<OrderRequestDto>()))
             .ReturnsAsync(null as Guid?);
@@ -108,7 +108,7 @@ public class OrderControllerTests
     [Test]
     public async Task Create_WhenOperationSuccessful_ReturnsCreatedWithId()
     {
-        //Arrange
+        // Arrange
         var newId = Guid.NewGuid();
         
         _orderServiceMock.Setup(x => x.CreateAsync(It.IsAny<OrderRequestDto>())).ReturnsAsync(newId);
@@ -125,7 +125,7 @@ public class OrderControllerTests
     [Test]
     public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
     {
-        //Arrange
+        // Arrange
         _orderServiceMock
             .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<OrderRequestDto>()))
             .ReturnsAsync(true);
@@ -140,7 +140,7 @@ public class OrderControllerTests
     [Test]
     public async Task Update_WhenOperationFailed_ReturnsBadRequest()
     {
-        //Arrange
+        // Arrange
         _orderServiceMock
             .Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<OrderRequestDto>()))
             .ReturnsAsync(false);
@@ -155,7 +155,7 @@ public class OrderControllerTests
     [Test]
     public async Task Delete_ReturnsNoContent()
     {
-        //Arrange
+        // Arrange
         _orderServiceMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
         
         // Act
