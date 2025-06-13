@@ -39,6 +39,11 @@ public class Country
         return new(Guid.NewGuid(), "Canada", Business.Enums.CountryStatus.Allowed);
     }
     
+    public static CountryDto GenerateBannedCountryDto()
+    {
+        return new(Guid.NewGuid(), "russia", Business.Enums.CountryStatus.Banned);
+    }
+    
     public static DataAccess.Entities.Country GenerateCountryEntity()
     {
         return new() { Id = Guid.NewGuid(), Name = "USA", CountryStatus = CountryStatus.Allowed };
