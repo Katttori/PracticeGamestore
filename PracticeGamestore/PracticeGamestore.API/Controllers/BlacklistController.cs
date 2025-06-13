@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Filters;
@@ -9,6 +11,7 @@ using PracticeGamestore.Models.Blacklist;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("blacklists")]
+[Authorize(Roles = nameof(UserRole.Admin))]
 public class BlacklistController(
     IBlacklistService blacklistService,
     ICountryService countryService,
