@@ -7,6 +7,7 @@ using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Services.File;
 using PracticeGamestore.DataAccess.Repositories.File;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Tests.Unit.File;
@@ -14,6 +15,7 @@ namespace PracticeGamestore.Tests.Unit.File;
 public class FileServiceTests
 {
     private Mock<IFileRepository> _fileRepository;
+    private Mock<IGameRepository> _gameRepository;
     private Mock<IUnitOfWork> _unitOfWork;
     private Mock<IWebHostEnvironment> _webHostEnvironment;
     private Mock<IConfiguration> _configuration;
@@ -24,6 +26,7 @@ public class FileServiceTests
     public void Setup()
     {
         _fileRepository = new Mock<IFileRepository>();
+        _gameRepository = new Mock<IGameRepository>();
         _unitOfWork = new Mock<IUnitOfWork>();
         _webHostEnvironment = new Mock<IWebHostEnvironment>();
         _configuration = new Mock<IConfiguration>();
@@ -34,6 +37,7 @@ public class FileServiceTests
         
         _fileService = new FileService(
             _fileRepository.Object,
+            _gameRepository.Object,
             _unitOfWork.Object,
             _webHostEnvironment.Object,
             _configuration.Object,
@@ -97,6 +101,12 @@ public class FileServiceTests
 
         _fileRepository.Setup(p => p.CreateAsync(It.IsAny<DataAccess.Entities.File>()))
             .ReturnsAsync(fileDto.MapToFileEntity().Id);
+        _gameRepository
+            .Setup(g => g.GetByIdAsync(fileDto.GameId))
+            .ReturnsAsync(TestData.Game.GenerateGameEntity(
+                TestData.Publisher.GeneratePublisherEntities(),
+                TestData.Genre.GenerateGenreEntities(),
+                TestData.Platform.GeneratePlatformEntities()));
         _unitOfWork.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
         // Act

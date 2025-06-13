@@ -2,15 +2,18 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.DataAccess.Repositories.File;
+using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.File;
 
 public class FileService(
     IFileRepository fileRepository,
+    IGameRepository gameRepository,
     IUnitOfWork unitOfWork,
     IWebHostEnvironment env,
     IConfiguration config,
@@ -33,6 +36,14 @@ public class FileService(
     
     public async Task<Guid?> UploadAsync(FileDto fileDto)
     {   
+        
+        var game = await gameRepository.GetByIdAsync(fileDto.GameId);
+        if (game == null)
+        {
+            logger.LogError(ErrorMessages.NotFound("Game", fileDto.GameId));
+            return null;
+        }
+        
         await unitOfWork.BeginTransactionAsync();
         var path = await SavePhysicalFileAsync(fileDto.File);
             
