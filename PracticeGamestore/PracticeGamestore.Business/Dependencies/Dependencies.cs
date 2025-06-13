@@ -60,11 +60,8 @@ public static class Dependencies
         services.AddScoped<IBlacklistService, BlacklistService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IFileService, FileService>();
-<<<<<<< feature/user-crud
         services.AddScoped<IUserService, UserService>();
-=======
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IHeaderHandleService, HeaderHandleService>();
->>>>>>> main
     }
 }

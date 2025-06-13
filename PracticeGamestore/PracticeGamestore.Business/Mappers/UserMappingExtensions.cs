@@ -34,5 +34,4 @@ public static class UserMappingExtensions
             BirthDate = userDto.BirthDate
         };
     }
-    
 }

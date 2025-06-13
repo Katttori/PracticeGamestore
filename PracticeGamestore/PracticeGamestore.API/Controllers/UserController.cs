@@ -26,6 +26,7 @@ public class UserController(
             logger.LogWarning("User with ID {Id} not found", id);
             return NotFound("User not found");
         }
+        
         return Ok(user.MapToUserResponseModel());
     }
     
