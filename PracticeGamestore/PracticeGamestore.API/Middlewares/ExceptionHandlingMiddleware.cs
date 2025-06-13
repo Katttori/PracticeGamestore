@@ -1,3 +1,5 @@
+using PracticeGamestore.Business.Constants;
+
 namespace PracticeGamestore.Middlewares;
 
 public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
@@ -17,8 +19,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             int statusCode;
             string message;
 
-            switch (e)
-            {
+            switch (e){
                 case ArgumentException:
                     statusCode = StatusCodes.Status400BadRequest;
                     message = e.Message;
@@ -29,7 +30,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
                     break;
                 default:
                     statusCode = StatusCodes.Status500InternalServerError;
-                    message = "something happened?";
+                    message = ErrorMessages.GlobalError;
                     break;
             }
             

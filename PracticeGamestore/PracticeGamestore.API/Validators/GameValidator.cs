@@ -30,8 +30,8 @@ public class GameValidator : AbstractValidator<GameRequestModel>
             .WithMessage(ErrorMessages.InvalidAgeRating);
 
         RuleFor(x => x.Picture)
-            .Must(p => p.Length is <= ValidationConstants.MaximumPictureSize
-                           and >= ValidationConstants.MinimumPictureSize &&
+            .Must(p => p.Length is <= ValidationConstants.GamePicture.MaximumPictureSize
+                           and >= ValidationConstants.GamePicture.MinimumPictureSize &&
                        IsValidPictureFormat(p))
             .When(x => x.Picture != null)
             .WithMessage(ErrorMessages.IncorrectPictureFormat);
@@ -51,7 +51,7 @@ public class GameValidator : AbstractValidator<GameRequestModel>
     }
     
     private static bool IsValidPictureFormat(byte[] bytes) =>
-         bytes.Length >= 4 && ValidationConstants.AllowedPictureFormats
+         bytes.Length >= 4 && ValidationConstants.GamePicture.AllowedPictureFormats
              .Any(format => format.Value
                  .Any(signature => bytes.Length >= signature.Length &&
                                    signature.Select((b, i) => b == 0x00 || bytes[i] == b)
