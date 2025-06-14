@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.HeaderHandle;
+using Microsoft.AspNetCore.Authorization;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
@@ -38,6 +40,7 @@ public class OrderController(
 
     [HttpPost]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.User))]
     public async Task<IActionResult> Create(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
         [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
@@ -59,6 +62,7 @@ public class OrderController(
 
     [HttpPut("{id:guid}")]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Update(Guid id, [FromBody] OrderRequestModel model)
     {
         var isUpdated = await orderService.UpdateAsync(id, model.MapToOrderDto());
@@ -73,6 +77,7 @@ public class OrderController(
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Delete(Guid id)
     {
         await orderService.DeleteAsync(id);

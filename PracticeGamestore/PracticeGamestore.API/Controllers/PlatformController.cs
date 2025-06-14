@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Platform;
@@ -68,6 +70,7 @@ public class PlatformController(
     
     [HttpPost]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Manager))]
     public async Task<IActionResult> CreatePlatform([FromBody] PlatformRequestModel platform)
     {
         var platformDto = platform.MapToPlatformDto();
@@ -86,6 +89,7 @@ public class PlatformController(
 
     [HttpPut("{id:guid}")]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformRequestModel platform)
     {
         var dto = platform.MapToPlatformDto();
@@ -103,6 +107,7 @@ public class PlatformController(
     }
     
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> DeletePlatform(Guid id)
     {
         await platformService.DeleteAsync(id);

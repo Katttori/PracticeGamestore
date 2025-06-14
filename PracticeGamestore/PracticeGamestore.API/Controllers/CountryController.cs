@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
@@ -10,6 +11,7 @@ using PracticeGamestore.Models.Country;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("countries")]
+[Authorize(Roles = nameof(UserRole.Admin))]
 public class CountryController(ICountryService countryService, ILogger<CountryController> logger) : ControllerBase
 {
     [HttpGet]
