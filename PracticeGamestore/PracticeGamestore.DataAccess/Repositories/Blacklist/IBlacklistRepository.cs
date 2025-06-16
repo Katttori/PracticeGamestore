@@ -8,4 +8,5 @@ public interface IBlacklistRepository
     void Update(Entities.Blacklist blacklist);
     Task DeleteAsync(Guid id);
     Task<bool> ExistsByUserEmailAsync(string email);
+    Task<bool> IsInBlacklistAsync(string userEmail, Guid countryId);
 }

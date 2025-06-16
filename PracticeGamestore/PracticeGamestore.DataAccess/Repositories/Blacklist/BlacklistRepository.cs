@@ -39,4 +39,10 @@ public class BlacklistRepository(GamestoreDbContext context) : IBlacklistReposit
     {
         return await _blacklistsNoTracking.AnyAsync(b => b.UserEmail == email);
     }
+
+    public async Task<bool> IsInBlacklistAsync(string userEmail, Guid countryId)
+    {
+        return await _blacklistsNoTracking
+            .AnyAsync(b => b.UserEmail == userEmail && b.CountryId == countryId);
+    }
 }

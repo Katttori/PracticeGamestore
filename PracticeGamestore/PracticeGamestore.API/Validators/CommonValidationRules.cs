@@ -54,6 +54,15 @@ public static class CommonValidationRules
             .WithMessage(ErrorMessages.HasIncorrectIds);
     }
 
+    public static IRuleBuilderOptions<T, string> HasValidPhoneNumber<T>(this IRuleBuilder<T, string> ruleBuilder)
+    {
+        return ruleBuilder
+            .NotEmpty()
+            .Matches(@"^\+?[0-9\s-]+$")
+            .WithMessage(ErrorMessages.IncorrectPhoneNumber)
+            .Length(10, ValidationConstants.StringLength.ShortMaximum);
+    }
+
     public static IRuleBuilderOptions<T, IFormFile?> IsValidFile<T>(this IRuleBuilder<T, IFormFile?> ruleBuilder, List<string> allowedExtensions)
     {
         return ruleBuilder

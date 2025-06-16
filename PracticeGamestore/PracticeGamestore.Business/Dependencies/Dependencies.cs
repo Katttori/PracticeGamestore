@@ -12,6 +12,7 @@ using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Order;
+using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Country;
 using PracticeGamestore.DataAccess.Repositories.File;
@@ -20,6 +21,7 @@ using PracticeGamestore.DataAccess.Repositories.Genre;
 using PracticeGamestore.DataAccess.Repositories.Platform;
 using PracticeGamestore.DataAccess.Repositories.Publisher;
 using PracticeGamestore.DataAccess.Repositories.Order;
+using PracticeGamestore.DataAccess.Repositories.User;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Dependencies;
@@ -37,6 +39,7 @@ public static class Dependencies
         services.AddScoped<IBlacklistRepository, BlacklistRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IFileRepository, FileRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 
     private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -57,6 +60,7 @@ public static class Dependencies
         services.AddScoped<IBlacklistService, BlacklistService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IHeaderHandleService, HeaderHandleService>();
     }
