@@ -23,11 +23,14 @@ public class UserValidatorTests
     [TestCase("Invalid#Name", TestName = "UserName with invalid characters")]
     public void ShouldHaveError_WhenUserNameIsInvalid(string? userName)
     {
+        // Arrange
         var model = GenerateValidModel();
         model.UserName = userName!;
-
+        
+        // Act
         var result = _validator.TestValidate(model);
-
+        
+        // Assert
         result.ShouldHaveValidationErrorFor(x => x.UserName);
     }
 
@@ -36,11 +39,14 @@ public class UserValidatorTests
     [TestCase("Jean-Luc Picard", TestName = "Valid name with dash")]
     public void ShouldNotHaveError_WhenUserNameIsValid(string userName)
     {
+        // Arrange
         var model = GenerateValidModel();
         model.UserName = userName;
 
+        // Act
         var result = _validator.TestValidate(model);
 
+        // Assert
         result.ShouldNotHaveValidationErrorFor(x => x.UserName);
     }
 
@@ -53,23 +59,29 @@ public class UserValidatorTests
     [TestCase("user name@domain.com", TestName = "Email with space")]
     public void ShouldHaveError_WhenEmailIsInvalid(string? email)
     {
+        // Arrange
         var model = GenerateValidModel();
         model.Email = email!;
-
+        
+        // Act
         var result = _validator.TestValidate(model);
-
+        
+        // Assert
         result.ShouldHaveValidationErrorFor(x => x.Email);
     }
 
-    [TestCase("valid@example.com")]
-    [TestCase("user.name+alias@sub.domain.com")]
+    [TestCase("valid@example.com", TestName = "Standard valid email")]
+    [TestCase("user.name+alias@sub.domain.com", TestName = "Standard valid email with subdomain")]
     public void ShouldNotHaveError_WhenEmailIsValid(string email)
     {
+        // Arrange
         var model = GenerateValidModel();
         model.Email = email;
-
+        
+        // Act
         var result = _validator.TestValidate(model);
-
+        
+        // Assert
         result.ShouldNotHaveValidationErrorFor(x => x.Email);
     }
 
@@ -80,40 +92,50 @@ public class UserValidatorTests
     [TestCase("123abc", TestName = "Phone contains letters")]
     public void ShouldHaveError_WhenPhoneNumberIsInvalid(string? phone)
     {
+        // Arrange
         var model = GenerateValidModel();
         model.PhoneNumber = phone!;
-
+        
+        // Act
         var result = _validator.TestValidate(model);
-
+        
+        // Assert
         result.ShouldHaveValidationErrorFor(x => x.PhoneNumber);
     }
 
-    [TestCase("+1234567890")]
-    [TestCase("00380501234567")]
-    [TestCase("+1 234 567 890")]
+    [TestCase("+1234567890", TestName = "Valid international format without prefix")]
+    [TestCase("00380501234567", TestName = "Valid international format with prefix")]
+    [TestCase("+1 234 567 890", TestName = "Valid international format with spaces")]
     public void ShouldNotHaveError_WhenPhoneNumberIsValid(string phone)
     {
+        // Arrange
         var model = GenerateValidModel();
         model.PhoneNumber = phone;
-
+        
+        // Act
         var result = _validator.TestValidate(model);
-
+        
+        // Assert
         result.ShouldNotHaveValidationErrorFor(x => x.PhoneNumber);
     }
 
     [Test]
     public void ShouldNotHaveAnyErrors_WhenModelIsValid()
     {
+        // Arrange
         var model = GenerateValidModel();
 
+        // Act
         var result = _validator.TestValidate(model);
 
+        // Assert
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Test]
     public void ShouldHaveMultipleErrors_WhenModelHasMultipleInvalidFields()
     {
+        // Arrange
         var model = new UserRequestModel
         {
             UserName = "",
@@ -125,8 +147,10 @@ public class UserValidatorTests
             BirthDate = DateTime.UtcNow.AddYears(-20)
         };
 
+        // Act
         var result = _validator.TestValidate(model);
 
+        // Assert
         result.ShouldHaveValidationErrorFor(x => x.UserName);
         result.ShouldHaveValidationErrorFor(x => x.Email);
         result.ShouldHaveValidationErrorFor(x => x.PhoneNumber);
