@@ -21,7 +21,7 @@ public class UserValidatorTests
     [TestCase(" ", TestName = "UserName is whitespace")]
     [TestCase("A", TestName = "UserName too short")]
     [TestCase("Invalid#Name", TestName = "UserName with invalid characters")]
-    public void ShouldHaveError_WhenUserNameIsInvalid(string? userName)
+    public void WhenUserNameIsInvalid_ShouldHaveError(string? userName)
     {
         // Arrange
         var model = GenerateValidModel();
@@ -37,7 +37,7 @@ public class UserValidatorTests
     [TestCase("John Doe", TestName = "Valid normal name")]
     [TestCase("O'Connor", TestName = "Valid name with apostrophe")]
     [TestCase("Jean-Luc Picard", TestName = "Valid name with dash")]
-    public void ShouldNotHaveError_WhenUserNameIsValid(string userName)
+    public void WhenUserNameIsValid_ShouldNotHaveError(string userName)
     {
         // Arrange
         var model = GenerateValidModel();
@@ -57,7 +57,7 @@ public class UserValidatorTests
     [TestCase("user@", TestName = "Email missing domain")]
     [TestCase("user@domain", TestName = "Email missing TLD")]
     [TestCase("user name@domain.com", TestName = "Email with space")]
-    public void ShouldHaveError_WhenEmailIsInvalid(string? email)
+    public void WhenEmailIsInvalid_ShouldHaveError(string? email)
     {
         // Arrange
         var model = GenerateValidModel();
@@ -72,7 +72,7 @@ public class UserValidatorTests
 
     [TestCase("valid@example.com", TestName = "Standard valid email")]
     [TestCase("user.name+alias@sub.domain.com", TestName = "Standard valid email with subdomain")]
-    public void ShouldNotHaveError_WhenEmailIsValid(string email)
+    public void WhenEmailIsValid_ShouldNotHaveError(string email)
     {
         // Arrange
         var model = GenerateValidModel();
@@ -90,7 +90,7 @@ public class UserValidatorTests
     [TestCase("123", TestName = "Phone too short")]
     [TestCase("VeryVeryLongPhoneNumberThatIsTooLong", TestName = "Phone too long")]
     [TestCase("123abc", TestName = "Phone contains letters")]
-    public void ShouldHaveError_WhenPhoneNumberIsInvalid(string? phone)
+    public void WhenPhoneNumberIsInvalid_ShouldHaveError(string? phone)
     {
         // Arrange
         var model = GenerateValidModel();
@@ -106,7 +106,7 @@ public class UserValidatorTests
     [TestCase("+1234567890", TestName = "Valid international format without prefix")]
     [TestCase("00380501234567", TestName = "Valid international format with prefix")]
     [TestCase("+1 234 567 890", TestName = "Valid international format with spaces")]
-    public void ShouldNotHaveError_WhenPhoneNumberIsValid(string phone)
+    public void WhenPhoneNumberIsValid_ShouldNotHaveError(string phone)
     {
         // Arrange
         var model = GenerateValidModel();
@@ -120,7 +120,7 @@ public class UserValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValid()
+    public void WhenModelIsValid_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var model = GenerateValidModel();
@@ -133,7 +133,7 @@ public class UserValidatorTests
     }
 
     [Test]
-    public void ShouldHaveMultipleErrors_WhenModelHasMultipleInvalidFields()
+    public void WhenModelHasMultipleInvalidFields_ShouldHaveMultipleErrors()
     {
         // Arrange
         var model = new UserRequestModel
