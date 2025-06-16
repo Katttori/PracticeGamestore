@@ -18,6 +18,7 @@ public class OrderController(
     ILogger<OrderController> logger) : ControllerBase
 {
     [HttpGet]
+    [Authorize(Roles = nameof(UserRole.Manager))]
     public async Task<IActionResult> GetAll()
     {
         var orders = await orderService.GetAllAsync();

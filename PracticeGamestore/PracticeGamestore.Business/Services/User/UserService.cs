@@ -35,8 +35,6 @@ public class UserService(
             dto.Status = UserStatus.Banned;
         }
         
-        dto.Role = string.IsNullOrWhiteSpace(dto.Role) ? "User" : dto.Role;
-        
         dto.Password = HashPassword(dto.Password);
         
         var entity = dto.MapToUserEntity();

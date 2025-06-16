@@ -14,7 +14,7 @@ public static class UserMappingExtensions
             user.Email,
             user.PhoneNumber,
             user.PasswordHash,
-            user.Role,
+            (UserRole)user.Role,
             (UserStatus)user.Status,
             user.CountryId,
             user.BirthDate
@@ -29,7 +29,7 @@ public static class UserMappingExtensions
             Email = userDto.Email,
             PhoneNumber = userDto.PhoneNumber,
             PasswordHash = userDto.Password,
-            Role = userDto.Role,
+            Role = (DataAccess.Enums.UserRole)userDto.Role,
             Status = (DataAccess.Enums.UserStatus)userDto.Status,
             CountryId = userDto.CountryId,
             BirthDate = userDto.BirthDate

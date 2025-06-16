@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PracticeGamestore.DataAccess;
 
@@ -11,9 +12,11 @@ using PracticeGamestore.DataAccess;
 namespace PracticeGamestore.DataAccess.Migrations
 {
     [DbContext(typeof(GamestoreDbContext))]
-    partial class GamestoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250616195636_ChangeUserRoleToEnum")]
+    partial class ChangeUserRoleToEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
