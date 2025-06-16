@@ -18,6 +18,8 @@ public class GamestoreDbContext : DbContext
     public DbSet<GameOrder> GameOrders { get; set; }
     public DbSet<GamePlatform> GamePlatforms { get; set; }
     public DbSet<GameGenre> GameGenres { get; set; }
+    
+    public DbSet<User> Users { get; set; }
 
     public GamestoreDbContext(DbContextOptions<GamestoreDbContext> options) : base(options){}
     

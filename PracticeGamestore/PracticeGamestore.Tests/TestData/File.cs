@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Moq;
 using PracticeGamestore.Business.Mappers;
-using PracticeGamestore.DataAccess.Entities;
 
 namespace PracticeGamestore.Tests.TestData;
 
@@ -18,9 +17,9 @@ public static class File
                 Id = Guid.NewGuid(),
                 GameId = games.First().Id,
                 Size = 1024,
-                Path = "GameFiles/gamefile1.pdf",
+                Path = "GameFiles/gamefile1.zip",
                 CreationDate = new DateTime(2024, 5, 10),
-                Type = "application/pdf",
+                Type = "application/zip",
                 Game = games.First(g => g.Id == games.First().Id)
             },
             new()
@@ -46,7 +45,7 @@ public static class File
             Id = realId,
             GameId = realGameId,
             Size = 3072,
-            Path = "GameFiles/sample.dat",
+            Path = "GameFiles/sample.zip",
             CreationDate = DateTime.UtcNow,
             Type = "application/octet-stream",
             Game = new PracticeGamestore.DataAccess.Entities.Game
@@ -62,35 +61,38 @@ public static class File
         };
     }
 
-    public static PracticeGamestore.Business.DataTransferObjects.FileDto GenerateFileDto(Guid? id = null,
+    public static Business.DataTransferObjects.FileDto GenerateFileDto(Guid? id = null,
         Guid? gameId = null)
     {
         var realId = id ?? Guid.NewGuid();
         var realGameId = gameId ?? Guid.NewGuid();
-
-        // MOCKED file
-        var mockFile = new Mock<IFormFile>();
-        mockFile.Setup(f => f.FileName).Returns("testfile.dat");
-        mockFile.Setup(f => f.Length).Returns(4096);
-        mockFile.Setup(f => f.ContentType).Returns("application/octet-stream");
-        mockFile.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(new byte[] { 0x00, 0x01 }));
-        mockFile.Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
-            .Returns<Stream, CancellationToken>((stream, _) => stream.WriteAsync(new byte[] { 0x00, 0x01 }, 0, 2));
-
-        return new PracticeGamestore.Business.DataTransferObjects.FileDto
+        
+        return new Business.DataTransferObjects.FileDto
         {
             Id = realId,
             GameId = realGameId,
             Size = 4096,
-            Path = $"GameFiles/{realId}.dat",
+            Path = $"GameFiles/{realId}.zip",
             CreationDate = DateTime.UtcNow,
             Type = "application/octet-stream",
-            File = mockFile.Object
+            File = GenerateFile("testfile.zip", 4096)
         };
     }
     
-    public static List<PracticeGamestore.Business.DataTransferObjects.FileDto> GenerateFileDtos()
+    public static List<Business.DataTransferObjects.FileDto> GenerateFileDtos()
     {
         return GenerateFileEntities().Select(file => file.MapToFileDto()).ToList();
+    }
+    
+    public static IFormFile GenerateFile(string fileNameWithExtension, long length)
+    {
+        var mockFile = new Mock<IFormFile>();
+        mockFile.Setup(f => f.FileName).Returns(fileNameWithExtension);
+        mockFile.Setup(f => f.Length).Returns(length);
+        mockFile.Setup(f => f.ContentType).Returns("application/octet-stream");
+        mockFile.Setup(f => f.OpenReadStream()).Returns(new MemoryStream([0x00, 0x01]));
+        mockFile.Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+            .Returns<Stream, CancellationToken>((stream, _) => stream.WriteAsync([0x00, 0x01], 0, 2));
+        return mockFile.Object;
     }
 }

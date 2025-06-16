@@ -1,30 +1,45 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Extensions;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Models.Game;
 
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("games")]
-public class GameController(IGameService gameService, ILogger<GameController> logger) : ControllerBase
+public class GameController(
+    IGameService gameService,
+    IHeaderHandleService headerHandleService,
+    ILogger<GameController> logger) : ControllerBase
 {
     [BirthdateRestrictionFilter]
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var games = await gameService.GetAllAsync(HttpContext.IsUnderage());
         return Ok(games.Select(g => g.MapToGameModel()));
     }
 
     [BirthdateRestrictionFilter]
     [HttpGet("/filter")]
-    public async Task<IActionResult> GetFiltered([FromQuery] GameFilter filter)
+    public async Task<IActionResult> GetFiltered(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        [FromQuery] GameFilter filter)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var (games, totalCount) = await gameService.GetFilteredAsync(filter, HttpContext.IsUnderage());
+        
         return Ok(new PaginatedGameListResponseModel {
             Games = games.Select(g => g.MapToGameModel()).ToList(),
             PageNumber = filter.Page ?? 1,
@@ -35,8 +50,13 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
 
     [BirthdateRestrictionFilter]
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public async Task<IActionResult> GetById(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        [FromRoute] Guid id)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var gameDto = await gameService.GetByIdAsync(id);
         
         if (gameDto is null)

@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
+using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Extensions;
 using PracticeGamestore.Filters;
@@ -9,18 +11,30 @@ using PracticeGamestore.Models.Publisher;
 namespace PracticeGamestore.Controllers;
 
 [ApiController, Route("publishers")]
-public class PublisherController(IPublisherService publisherService, ILogger<PublisherController> logger) : ControllerBase
+public class PublisherController(
+    IPublisherService publisherService,
+    IHeaderHandleService headerHandleService,
+    ILogger<PublisherController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var publishers = await publisherService.GetAllAsync();
         return Ok(publishers.Select(p => p.MapToPublisherModel()));
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public async Task<IActionResult> GetById(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        [FromRoute] Guid id)
     {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
         var publisher = await publisherService.GetByIdAsync(id);
         
         if (publisher is null)
@@ -34,9 +48,14 @@ public class PublisherController(IPublisherService publisherService, ILogger<Pub
     
     [BirthdateRestrictionFilter]
     [HttpGet("{id:guid}/games")]
-    public async Task<IActionResult> GetPublisherGames([FromRoute] Guid id)
+    public async Task<IActionResult> GetPublisherGames(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
+        [FromRoute] Guid id)
     {
-         var games = await publisherService.GetGamesAsync(id, HttpContext.IsUnderage());
+        await headerHandleService.CheckAccessAsync(country, email);
+        
+        var games = await publisherService.GetGamesAsync(id, HttpContext.IsUnderage());
 
          if (games is null)
          {

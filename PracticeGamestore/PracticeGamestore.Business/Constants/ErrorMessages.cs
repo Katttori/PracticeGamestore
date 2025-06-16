@@ -12,7 +12,7 @@ public static class ErrorMessages
         => $"{first} cannot be greater than {second}";
     
     public static string IncorrectGameRating =>
-        $"Age rating must be between {ValidationConstants.GameRating.Min} and {ValidationConstants.GameRating.Max} inclusive.";
+        $"Game rating must be between {ValidationConstants.GameRating.Min} and {ValidationConstants.GameRating.Max} inclusive.";
 
     public static string InvalidAgeRating =>
         $"Age rating must be one of: {string.Join(", ", ValidationConstants.AgeRatingValues)}";
@@ -21,9 +21,12 @@ public static class ErrorMessages
         $"OrderBy fields must be one of: {string.Join(", ", ValidationConstants.OrderByFields)}";
 
     public static readonly string IncorrectPictureFormat =
-        $"Picture must be a valid image format ({string.Join(", ", ValidationConstants.AllowedPictureFormats.Keys)}) " +
-        $"and between {ValidationConstants.MinimumPictureSize} and {ValidationConstants.MaximumPictureSize} bytes.";
+        $"Picture must be a valid image format ({string.Join(", ", ValidationConstants.GamePicture.AllowedPictureFormats.Keys)}) " +
+        $"and between {ValidationConstants.GamePicture.MinimumPictureSize} and {ValidationConstants.GamePicture.MaximumPictureSize} bytes.";
 
+    public static readonly string InvalidGameFile = 
+        $"Game file is required and must be between {ValidationConstants.GameFile.MinSize / 1024}KB and {ValidationConstants.GameFile.MaxSize / (1024 * 1024)}MB with one of the following extensions: {string.Join(", ", ValidationConstants.GameFile.AllowedExtensions)}.";
+    
     public const string UnauthorizedAccess = "You don't have permission to perform this action.";
     public const string UnauthenticatedAccess = "You must be logged in to perform this action.";
     public const string IncorrectPageUrl = "Specified page URL is invalid.";
@@ -31,4 +34,10 @@ public static class ErrorMessages
     public const string IncorrectQueryParameters = "Invalid query parameters";
     public const string InvalidReleaseDate = "Release date cannot be in future";
     public const string IncorrectName = "Name must contain only letters, hyphens, spaces, and apostrophes";
+    public const string FailedFileUpload = "Failed to upload the file.";
+    public const string GlobalError = "something happened?";
+    public const string MissingEmailHeader = "Missing X-User-Email header.";
+    public const string MissingLocationHeader = "Missing X-Location-Country header.";
+    public const string BlacklistedUser = "you are banned :)";
+    public const string IncorrectPhoneNumber = "Phone number must be in the format +1234567890 or 1234567890, and must not contain letters or special characters.";
 }

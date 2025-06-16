@@ -481,7 +481,7 @@ public class GameValidatorTests
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
-        game.Picture = new byte[ValidationConstants.MinimumPictureSize - 1];
+        game.Picture = new byte[ValidationConstants.GamePicture.MinimumPictureSize - 1];
         
         // Act
         var result = _validator.TestValidate(game);
@@ -496,7 +496,7 @@ public class GameValidatorTests
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
-        game.Picture = new byte[ValidationConstants.MaximumPictureSize + 1];
+        game.Picture = new byte[ValidationConstants.GamePicture.MaximumPictureSize + 1];
         
         // Act
         var result = _validator.TestValidate(game);
