@@ -5,8 +5,9 @@ public static class ErrorMessages
     public static string FailedToCreate(string entityName) => $"Failed to create {entityName}.";
     public static string NotFound(string entityName, Guid id) => $"{entityName} with id {id} does not exist.";
     public static string FailedToUpdate(string entityName, Guid id) => $"Failed to update {entityName} with id {id}.";
-
+    public static string FailedLogIn(string email) => $"Could not find a user with email {email}, who is allowed to log in in our system:)";
     public static string HasIncorrectIds => "{PropertyName} does not contain corrects ids";
+    public static string FailedRegistrationBecauseOfBannedCountry(string country) => $"Country {country} is banned! You are not allowed to register:)";
 
     public static string FirstCannotBeGreaterThanSecond(string first, string second)
         => $"{first} cannot be greater than {second}";
@@ -31,7 +32,6 @@ public static class ErrorMessages
         $"Game file is required and must be between {ValidationConstants.GameFile.MinSize / 1024}KB and {ValidationConstants.GameFile.MaxSize / (1024 * 1024)}MB with one of the following extensions: {string.Join(", ", ValidationConstants.GameFile.AllowedExtensions)}.";
     
     public const string UnauthorizedAccess = "You don't have permission to perform this action.";
-    public const string Unauthorized = "Unauthorized! Your credentilas are invalid.";
     public const string UnauthenticatedAccess = "You must be logged in to perform this action.";
     public const string IncorrectPageUrl = "Specified page URL is invalid.";
     public const string IncorrectOrdering = "Order by field must be either asc or desc.";

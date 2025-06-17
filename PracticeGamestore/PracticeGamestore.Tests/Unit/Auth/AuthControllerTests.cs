@@ -148,35 +148,32 @@ public class AuthControllerTests
     }
 
     [Test]
-    public async Task Register_WhenLocationServiceThrowsUnauthorizedAccessExceptionBecauseUserCountryIsBanned_ShouldContinueProcessingAndLogWarning()
+    public async Task Register_WhenLocationServiceThrowsUnauthorizedAccessExceptionBecauseUserCountryIsBanned_ShouldReturnBadRequestWithMessage()
     {
         // Arrange
         var userRequest = TestData.User.GenerateUserRequestModel();
         var country = TestData.Country.GenerateCountryDto();
-        var userId = Guid.NewGuid();
         
         _countryServiceMock.Setup(x => x.GetByIdAsync(userRequest.CountryId))
             .ReturnsAsync(country);
         _locationServiceMock.Setup(x => x.HandleLocationAccessAsync(country.Name, userRequest.Email))
             .ThrowsAsync(new UnauthorizedAccessException());
-        _userServiceMock.Setup(x => x.CreateAsync(It.IsAny<UserDto>()))
-            .ReturnsAsync(userId);
-
+      
         // Act
         var result = await _authController.Register(userRequest);
 
         // Assert
-        var createdResult = result as CreatedAtActionResult;
+        var createdResult = result as BadRequestObjectResult;
         Assert.That(createdResult, Is.Not.Null);
-        Assert.That(createdResult!.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.That(createdResult.Value, Is.EqualTo(userId));
-
+        Assert.That(createdResult!.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        Assert.That(createdResult.Value, Is.EqualTo(ErrorMessages.FailedRegistrationBecauseOfBannedCountry(country.Name)));
+        _userServiceMock.Verify(x => x.CreateAsync(It.IsAny<UserDto>()), Times.Never);
         _loggerMock.Verify(
             x => x.Log(
                 LogLevel.Warning,
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((o, t) => o.ToString()!.Contains("User with email") && 
-                                              o.ToString()!.Contains("is registering from banned country") &&
+                                              o.ToString()!.Contains("tried to register from banned country") &&
                                               o.ToString()!.Contains("added to blacklist")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
@@ -213,7 +210,7 @@ public class AuthControllerTests
     }
 
     [Test]
-    public async Task Login_WhenCredentialsAreInvalid_ShouldReturnUnauthorized()
+    public async Task Login_WhenCredentialsAreInvalid_ShouldReturnNotFoundWithMessage()
     {
         // Arrange
         var loginRequest = new LoginRequest 
@@ -229,9 +226,9 @@ public class AuthControllerTests
         var result = await _authController.Login(loginRequest);
 
         // Assert
-        var unauthorizedResult = result as UnauthorizedObjectResult;
+        var unauthorizedResult = result as NotFoundObjectResult;
         Assert.That(unauthorizedResult, Is.Not.Null);
-        Assert.That(unauthorizedResult!.StatusCode, Is.EqualTo(StatusCodes.Status401Unauthorized));
-        Assert.That(unauthorizedResult.Value, Is.EqualTo(ErrorMessages.Unauthorized));
+        Assert.That(unauthorizedResult!.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(unauthorizedResult.Value, Is.EqualTo(ErrorMessages.FailedLogIn(loginRequest.Email)));
     }
 }

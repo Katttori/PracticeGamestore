@@ -34,8 +34,9 @@ public class AuthController(IUserService userService,
         }
         catch (UnauthorizedAccessException)
         {
-            logger.LogWarning("User with email {Email} is registering from banned country {CountryName}, added to blacklist", 
+            logger.LogWarning("User with email {Email} tried to register from banned country {CountryName}, added to blacklist", 
                 model.Email, country!.Name);
+            return BadRequest(ErrorMessages.FailedRegistrationBecauseOfBannedCountry(country.Name));
         }
 
         var id = await userService.CreateAsync(model.MapToUserDto());
@@ -54,7 +55,7 @@ public class AuthController(IUserService userService,
     {
         var token = await authService.AuthenticateUser(request.Email, request.Password);
         return token is null 
-            ? Unauthorized(ErrorMessages.Unauthorized) 
+            ? NotFound(ErrorMessages.FailedLogIn(request.Email)) 
             : Ok(token.MapToTokenResponseModel());
     }
 }

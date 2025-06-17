@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -5,6 +6,7 @@ using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.Auth;
 using PracticeGamestore.Business.Services.Token;
 using PracticeGamestore.Business.Utils;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.User;
 
 namespace PracticeGamestore.Tests.Unit.Auth;
@@ -65,7 +67,9 @@ public class AuthServiceTests
         var result = await _authService.AuthenticateUser(email, password);
 
         Assert.That(result, Is.Null);
-        
+    
+        // The key insight: when structured logging replaces {} with actual values,
+        // we need to match the final formatted message, not the template
         _logger.Verify(
             x => x.Log(
                 LogLevel.Warning,
@@ -86,6 +90,23 @@ public class AuthServiceTests
             .ReturnsAsync(user);
 
         var result = await _authService.AuthenticateUser(user.Email, incorrectPassword);
+
+        Assert.That(result, Is.Null);
+        
+        _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<DataAccess.Entities.User>()), Times.Never);
+    }
+    
+    [TestCase(UserStatus.Deleted, TestName = "When user's status is deleted returns null")]
+    [TestCase(UserStatus.Banned, TestName = "When user's status is banned returns null")]
+    public async Task AuthenticateUser_WhenTheirStatusIsBannedOrDeleted_ShouldReturnNull(UserStatus status)
+    {
+        var user = TestData.User.GenerateUserEntity();
+        user.Status = status;
+
+        _userRepository.Setup(x => x.GetByEmailAsync(user.Email))
+            .ReturnsAsync(user);
+
+        var result = await _authService.AuthenticateUser(user.Email, It.IsAny<string>());
 
         Assert.That(result, Is.Null);
         
