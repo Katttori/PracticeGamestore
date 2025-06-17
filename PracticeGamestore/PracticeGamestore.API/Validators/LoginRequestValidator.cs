@@ -12,6 +12,7 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
             .HasCorrectEmail();
 
         RuleFor(x => x.Password)
+            .Length(ValidationConstants.Password.MinLength, ValidationConstants.Password.MaxLength)
             .Must(password => !string.IsNullOrWhiteSpace(password?.Trim()))
             .WithMessage(ErrorMessages.PasswordRequired);
     }

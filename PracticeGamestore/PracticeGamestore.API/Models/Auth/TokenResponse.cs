@@ -1,6 +1,6 @@
 namespace PracticeGamestore.Models.Auth;
 
-public class TokenResponse
+public class TokenResponseModel
 {
     public Guid UserId { get; set; }
     public required string Token { get; set; }

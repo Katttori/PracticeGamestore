@@ -5,14 +5,14 @@ namespace PracticeGamestore.Mappers;
 
 public static class TokenResponseMappingExtensions
 {
-    public static TokenResponseDto MapToTokenResponseDto(this TokenResponse tokenResponse)
+    public static TokenResponseDto MapToTokenResponseDto(this TokenResponseModel tokenResponseModel)
     {
-        return new TokenResponseDto(tokenResponse.UserId, tokenResponse.Token, tokenResponse.Expiration);
+        return new TokenResponseDto(tokenResponseModel.UserId, tokenResponseModel.Token, tokenResponseModel.Expiration);
     }
 
-    public static TokenResponse MapToTokenResponseModel(this TokenResponseDto dto)
+    public static TokenResponseModel MapToTokenResponseModel(this TokenResponseDto dto)
     {
-        return new TokenResponse
+        return new TokenResponseModel
         {
             UserId = dto.UserId,
             Token = dto.Token,
