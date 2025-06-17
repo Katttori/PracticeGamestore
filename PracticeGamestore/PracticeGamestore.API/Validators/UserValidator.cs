@@ -20,6 +20,5 @@ public class UserValidator : AbstractValidator<UserRequestModel>
         RuleFor(x => x.Role)
             .Must(role => ValidationConstants.UserRoleValues.Contains(role.ToString()))
             .WithMessage(ErrorMessages.InvalidRole);
-
     }
 }
