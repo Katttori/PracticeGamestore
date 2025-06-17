@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Extensions;
 using PracticeGamestore.Business.Services.HeaderHandle;
@@ -48,6 +50,7 @@ public class GenreController(
 
     [HttpPost]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Manager))]
     public async Task<IActionResult> Create([FromBody] GenreRequestModel model)
     {
         var createdId = await genreService.CreateAsync(model.MapToGenreDto());
@@ -65,6 +68,7 @@ public class GenreController(
 
     [HttpPut("{id:guid}")]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GenreRequestModel model)
     {
         var isUpdated = await genreService.UpdateAsync(id, model.MapToGenreDto());
@@ -79,6 +83,7 @@ public class GenreController(
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Delete(Guid id)
     {
         await genreService.DeleteAsync(id);

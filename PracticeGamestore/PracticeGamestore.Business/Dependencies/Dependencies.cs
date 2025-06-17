@@ -13,6 +13,7 @@ using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Business.Services.User;
+using PracticeGamestore.Business.Services.Token;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Country;
 using PracticeGamestore.DataAccess.Repositories.File;
@@ -28,7 +29,7 @@ namespace PracticeGamestore.Business.Dependencies;
 
 public static class Dependencies
 {
-    private static void AddDataAccessServices(this IServiceCollection services)
+    private static void AddDataAccessServices(IServiceCollection services)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGameRepository, GameRepository>();
@@ -42,7 +43,7 @@ public static class Dependencies
         services.AddScoped<IUserRepository, UserRepository>();
     }
 
-    private static void RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
+    private static void RegisterDbContext(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<GamestoreDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("GamestoreDatabase")));
@@ -50,8 +51,8 @@ public static class Dependencies
 
     public static void AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.RegisterDbContext(configuration);
-        services.AddDataAccessServices();
+        RegisterDbContext(services, configuration);
+        AddDataAccessServices(services);
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IPublisherService, PublisherService>();
         services.AddScoped<IGenreService, GenreService>();
@@ -63,5 +64,6 @@ public static class Dependencies
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IHeaderHandleService, HeaderHandleService>();
+        services.AddScoped<ITokenService, TokenService>();
     }
 }

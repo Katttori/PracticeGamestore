@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Business.DataTransferObjects.Filtering;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Extensions;
 using PracticeGamestore.Business.Services.HeaderHandle;
@@ -76,6 +78,7 @@ public class GameController(
 
     [HttpPost]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Manager))]
     public async Task<IActionResult> Create([FromBody] GameRequestModel model)
     {
         var id = await gameService.CreateAsync(model.MapToGameDto());
@@ -92,6 +95,7 @@ public class GameController(
 
     [HttpPut("{id:guid}")]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GameRequestModel model)
     {
         var isUpdated = await gameService.UpdateAsync(id, model.MapToGameDto());
@@ -106,6 +110,7 @@ public class GameController(
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         await gameService.DeleteAsync(id);

@@ -9,12 +9,12 @@ public class UserDto
     public string Email { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public string Password { get; set; } = null!;
-    public string Role { get; set; } = null!; 
+    public UserRole Role { get; set; } 
     public UserStatus Status { get; set; }
     public Guid CountryId { get; set; }
     public DateTime BirthDate { get; set; }
     
-    public UserDto(Guid? id, string userName, string email, string phoneNumber, string password, string role, UserStatus status, Guid countryId, DateTime birthDate)
+    public UserDto(Guid? id, string userName, string email, string phoneNumber, string password, UserRole role, UserStatus status, Guid countryId, DateTime birthDate)
     {
         Id = id;
         UserName = userName;

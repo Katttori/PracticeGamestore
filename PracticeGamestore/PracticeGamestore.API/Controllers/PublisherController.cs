@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.HeaderHandle;
+using Microsoft.AspNetCore.Authorization;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Extensions;
 using PracticeGamestore.Filters;
@@ -68,6 +70,7 @@ public class PublisherController(
 
     [HttpPost]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Manager))]
     public async Task<IActionResult> Create([FromBody] PublisherRequestModel model)
     {
         var id = await publisherService.CreateAsync(model.MapToPublisherDto());
@@ -84,6 +87,7 @@ public class PublisherController(
 
     [HttpPut("{id:guid}")]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] PublisherRequestModel model)
     {
         var isUpdated = await publisherService.UpdateAsync(id, model.MapToPublisherDto());
@@ -98,6 +102,7 @@ public class PublisherController(
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         await publisherService.DeleteAsync(id);
