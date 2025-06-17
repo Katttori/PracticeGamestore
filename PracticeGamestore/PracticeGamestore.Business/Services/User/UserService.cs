@@ -1,6 +1,8 @@
-﻿using PracticeGamestore.Business.DataTransferObjects;
+﻿using Microsoft.Extensions.Logging;
+using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.Business.Utils;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.User;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -36,8 +38,8 @@ public class UserService(
         }
         
         dto.Role = string.IsNullOrWhiteSpace(dto.Role) ? "User" : dto.Role;
-        
-        dto.Password = HashPassword(dto.Password);
+        dto.PasswordSalt = Guid.NewGuid().ToString();
+        dto.Password = PasswordHasher.HashPassword(dto.Password, dto.PasswordSalt);
         
         var entity = dto.MapToUserEntity();
         var createdId = await userRepository.CreateAsync(entity);
@@ -50,8 +52,8 @@ public class UserService(
     {
         var existingUser = await GetByIdAsync(id);
         if (existingUser is null) return false;
-        
-        dto.Password = HashPassword(dto.Password);
+        dto.PasswordSalt = Guid.NewGuid().ToString();
+        dto.Password = PasswordHasher.HashPassword(dto.Password, dto.PasswordSalt);
         var updatedUser = dto.MapToUserEntity();
         updatedUser.Id = id;
         await userRepository.Update(updatedUser);
@@ -72,15 +74,5 @@ public class UserService(
         
         var changes = await unitOfWork.SaveChangesAsync();
         return changes > 0;
-    }
-
-    private string HashPassword(string password)
-    {
-        using var sha256 = System.Security.Cryptography.SHA256.Create();
-        var salt = Guid.NewGuid().ToString();
-        var bytes = System.Text.Encoding.UTF8.GetBytes(password + salt);
-        var hash = sha256.ComputeHash(bytes);
-        
-        return Convert.ToBase64String(hash);
     }
 }

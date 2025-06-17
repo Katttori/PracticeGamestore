@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace PracticeGamestore.Business.Constants;
 
 public static class ValidationConstants
@@ -42,5 +44,18 @@ public static class ValidationConstants
         public static readonly List<string> AllowedExtensions = [".zip", ".rar", ".exe", ".msi", ".dmg", ".pkg", ".deb", ".rpm", ".7z"];
         public const long MaxSize = 200L * 1024 * 1024 * 1024;
         public const long MinSize = 1L * 1024 * 1024 * 1024;
+    }
+    
+    public static class Password
+    {
+        public const int MinLength = 8;
+        public const int MaxLength = 50;
+        public static readonly Regex SpecialCharRegex = new(@"[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]", RegexOptions.Compiled);
+    }
+    
+    public static class PhoneNumber
+    {
+        public const int MaxLength = DataAccess.Constants.ValidationConstants.MaxPhoneLength;
+        public const int MinLength = 10;
     }
 }

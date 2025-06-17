@@ -14,6 +14,7 @@ public static class UserMappingExtensions
             model.Email,
             model.PhoneNumber, 
             model.Password,
+            null,
             model.Role,
             UserStatus.Active,
             model.CountryId,

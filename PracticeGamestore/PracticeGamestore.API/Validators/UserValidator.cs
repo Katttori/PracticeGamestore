@@ -15,5 +15,17 @@ public class UserValidator : AbstractValidator<UserRequestModel>
         
         RuleFor(x => x.PhoneNumber)
             .HasValidPhoneNumber();
+
+        RuleFor(x => x.CountryId)
+            .HasCorrectId();
+
+        RuleFor(x => x.BirthDate)
+            .LessThan(DateTime.UtcNow);
+
+        RuleFor(x => x.Role)
+            .NotEmpty();
+        
+        RuleFor(x => x.Password)
+            .HasSecurePassword();
     }
 }

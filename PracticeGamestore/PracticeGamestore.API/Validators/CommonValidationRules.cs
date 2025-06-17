@@ -60,7 +60,7 @@ public static class CommonValidationRules
             .NotEmpty()
             .Matches(@"^\+?[0-9\s-]+$")
             .WithMessage(ErrorMessages.IncorrectPhoneNumber)
-            .Length(10, ValidationConstants.StringLength.ShortMaximum);
+            .Length(ValidationConstants.PhoneNumber.MinLength, ValidationConstants.PhoneNumber.MaxLength);
     }
 
     public static IRuleBuilderOptions<T, IFormFile?> IsValidFile<T>(this IRuleBuilder<T, IFormFile?> ruleBuilder, List<string> allowedExtensions)
@@ -72,5 +72,19 @@ public static class CommonValidationRules
                 var extension = Path.GetExtension(x.FileName)?.ToLowerInvariant();
                 return !string.IsNullOrEmpty(extension) && allowedExtensions.Contains(extension);
             }).WithMessage(ErrorMessages.InvalidGameFile);
+    }
+
+    public static IRuleBuilderOptions<T, string> HasSecurePassword<T>(this IRuleBuilder<T, string> ruleBuilder)
+    {
+        return ruleBuilder
+            .NotEmpty()
+            .Length(ValidationConstants.Password.MinLength, ValidationConstants.Password.MaxLength)
+            .Must(password => 
+                password != null &&
+                password.Any(char.IsUpper) &&
+                password.Any(char.IsLower) &&
+                password.Any(char.IsDigit) &&
+                ValidationConstants.Password.SpecialCharRegex.IsMatch(password))
+            .WithMessage(ErrorMessages.InsecurePassword);
     }
 }

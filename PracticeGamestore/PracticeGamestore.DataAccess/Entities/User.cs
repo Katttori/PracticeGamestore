@@ -11,6 +11,7 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public string Role { get; set; } = "User"; // Default role is User
     public UserStatus Status { get; set; } = UserStatus.Active;
+    public string PasswordSalt { get; set; } = string.Empty;
     public Guid CountryId { get; set; }
     public DateTime BirthDate { get; set; }
     public Country Country { get; set; } = null!;

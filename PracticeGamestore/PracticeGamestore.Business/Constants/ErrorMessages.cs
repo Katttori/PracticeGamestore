@@ -28,6 +28,7 @@ public static class ErrorMessages
         $"Game file is required and must be between {ValidationConstants.GameFile.MinSize / 1024}KB and {ValidationConstants.GameFile.MaxSize / (1024 * 1024)}MB with one of the following extensions: {string.Join(", ", ValidationConstants.GameFile.AllowedExtensions)}.";
     
     public const string UnauthorizedAccess = "You don't have permission to perform this action.";
+    public const string Unauthorized = "Unauthorized! Your credentilas are invalid.";
     public const string UnauthenticatedAccess = "You must be logged in to perform this action.";
     public const string IncorrectPageUrl = "Specified page URL is invalid.";
     public const string IncorrectOrdering = "Order by field must be either asc or desc.";
@@ -40,4 +41,9 @@ public static class ErrorMessages
     public const string MissingLocationHeader = "Missing X-Location-Country header.";
     public const string BlacklistedUser = "you are banned :)";
     public const string IncorrectPhoneNumber = "Phone number must be in the format +1234567890 or 1234567890, and must not contain letters or special characters.";
+    public const string RegistrationFailed = "Registartion failed.";
+    public const string InvalidRegistrationCountry = "Invalid country was specified during registration.";
+    public const string PasswordRequired = "Password is required.";
+    public const string InsecurePassword =
+        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character";
 }
