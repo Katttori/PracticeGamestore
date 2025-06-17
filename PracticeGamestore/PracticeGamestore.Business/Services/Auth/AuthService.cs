@@ -23,6 +23,6 @@ public class AuthService(ITokenService tokenService,
         }
 
         var hashedPassword = PasswordHasher.HashPassword(password, user.PasswordSalt);
-        return hashedPassword != user.PasswordHash ? null : tokenService.GenerateToken(user);
+        return hashedPassword != user.PasswordHash ? null : tokenService.GenerateJwtToken(user);
     }
 }

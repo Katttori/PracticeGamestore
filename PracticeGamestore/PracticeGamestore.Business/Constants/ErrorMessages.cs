@@ -16,6 +16,9 @@ public static class ErrorMessages
 
     public static string InvalidAgeRating =>
         $"Age rating must be one of: {string.Join(", ", ValidationConstants.AgeRatingValues)}";
+    
+    public static string InvalidRole =>
+        $"Role must be one of: {string.Join(", ", ValidationConstants.UserRoleValues)}";
 
     public static string IncorrectOrderByFields =>
         $"OrderBy fields must be one of: {string.Join(", ", ValidationConstants.OrderByFields)}";

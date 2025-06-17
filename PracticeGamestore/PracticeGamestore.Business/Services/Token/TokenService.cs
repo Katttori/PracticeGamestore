@@ -22,11 +22,11 @@ public class TokenService(IOptions<JwtOptions> jwtOptions, IConfiguration config
             ValidateAudience = true,
             ValidAudience = jwtOptions.Audience,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero 
+            ClockSkew = TimeSpan.Zero
         };
     }
 
-    public TokenResponseDto GenerateToken(DataAccess.Entities.User user)
+    public TokenResponseDto GenerateJwtToken(DataAccess.Entities.User user)
     {
         var handler = new JwtSecurityTokenHandler();
         var key = CreateSecurityKey();
@@ -42,7 +42,7 @@ public class TokenService(IOptions<JwtOptions> jwtOptions, IConfiguration config
         };
 
         var token = handler.CreateToken(tokenDescriptor);
-        return new TokenResponseDto (user.Id, handler.WriteToken(token), jwtOptions.Value.ExpirationTimeInMinutes);
+        return new TokenResponseDto(user.Id, handler.WriteToken(token), jwtOptions.Value.ExpirationTimeInMinutes);
     }
 
     private SymmetricSecurityKey CreateSecurityKey()
@@ -56,7 +56,7 @@ public class TokenService(IOptions<JwtOptions> jwtOptions, IConfiguration config
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
+            new Claim(ClaimTypes.Role, user.Role.ToString())
         });
     }
 }

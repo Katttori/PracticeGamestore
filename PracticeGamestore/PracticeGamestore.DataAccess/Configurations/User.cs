@@ -40,9 +40,9 @@ public class User : IEntityTypeConfiguration<Entities.User>
         
         builder.Property(x => x.Role)
             .HasColumnName("role")
-            .HasMaxLength(50)
+            .HasConversion<int>()
             .IsRequired()
-            .HasDefaultValue("User"); // Default role is User
+            .HasDefaultValue(UserRole.User);
         
         builder.Property(x => x.Status)
             .HasColumnName("status")

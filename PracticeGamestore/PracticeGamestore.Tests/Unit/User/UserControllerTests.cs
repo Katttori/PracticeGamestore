@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects;
+using PracticeGamestore.Business.Services.Token;
 using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.Controllers;
 using PracticeGamestore.Mappers;
@@ -14,6 +15,7 @@ namespace PracticeGamestore.Tests.Unit.User;
 public class UserControllerTests
 {
     private Mock<IUserService> _userService;
+    private Mock<ITokenService> _tokenService;
     private Mock<ILogger<UserController>> _loggerMock;
     private UserController _userController;
     
@@ -21,8 +23,9 @@ public class UserControllerTests
     public void SetUp()
     {
         _userService = new Mock<IUserService>();
+        _tokenService = new Mock<ITokenService>();
         _loggerMock = new Mock<ILogger<UserController>>();
-        _userController = new UserController(_userService.Object, _loggerMock.Object);
+        _userController = new UserController(_userService.Object, _tokenService.Object, _loggerMock.Object);
     }
 
     [Test]

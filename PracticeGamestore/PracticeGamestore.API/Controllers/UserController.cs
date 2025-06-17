@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PracticeGamestore.Business.Enums;
+using PracticeGamestore.Business.Services.Token;
 using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.User;
@@ -8,9 +11,11 @@ namespace PracticeGamestore.Controllers;
 [ApiController, Route("users")]
 public class UserController(
     IUserService userService,
+    ITokenService tokenService,
     ILogger<UserController> logger) : ControllerBase
 {
     [HttpGet]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> GetAll()
     {
         var users = await userService.GetAllAsync();
@@ -18,6 +23,7 @@ public class UserController(
     }
     
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> GetById(Guid id)
     {
         var user = await userService.GetByIdAsync(id);
@@ -31,6 +37,7 @@ public class UserController(
     }
     
     [HttpPost]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Create([FromBody] UserRequestModel request)
     {
         var id = await userService.CreateAsync(request.MapToUserDto());
@@ -46,6 +53,7 @@ public class UserController(
     }
     
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Update(Guid id, [FromBody] UserRequestModel request)
     {
         var updated = await userService.UpdateAsync(id, request.MapToUserDto());
@@ -60,6 +68,7 @@ public class UserController(
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Delete(Guid id)
     {
         await userService.DeleteAsync(id);
@@ -67,6 +76,7 @@ public class UserController(
     }
 
     [HttpPost("{id:guid}/ban")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     public async Task<IActionResult> Ban(Guid id)
     {
         var user = await userService.BanUserAsync(id);

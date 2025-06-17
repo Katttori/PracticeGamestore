@@ -11,7 +11,7 @@ public class OrderRequestDto
     
     public OrderRequestDto(string userEmail, decimal total, List<Guid> gameIds)
     {
-        Status = OrderStatus.Initiated;
+        Status = OrderStatus.Created;
         UserEmail = userEmail;
         Total = total;
         GameIds = gameIds;

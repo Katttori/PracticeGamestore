@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using PracticeGamestore.Business.DataTransferObjects;
+﻿using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Mappers;
 using PracticeGamestore.Business.Utils;
@@ -37,7 +36,6 @@ public class UserService(
             dto.Status = UserStatus.Banned;
         }
         
-        dto.Role = string.IsNullOrWhiteSpace(dto.Role) ? "User" : dto.Role;
         dto.PasswordSalt = Guid.NewGuid().ToString();
         dto.Password = PasswordHasher.HashPassword(dto.Password, dto.PasswordSalt);
         

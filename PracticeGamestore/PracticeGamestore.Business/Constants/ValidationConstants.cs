@@ -18,6 +18,8 @@ public static class ValidationConstants
     }
 
     public static readonly HashSet<int> AgeRatingValues = [3, 7, 12, 16, 18];
+    
+    public static readonly HashSet<string> UserRoleValues = ["Admin", "User", "Manager"];
 
     public static readonly HashSet<string> OrderByFields = ["name", "price", "rating", "age", "release-date"];
 
