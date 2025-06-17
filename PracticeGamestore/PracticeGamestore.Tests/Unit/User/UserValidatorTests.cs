@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using NUnit.Framework;
+using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Models.User;
 using PracticeGamestore.Validators;
 
@@ -24,7 +25,7 @@ public class UserValidatorTests
     public void WhenUserNameIsInvalid_ShouldHaveError(string? userName)
     {
         // Arrange
-        var model = GenerateValidModel();
+        var model = TestData.User.GenerateUserRequestModel();
         model.UserName = userName!;
         
         // Act
@@ -40,7 +41,7 @@ public class UserValidatorTests
     public void WhenUserNameIsValid_ShouldNotHaveError(string userName)
     {
         // Arrange
-        var model = GenerateValidModel();
+        var model = TestData.User.GenerateUserRequestModel();
         model.UserName = userName;
 
         // Act
@@ -60,7 +61,7 @@ public class UserValidatorTests
     public void WhenEmailIsInvalid_ShouldHaveError(string? email)
     {
         // Arrange
-        var model = GenerateValidModel();
+        var model = TestData.User.GenerateUserRequestModel();
         model.Email = email!;
         
         // Act
@@ -75,7 +76,7 @@ public class UserValidatorTests
     public void WhenEmailIsValid_ShouldNotHaveError(string email)
     {
         // Arrange
-        var model = GenerateValidModel();
+        var model = TestData.User.GenerateUserRequestModel();
         model.Email = email;
         
         // Act
@@ -93,7 +94,7 @@ public class UserValidatorTests
     public void WhenPhoneNumberIsInvalid_ShouldHaveError(string? phone)
     {
         // Arrange
-        var model = GenerateValidModel();
+        var model = TestData.User.GenerateUserRequestModel();
         model.PhoneNumber = phone!;
         
         // Act
@@ -109,7 +110,7 @@ public class UserValidatorTests
     public void WhenPhoneNumberIsValid_ShouldNotHaveError(string phone)
     {
         // Arrange
-        var model = GenerateValidModel();
+        var model = TestData.User.GenerateUserRequestModel();
         model.PhoneNumber = phone;
         
         // Act
@@ -123,7 +124,7 @@ public class UserValidatorTests
     public void WhenModelIsValid_ShouldNotHaveAnyErrors()
     {
         // Arrange
-        var model = GenerateValidModel();
+        var model = TestData.User.GenerateUserRequestModel();
 
         // Act
         var result = _validator.TestValidate(model);
@@ -142,7 +143,7 @@ public class UserValidatorTests
             Email = "invalidemail",
             PhoneNumber = "abc123",
             Password = "password",
-            Role = "User",
+            Role = UserRole.User,
             CountryId = Guid.NewGuid(),
             BirthDate = DateTime.UtcNow.AddYears(-20)
         };
@@ -154,19 +155,5 @@ public class UserValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.UserName);
         result.ShouldHaveValidationErrorFor(x => x.Email);
         result.ShouldHaveValidationErrorFor(x => x.PhoneNumber);
-    }
-
-    private UserRequestModel GenerateValidModel()
-    {
-        return new UserRequestModel
-        {
-            UserName = "John Doe",
-            Email = "john.doe@example.com",
-            PhoneNumber = "+1234567890",
-            Password = "StrongPassword123!",
-            Role = "User",
-            CountryId = Guid.NewGuid(),
-            BirthDate = DateTime.UtcNow.AddYears(-20)
-        };
     }
 }
