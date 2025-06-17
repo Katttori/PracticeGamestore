@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Enums;
-using PracticeGamestore.Business.Services.Game;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Platform;
+using PracticeGamestore.Extensions;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Platform;
@@ -15,7 +15,6 @@ namespace PracticeGamestore.Controllers;
 [ApiController, Route("platforms")]
 public class PlatformController(
     IPlatformService platformService,
-    IGameService gameService,
     IHeaderHandleService headerHandleService,
     ILogger<PlatformController> logger) : ControllerBase
 {
@@ -49,6 +48,7 @@ public class PlatformController(
         return Ok(platform.MapToPlatformModel());
     }
     
+    [BirthdateRestrictionFilter]
     [HttpGet("{platformId:guid}/games")]
     public async Task<IActionResult> GetGamesByPlatform(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
@@ -57,7 +57,7 @@ public class PlatformController(
     {
         await headerHandleService.CheckAccessAsync(country, email);
         
-        var games = await gameService.GetByPlatformAsync(platformId);
+        var games = await platformService.GetGamesAsync(platformId, HttpContext.IsUnderage());
         
         if (games is null)
         {

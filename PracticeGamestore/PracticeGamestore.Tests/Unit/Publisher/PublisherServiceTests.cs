@@ -225,14 +225,15 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public async Task GetGamesAsync_ShouldReturnPublisherGames_WhenPublisherExist()
+    public async Task GetByPublisherGamesAsync_WhenPublisherExistsAndUserIsAdult_ShouldReturnAllGames()
     {
         //Arrange
         var publisherId = Guid.NewGuid();
+        var hideAdultContent = false;
         var games = TestData.Game.GenerateGameEntities().Where(g => g.PublisherId == publisherId).ToList();
         _publisherRepository.Setup(x => x.ExistsAsync(publisherId))
             .ReturnsAsync(true);
-        _gameRepository.Setup(x => x.GetByPublisherIdAsync(publisherId))
+        _gameRepository.Setup(x => x.GetByPublisherIdAsync(publisherId, hideAdultContent))
             .ReturnsAsync(games);
         
         //Act
@@ -246,7 +247,29 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public async Task GetGamesAsync_ShouldReturnNull_WhenPublisherDoesNotExist()
+    public async Task GetByPublisherGamesAsync_WhenPublisherExistAndUserIsUnderage_ShouldReturnGamesWithAgeRatingLessThan18()
+    {
+        //Arrange
+        var publisherId = Guid.NewGuid();
+        var hideAdultContent = true;
+        var games = TestData.Game.GenerateGameEntitiesWithAgeRatingLessThan18().Where(g => g.PublisherId == publisherId).ToList();
+        _publisherRepository.Setup(x => x.ExistsAsync(publisherId))
+            .ReturnsAsync(true);
+        _gameRepository.Setup(x => x.GetByPublisherIdAsync(publisherId, hideAdultContent))
+            .ReturnsAsync(games);
+        
+        //Act
+        var result =
+            (await _publisherService.GetGamesAsync(publisherId) ?? Array.Empty<GameResponseDto>()).ToList();
+        
+        //Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(games.Count));
+        Assert.That(result.All(dto => dto.Publisher.Id == publisherId), Is.True);
+    }
+    
+    [Test]
+    public async Task GetByPublisherGamesAsync_WhenPublisherDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         _publisherRepository.Setup(x => x.ExistsAsync(It.IsAny<Guid>()))

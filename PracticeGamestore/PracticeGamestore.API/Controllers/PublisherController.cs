@@ -5,6 +5,7 @@ using PracticeGamestore.Business.Services.HeaderHandle;
 using Microsoft.AspNetCore.Authorization;
 using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Publisher;
+using PracticeGamestore.Extensions;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Publisher;
@@ -46,7 +47,8 @@ public class PublisherController(
         
         return Ok(publisher.MapToPublisherModel());
     }
-
+    
+    [BirthdateRestrictionFilter]
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetPublisherGames(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
@@ -55,7 +57,7 @@ public class PublisherController(
     {
         await headerHandleService.CheckAccessAsync(country, email);
         
-         var games = await publisherService.GetGamesAsync(id);
+        var games = await publisherService.GetGamesAsync(id, HttpContext.IsUnderage());
 
          if (games is null)
          {

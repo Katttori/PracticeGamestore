@@ -385,6 +385,16 @@ public static class Game
         };
         return gameResponseDtos;
     }
+
+    public static List<GameResponseDto> GenerateGameResponseDtosWithAgeRatingLessThan18()
+    {
+        return GenerateGameResponseDtos().Where(g => g.AgeRating != AgeRating.EighteenPlus).ToList();
+    }
+    
+    public static List<DataAccess.Entities.Game> GenerateGameEntitiesWithAgeRatingLessThan18()
+    {
+        return GenerateGameEntities().Where(g => g.AgeRating != AgeRating.EighteenPlus).ToList();
+    }
     
     public static GameResponseDto GenerateGameResponseDto()
     {

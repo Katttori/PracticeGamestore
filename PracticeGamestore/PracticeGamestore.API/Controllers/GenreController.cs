@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Genre;
+using PracticeGamestore.Extensions;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
@@ -88,7 +89,7 @@ public class GenreController(
         await genreService.DeleteAsync(id);
         return NoContent();
     }
-
+    [BirthdateRestrictionFilter]
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetGamesByGenre(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
@@ -97,7 +98,7 @@ public class GenreController(
     {
         await headerHandleService.CheckAccessAsync(country, email);
         
-        var games = await genreService.GetGames(id);
+        var games = await genreService.GetGamesAsync(id, HttpContext.IsUnderage());
         return games is null
             ? NotFound(ErrorMessages.NotFound("Genre", id))
             : Ok(games.Select(g => g.MapToGameModel()));

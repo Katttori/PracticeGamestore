@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Publisher;
 using PracticeGamestore.Controllers;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Publisher;
 
@@ -28,7 +30,13 @@ public class PublisherControllerTests
         _publisherService = new Mock<IPublisherService>();
         _headerHandleService = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<PublisherController>>();
-        _publisherController = new PublisherController(_publisherService.Object, _headerHandleService.Object, _loggerMock.Object);
+        _publisherController = new PublisherController(_publisherService.Object, _headerHandleService.Object, _loggerMock.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext() 
+            }
+        };
     }
 
     [Test]
@@ -180,10 +188,10 @@ public class PublisherControllerTests
     }
     
     [Test]
-    public async Task GetPublisherGames_ShouldReturnNotFound_WhenPublisherDoesNotExist()
+    public async Task GetPublisherGames_WhenPublisherDoesNotExist_ShouldReturnNotFound()
     {
         //Arrange
-        _publisherService.Setup(x => x.GetGamesAsync(It.IsAny<Guid>()))
+        _publisherService.Setup(x => x.GetGamesAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
             .ReturnsAsync(null as IEnumerable<GameResponseDto>);
 
         //Act
@@ -194,13 +202,41 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task GetPublisherGames_ShouldReturnPublisherGames_WhenPublisherExist()
+    public async Task GetPublisherGames_WhenPublisherExistAndUserIsAdult_ShouldReturnAllPublisherGames()
     {
         //Arrange
+        var hideAdultContent = false;
         var publisherId = Guid.NewGuid();
-        var games = TestData.Game.GenerateGameResponseDtos().Where(g => g.Publisher.Id == publisherId).ToList();
-        _publisherService.Setup(x => x.GetGamesAsync(publisherId))
+        var games = TestData.Game.GenerateGameResponseDtos()
+            .Where(g => g.Publisher.Id == publisherId).ToList();
+        _publisherService.Setup(x => x.GetGamesAsync(publisherId, hideAdultContent))
             .ReturnsAsync(games);
+        _publisherController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
+
+        //Act
+        var result = await _publisherController.GetPublisherGames(CountryHeader, UserEmailHeader, publisherId);
+        
+        //Assert
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        var response =
+            (okResult.Value as IEnumerable<GameResponseDto> ?? Array.Empty<GameResponseDto>()).ToList();
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response.All(dto => dto.Publisher.Id == publisherId), Is.True);
+    }
+    
+    [Test]
+    public async Task GetPublisherGames_WhenPublisherExistAndUserIsUnderage_ShouldReturnPublisherGamesWithAgeRatingLessThan18()
+    {
+        //Arrange
+        var hideAdultContent = true;
+        var publisherId = Guid.NewGuid();
+        var games = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18()
+            .Where(g => g.Publisher.Id == publisherId).ToList();
+        _publisherService.Setup(x => x.GetGamesAsync(publisherId, hideAdultContent))
+            .ReturnsAsync(games);
+        _publisherController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
 
         //Act
         var result = await _publisherController.GetPublisherGames(CountryHeader, UserEmailHeader, publisherId);

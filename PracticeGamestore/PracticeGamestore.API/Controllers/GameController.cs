@@ -6,6 +6,7 @@ using PracticeGamestore.Mappers;
 using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Game;
+using PracticeGamestore.Extensions;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Models.Game;
@@ -18,6 +19,7 @@ public class GameController(
     IHeaderHandleService headerHandleService,
     ILogger<GameController> logger) : ControllerBase
 {
+    [BirthdateRestrictionFilter]
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
@@ -25,10 +27,11 @@ public class GameController(
     {
         await headerHandleService.CheckAccessAsync(country, email);
         
-        var games = await gameService.GetAllAsync();
+        var games = await gameService.GetAllAsync(HttpContext.IsUnderage());
         return Ok(games.Select(g => g.MapToGameModel()));
     }
 
+    [BirthdateRestrictionFilter]
     [HttpGet("/filter")]
     public async Task<IActionResult> GetFiltered(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
@@ -37,7 +40,8 @@ public class GameController(
     {
         await headerHandleService.CheckAccessAsync(country, email);
         
-        var (games, totalCount) = await gameService.GetFilteredAsync(filter);
+        var (games, totalCount) = await gameService.GetFilteredAsync(filter, HttpContext.IsUnderage());
+        
         return Ok(new PaginatedGameListResponseModel {
             Games = games.Select(g => g.MapToGameModel()).ToList(),
             PageNumber = filter.Page ?? 1,
@@ -46,6 +50,7 @@ public class GameController(
         });
     }
 
+    [BirthdateRestrictionFilter]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
@@ -60,6 +65,12 @@ public class GameController(
         {
             logger.LogWarning("Game with id: {Id} was not found.", id);
             return NotFound(ErrorMessages.NotFound("Game", id));
+        }
+
+        if ((int)gameDto.AgeRating == 18 && HttpContext.IsUnderage())
+        {
+            logger.LogWarning("Access denied to 18+ game {Id} for underage user.", id);
+            return NotFound($"Game with id {id} was not found.");
         }
         
         return Ok(gameDto.MapToGameModel());

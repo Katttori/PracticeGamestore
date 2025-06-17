@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects;
 using PracticeGamestore.Business.DataTransferObjects.Filtering;
 using PracticeGamestore.Business.Services.Game;
@@ -30,7 +31,13 @@ public class GameControllerTests
         _gameService = new Mock<IGameService>();
         _headerHandleService = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<GameController>>();
-        _gameController = new GameController(_gameService.Object, _headerHandleService.Object, _loggerMock.Object);
+        _gameController = new GameController(_gameService.Object,  _headerHandleService.Object, _loggerMock.Object)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext() 
+                }
+            };
     }
 
     private static bool GameResponseModelsAreTheSame(GameResponseModel dto1, GameResponseModel dto2)
@@ -94,14 +101,35 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetAll_ReturnsOkWithGames()
+    public async Task GetAll_ShouldReturnOkWithAllGamesIfUserIsAdult()
     {
         //Arrange
+        var hideAdultContent = false;
         var gameDtos = TestData.Game.GenerateGameResponseDtos();
-        _gameService.Setup(x => x.GetAllAsync())
+        _gameService.Setup(x => x.GetAllAsync(hideAdultContent))
             .ReturnsAsync(gameDtos);
         var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
+        
+        //Act
+        var result = await _gameController.GetAll(CountryHeader, UserEmailHeader);
 
+        //Assert
+        var okResult = AssertThatStatusCodeIsOk(result);
+        AssertThatResultListOfGamesIsEqualToExpectedList(okResult, expected);
+    }
+    
+    [Test]
+    public async Task GetAll_ShouldReturnOkWithGamesOfAgeRatingLessThan18IfUserIsUnderage()
+    {
+        //Arrange
+        var hideAdultContent = true;
+        var gameDtos = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18();
+        _gameService.Setup(x => x.GetAllAsync(hideAdultContent))
+            .ReturnsAsync(gameDtos);
+        var expected = gameDtos.Select(dto => dto.MapToGameModel()).ToList();
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
+        
         //Act
         var result = await _gameController.GetAll(CountryHeader, UserEmailHeader);
 
@@ -111,7 +139,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetGameById_ShouldReturnOkResult_WhenGameExists()
+    public async Task GetGameById_WhenGameExists_ShouldReturnOkResult()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -129,9 +157,9 @@ public class GameControllerTests
         Assert.That(response, Is.Not.Null);
         Assert.That(GameResponseModelsAreTheSame(response!, expected), Is.True);
     }
-
+    
     [Test]
-    public async Task GetGameById_ShouldReturnNotFound_WhenPublisherDoesNotExist()
+    public async Task GetGameById_WhenGameDoesNotExist_ShouldReturnNotFound()
     {
         //Arrange
         _gameService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -143,9 +171,26 @@ public class GameControllerTests
         //Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
     }
+    
+    [Test]
+    public async Task GetGameById_WhenGameHasAgeRatingEighteenPlusAndUserIsUnderage_ShouldReturnNotFound()
+    {
+        //Arrange
+        var game = TestData.Game.GenerateGameResponseDto();
+        game.AgeRating = AgeRating.EighteenPlus;
+        _gameService.Setup(x => x.GetByIdAsync(game.Id))
+            .ReturnsAsync(game);
+        _gameController.ControllerContext.HttpContext.Items["Underage"] = true;
+
+        //Act
+        var result = await _gameController.GetById(CountryHeader, UserEmailHeader, game.Id);
+
+        //Assert
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+    }
 
     [Test]
-    public async Task CreateGame_ShouldReturnCreatedResult_WhenPublisherIsCreated()
+    public async Task CreateGame_WhenGameIsCreated_ShouldReturnCreatedResult()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -167,7 +212,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task CreateGame_ShouldReturnBadRequest_WhenCreationFails()
+    public async Task CreateGame_WhenCreationFails_ShouldReturnBadRequest()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -182,7 +227,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task CreateGame_ShouldReturnBadRequest_WhenProvidedAgeRatingIsIncorrect()
+    public async Task CreateGame_WhenProvidedAgeRatingIsIncorrect_ShouldReturnBadRequest()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -196,7 +241,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnNoContent_WhenGameIsUpdated()
+    public async Task Update_WhenGameIsUpdated_ShouldReturnNoContent()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -212,7 +257,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
+    public async Task Update_WhenUpdateFails_ShouldReturnBadRequest()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -228,7 +273,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task Update_ShouldReturnBadRequest_WhenProvidedAgeRatingIsIncorrect()
+    public async Task Update_WhenProvidedAgeRatingIsIncorrect_ShouldReturnBadRequest()
     {
         //Arrange
         var gameRequestModel = TestData.Game.GenerateGameRequestModel();
@@ -242,7 +287,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task Delete_ShouldReturnNoContent_WhenGameIsDeleted()
+    public async Task Delete_WhenGameIsDeleted_ShouldReturnNoContent()
     {
         //Arrange
         _gameService.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
@@ -255,7 +300,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithFilteredGames_WhenValidFilterProvided()
+    public async Task GetFiltered_WhenValidFilterProvided_ShouldReturnOkWithFilteredGames()
     {
         // Arrange
         var gameFilter = new GameFilter 
@@ -267,7 +312,7 @@ public class GameControllerTests
         
         var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g => g.Price is >= 30 and <= 60 && g.Name.Contains("cyber", StringComparison.InvariantCultureIgnoreCase)).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
@@ -281,11 +326,11 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithEmptyList_WhenNoGamesMatchFilter()
+    public async Task GetFiltered_WhenNoGamesMatchFilter_ShouldReturnOkWithEmptyList()
     {
         // Arrange
         var gameFilter = new GameFilter { MinPrice = 1000000 };
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync(([], 0));
 
         // Act
@@ -297,13 +342,13 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkAndGames_WhenValidOrderDirectionProvided()
+    public async Task GetFiltered_WhenValidOrderDirectionProvided_ShouldReturnOkAndGames()
     {
         // Arrange
         var gameFilter = new GameFilter { Order = "desc" };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().OrderBy(g => g.Name).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
@@ -317,13 +362,13 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidOrderByFieldsProvided()
+    public async Task GetFiltered_WhenValidOrderByFieldsProvided_ShouldReturnOkWithGames()
     {
         // Arrange
         var gameFilter = new GameFilter { OrderBy = ["price", "rating"] };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().OrderByDescending(g => g.Rating).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
@@ -336,13 +381,13 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOkWithGames_WhenValidAgeRatingsProvided()
+    public async Task GetFiltered_WhenValidAgeRatingsProvided_ShouldReturnOkWithGames()
     {
         // Arrange
         var gameFilter = new GameFilter { Age = [12, 16] };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g => g.AgeRating is AgeRating.TwelvePlus or AgeRating.SixteenPlus).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
@@ -355,7 +400,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenValidDateRangeProvided()
+    public async Task GetFiltered_WhenValidDateRangeProvided_ShouldReturnOk()
     {
         // Arrange
         var gameFilter = new GameFilter 
@@ -366,7 +411,7 @@ public class GameControllerTests
         var gameDtos = TestData.Game.GenerateGameResponseDtos().Where(g =>
             g.ReleaseDate >= new DateTime(2024, 1, 1) && g.ReleaseDate <= new DateTime(2024, 12, 31)).ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
@@ -379,13 +424,13 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenValidPaginationProvided()
+    public async Task GetFiltered_WhenValidPaginationProvided_ShouldReturnOk()
     {
         // Arrange
         var gameFilter = new GameFilter { Page = 2, PageSize = 5 };
         var gameDtos = TestData.Game.GenerateGameResponseDtos().ToList();
         var paginated = gameDtos.Skip(5).Take(5).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
 
@@ -398,7 +443,7 @@ public class GameControllerTests
     }
 
     [Test]
-    public async Task GetFiltered_ShouldReturnOk_WhenComplexValidFilterProvided()
+    public async Task GetFiltered_WhenComplexValidFilterProvided_ShouldReturnOk()
     {
         // Arrange
         var gameFilter = new GameFilter 
@@ -426,7 +471,7 @@ public class GameControllerTests
             .ThenByDescending(g => g.Price)
             .ToList();
         var paginated = gameDtos.Take(10).ToList(); 
-        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>()))
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), false))
             .ReturnsAsync((paginated, gameDtos.Count));
         var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
         
@@ -436,5 +481,94 @@ public class GameControllerTests
         // Assert
         var okResult = AssertThatStatusCodeIsOk(result);
         AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_WhenUserIsUnderage_ShouldReturnOkWithFilteredGamesExcludingAdultContent()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var gameFilter = new GameFilter 
+        { 
+            MinPrice = 25,
+            MaxPrice = 55,
+            Name = "space"
+        };
+        
+        var gameDtos = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18()
+            .Where(g => g.Price is >= 25 and <= 55 && g.Name.Contains("space", StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+        var paginated = gameDtos.Take(10).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), hideAdultContent))
+            .ReturnsAsync((paginated, gameDtos.Count));
+        
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
+
+        // Act
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
+
+        // Assert
+        var okResult = AssertThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 10, gameDtos.Count);
+    }
+
+    [Test]
+    public async Task GetFiltered_WhenFilteringForAdultOnlyContentAndUserIsUnderage_ShouldReturnEmptyList()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var gameFilter = new GameFilter 
+        { 
+            Age = [18]
+        };
+        
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), hideAdultContent))
+            .ReturnsAsync(([], 0));
+        
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
+
+        // Act
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
+
+        // Assert
+        var okResult = AssertThatStatusCodeIsOk(result);
+        var response = okResult.Value as PaginatedGameListResponseModel;
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response, Is.Empty);
+    }
+    
+    [Test]
+    public async Task GetFiltered_WhenUserIsUnderageWithComplexFilter_ShouldReturnFilteredGamesSortedByPriceDesc()
+    {
+        // Arrange
+        var hideAdultContent = true;
+        var gameFilter = new GameFilter 
+        { 
+            RatingFrom = 4.0,
+            Age = [12, 16, 18],
+            OrderBy = ["price"],
+            Order = "desc",
+            PageSize = 5,
+            Page = 1
+        };
+    
+        var gameDtos = TestData.Game.GenerateGameResponseDtosWithAgeRatingLessThan18()
+            .Where(g => g.Rating >= 4.0 && (g.AgeRating == AgeRating.TwelvePlus || g.AgeRating == AgeRating.SixteenPlus))
+            .OrderByDescending(g => g.Price)
+            .ToList();
+        var paginated = gameDtos.Take(5).ToList(); 
+        _gameService.Setup(x => x.GetFilteredAsync(It.IsAny<GameFilter>(), hideAdultContent))
+            .ReturnsAsync((paginated, gameDtos.Count));
+    
+        var expected = paginated.Select(dto => dto.MapToGameModel()).ToList();
+        _gameController.ControllerContext.HttpContext.Items[HttpContextCustomItems.UnderageIndicator] = hideAdultContent;
+
+        // Act
+        var result = await _gameController.GetFiltered(CountryHeader, UserEmailHeader, gameFilter);
+
+        // Assert
+        var okResult = AssertThatStatusCodeIsOk(result);
+        AssertThatResultIsEqualToExpected(okResult, expected, 1, 5, gameDtos.Count);
     }
 }
