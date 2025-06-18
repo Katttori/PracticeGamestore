@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -31,11 +30,11 @@ public class AuthServiceTests
     [Test]
     public async Task AuthenticateUser_WhenUserExistsAndPasswordIsCorrect_ShouldReturnTokenResponse()
     {
+        // Arrange
         var user = TestData.User.GenerateUserEntity();
         var password = "testpassword";
         
         user.PasswordHash = PasswordHasher.HashPassword(password, user.PasswordSalt);
-        
         var tokenResponse = new TokenResponseDto(user.Id, "test-jwt-token", 60);
 
         _userRepository.Setup(x => x.GetByEmailAsync(user.Email))
@@ -44,32 +43,34 @@ public class AuthServiceTests
         _tokenService.Setup(x => x.GenerateJwtToken(user))
             .Returns(tokenResponse);
 
+        // Act
         var result = await _authService.AuthenticateUser(user.Email, password);
 
+        // Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.UserId, Is.EqualTo(user.Id));
         Assert.That(result.Token, Is.EqualTo("test-jwt-token"));
         Assert.That(result.Expiration, Is.EqualTo(60));
         
         _tokenService.Verify(x => x.GenerateJwtToken(user), Times.Once);
-        Assert.That(result, Is.Not.Null);
     }
 
     [Test]
     public async Task AuthenticateUser_WhenUserDoesNotExist_ShouldReturnNullAndLogWarning()
     {
+        // Arrange
         var email = "nonexistent@example.com";
         var password = "password";
 
         _userRepository.Setup(x => x.GetByEmailAsync(email))
             .ReturnsAsync(null as DataAccess.Entities.User);
 
+        // Act
         var result = await _authService.AuthenticateUser(email, password);
 
+        // Assert
         Assert.That(result, Is.Null);
-    
-        // The key insight: when structured logging replaces {} with actual values,
-        // we need to match the final formatted message, not the template
+        
         _logger.Verify(
             x => x.Log(
                 LogLevel.Warning,
@@ -83,14 +84,17 @@ public class AuthServiceTests
     [Test]
     public async Task AuthenticateUser_WhenPasswordIsIncorrect_ShouldReturnNull()
     {
+        // Arrange
         var user = TestData.User.GenerateUserEntity();
         var incorrectPassword = "wrongpassword";
 
         _userRepository.Setup(x => x.GetByEmailAsync(user.Email))
             .ReturnsAsync(user);
 
+        // Act
         var result = await _authService.AuthenticateUser(user.Email, incorrectPassword);
 
+        // Assert
         Assert.That(result, Is.Null);
         
         _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<DataAccess.Entities.User>()), Times.Never);
@@ -100,14 +104,17 @@ public class AuthServiceTests
     [TestCase(UserStatus.Banned, TestName = "When user's status is banned returns null")]
     public async Task AuthenticateUser_WhenTheirStatusIsBannedOrDeleted_ShouldReturnNull(UserStatus status)
     {
+        // Arrange
         var user = TestData.User.GenerateUserEntity();
         user.Status = status;
 
         _userRepository.Setup(x => x.GetByEmailAsync(user.Email))
             .ReturnsAsync(user);
 
+        // Act
         var result = await _authService.AuthenticateUser(user.Email, It.IsAny<string>());
 
+        // Assert
         Assert.That(result, Is.Null);
         
         _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<DataAccess.Entities.User>()), Times.Never);

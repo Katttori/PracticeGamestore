@@ -1,7 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
@@ -14,8 +12,7 @@ namespace PracticeGamestore.Tests.Unit.Token;
 [TestFixture]
 public class TokenServiceTests
 {
-    private Mock<IOptions<JwtOptions>> _jwtOptionsMock;
-    private Mock<IConfiguration> _configurationMock;
+    private Mock<IOptions<JwtOptions>> _jwtOptions;
     private TokenService _tokenService;
     private JwtOptions _testJwtOptions;
 
@@ -30,12 +27,10 @@ public class TokenServiceTests
             ExpirationTimeInMinutes = 60
         };
 
-        _jwtOptionsMock = new Mock<IOptions<JwtOptions>>();
-        _jwtOptionsMock.Setup(x => x.Value).Returns(_testJwtOptions);
-
-        _configurationMock = new Mock<IConfiguration>();
+        _jwtOptions = new Mock<IOptions<JwtOptions>>();
+        _jwtOptions.Setup(x => x.Value).Returns(_testJwtOptions);
         
-        _tokenService = new TokenService(_jwtOptionsMock.Object, _configurationMock.Object);
+        _tokenService = new TokenService(_jwtOptions.Object);
     }
     
     [Test]

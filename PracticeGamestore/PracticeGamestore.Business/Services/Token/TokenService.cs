@@ -9,7 +9,7 @@ using PracticeGamestore.Business.Options;
 
 namespace PracticeGamestore.Business.Services.Token;
 
-public class TokenService(IOptions<JwtOptions> jwtOptions, IConfiguration configuration) : ITokenService
+public class TokenService(IOptions<JwtOptions> jwtOptions) : ITokenService
 {
     public static TokenValidationParameters CreateTokenValidationParameters(JwtOptions jwtOptions)
     {
