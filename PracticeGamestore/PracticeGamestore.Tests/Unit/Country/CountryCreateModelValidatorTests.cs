@@ -20,7 +20,7 @@ public class CountryCreateModelValidatorTests
     [TestCase("", TestName = "Name is empty")]
     [TestCase(" ", TestName = "Name is blank")]
     [TestCase("a", TestName = "Name is too short")]
-    public void ShouldHaveError_WhenCountryNameIsEmptyTooShortOrNull(string? name)
+    public void WhenCountryNameIsEmptyTooShortOrNull_ShouldHaveError(string? name)
     {
         // Arrange
         var country = TestData.Country.GenerateCountryCreateRequestModel();
@@ -37,7 +37,7 @@ public class CountryCreateModelValidatorTests
     [TestCase("USA123", TestName = "Name contains numbers at end")]
     [TestCase("Coun@try", TestName = "Name contains special characters")]
     [TestCase("Unit#ed States", TestName = "Name contains hash symbol")]
-    public void ShouldHaveCustomError_WhenCountryNameHasInvalidFormat(string name)
+    public void WhenCountryNameHasInvalidFormat_ShouldHaveCustomError(string name)
     {
         // Arrange
         var country = TestData.Country.GenerateCountryCreateRequestModel();
@@ -52,7 +52,7 @@ public class CountryCreateModelValidatorTests
     }
     
     [Test]
-    public void ShouldHaveError_WhenNameIsTooLong()
+    public void WhenNameIsTooLong_ShouldHaveError()
     {
         // Arrange
         var country = TestData.Country.GenerateCountryCreateRequestModel();
@@ -70,7 +70,7 @@ public class CountryCreateModelValidatorTests
     [TestCase("United Kingdom", TestName = "Two-word country name")]
     [TestCase("Côte d'Ivoire", TestName = "Country name with apostrophe")]
     [TestCase("Bosnia-Herzegovina", TestName = "Country name with hyphen")]
-    public void ShouldNotHaveError_WhenCountryNameIsValid(string name)
+    public void WhenCountryNameIsValid_ShouldNotHaveError(string name)
     {
         // Arrange
         var country = TestData.Country.GenerateCountryCreateRequestModel();
@@ -84,7 +84,7 @@ public class CountryCreateModelValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValid()
+    public void WhenModelIsValid_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var country = TestData.Country.GenerateCountryCreateRequestModel();

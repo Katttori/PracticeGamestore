@@ -26,7 +26,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public async Task GetAllAsync_ShouldReturnAllUsers()
+    public async Task GetAllAsync_WhenUsersExist_ShouldReturnAllUsers()
     {
         // Arrange
         var users = TestData.User.GenerateUserEntities();
@@ -43,7 +43,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_WhenUserExists_ReturnsUserDto()
+    public async Task GetByIdAsync_WhenUserExists_ShouldReturnUserDto()
      {
         // Arrange
         var user = TestData.User.GenerateUserEntity();
@@ -62,7 +62,7 @@ public class UserServiceTests
      }
 
     [Test]
-    public async Task GetByIdAsync_WhenUserDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_WhenUserDoesNotExist_ShouldReturnNull()
     {
         // Arrange
         _userRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -76,7 +76,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_WhenUserExistsAndChangesSavedSuccessfully_ReturnsTrue()
+    public async Task UpdateAsync_WhenUserExistsAndChangesSavedSuccessfully_ShouldReturnTrue()
     {
         // Arrange
         var user = TestData.User.GenerateUserEntity();
@@ -93,7 +93,7 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenUserDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenUserDoesNotExist_ShouldReturnFalse()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -188,7 +188,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
+    public async Task DeleteAsync_WhenUserIsDeleted_ShouldCallDeleteAndSaveChanges()
     {
         // Arrange
         var id = Guid.NewGuid();

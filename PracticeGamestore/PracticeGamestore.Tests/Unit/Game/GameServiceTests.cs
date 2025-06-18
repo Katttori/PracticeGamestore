@@ -464,7 +464,7 @@ public class GameServiceTests
     }
 
     [Test]
-    public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
+    public async Task DeleteAsync_WhenGameIsDeleted_ShouldCallDeleteAndSaveChanges()
     {
         //Arrange
         var id = Guid.NewGuid();

@@ -27,7 +27,7 @@ public class GenreServiceTests
     }
   
     [Test]
-    public async Task GetAllAsync_ReturnsAllGenres()
+    public async Task GetAllAsync_WhenGenresExist_ShouldReturnAllGenres()
     {
         // Arrange
         var entities = TestData.Genre.GenerateGenreEntities();
@@ -44,7 +44,7 @@ public class GenreServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_WhenGenreExists_ReturnsGenreDto()
+    public async Task GetByIdAsync_WhenGenreExists_ShouldReturnGenreDto()
     {
         // Arrange
         var entity = TestData.Genre.GenerateActionGenre();
@@ -61,7 +61,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task GetByIdAsync_WhenGenreDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_WhenGenreDoesNotExist_ShouldReturnNull()
     {
         // Arrange
         _genreRepository
@@ -76,7 +76,7 @@ public class GenreServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_WhenChangesSavedSuccessfully_ReturnsCreatedId()
+    public async Task CreateAsync_WhenChangesSavedSuccessfully_ShouldReturnCreatedId()
     {
         // Arrange
         var dto = TestData.Genre.GenerateGenreDto();
@@ -96,7 +96,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_WhenSaveChangesFailed_ReturnsNull()
+    public async Task CreateAsync_WhenSaveChangesFailed_ShouldReturnNull()
     {
         // Arrange
         var dto = TestData.Genre.GenerateGenreDto();
@@ -116,7 +116,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void CreateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var dto = new GenreDto(Guid.NewGuid(), "Action");
@@ -128,7 +128,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_WhenParentIsInvalid_ReturnsNull()
+    public async Task CreateAsync_WhenParentIsInvalid_ShouldReturnNull()
     {
         // Arrange
         var invalidParentId = Guid.NewGuid();
@@ -146,7 +146,7 @@ public class GenreServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ReturnsTrue()
+    public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ShouldReturnTrue()
     {
         // Arrange
         var dto = TestData.Genre.GenerateGenreDto();
@@ -167,7 +167,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenEntityDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenEntityDoesNotExist_ShouldReturnFalse()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -185,7 +185,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void UpdateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -200,7 +200,7 @@ public class GenreServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenParentIsSelf_ReturnsFalse()
+    public async Task UpdateAsync_WhenParentIsSelf_ShouldReturnFalse()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -219,7 +219,7 @@ public class GenreServiceTests
     }
 
     [Test]
-    public async Task DeleteAsync_CallsDeleteAndSaveChanges()
+    public async Task DeleteAsync_WhenGenresIsDeleted_ShouldCallDeleteAndSaveChanges()
     {
         // Arrange
         var id = Guid.NewGuid();

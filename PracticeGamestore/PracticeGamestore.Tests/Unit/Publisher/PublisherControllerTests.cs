@@ -40,7 +40,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task GetAll_ReturnsOkWithPublishers()
+    public async Task GetAll_WhenPublishersExist_ShouldReturnOkWithPublishers()
     {
         //Arrange
         var publisherDtos = TestData.Publisher.GeneratePublisherDtos();
@@ -68,7 +68,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task GetPublisherById_ShouldReturnOkResult_WhenPublisherExists()
+    public async Task GetPublisherById_WhenPublisherExists_ShouldReturnOkResult()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -93,7 +93,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task GetPublisherById_ShouldReturnNotFound_WhenPublisherDoesNotExist()
+    public async Task GetPublisherById_WhenPublisherDoesNotExist_ShouldReturnNotFound()
     {
         //Arrange
         _publisherService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -107,7 +107,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task CreatePublisher_ShouldReturnCreatedResult_WhenPublisherIsCreated()
+    public async Task CreatePublisher_WhenPublisherIsCreated_ShouldReturnCreatedResult()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -129,7 +129,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task CreatePublisher_ShouldReturnBadRequest_WhenCreationFails()
+    public async Task CreatePublisher_WhenCreationFails_ShouldReturnBadRequest()
     {
         //Arrange
         var publisherRequestModel = TestData.Publisher.GeneratePublisherRequestModel();
@@ -144,7 +144,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnNoContent_WhenPublisherIsUpdated()
+    public async Task Update_WhenPublisherIsUpdated_ShouldReturnNoContent()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -159,7 +159,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
+    public async Task Update_WhenUpdateFails_ShouldReturnBadRequest()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -175,7 +175,7 @@ public class PublisherControllerTests
     }
 
     [Test]
-    public async Task Delete_ShouldReturnNoContent_WhenPublisherIsDeleted()
+    public async Task Delete_WhenPublisherIsDeleted_ShouldReturnNoContent()
     {
         //Arrange
         _publisherService.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);

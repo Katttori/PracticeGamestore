@@ -22,7 +22,7 @@ public class GameValidatorTests
     [TestCase("", TestName = "Name is empty")]
     [TestCase(" ", TestName = "Name is whitespace")]
     [TestCase("a", TestName = "Name is too short")]
-    public void ShouldHaveError_WhenNameIsEmptyTooShortOrNull(string? name)
+    public void WhenNameIsEmptyTooShortOrNull_ShouldHaveError(string? name)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -36,7 +36,7 @@ public class GameValidatorTests
     }
     
     [Test]
-    public void ShouldHaveError_WhenNameIsTooLong()
+    public void WhenNameIsTooLong_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -53,7 +53,7 @@ public class GameValidatorTests
     [TestCase("FIFA Champions 2025", TestName = "Name with numbers")]
     [TestCase("Dragon's Legacy", TestName = "Name with apostrophe")]
     [TestCase("Street Racer Ultimate", TestName = "Multi-word name")]
-    public void ShouldNotHaveError_WhenNameIsValid(string name)
+    public void WhenNameIsValid_ShouldNotHaveError(string name)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -70,7 +70,7 @@ public class GameValidatorTests
     [TestCase("", TestName = "Key is empty")]
     [TestCase(" ", TestName = "Key is whitespace")]
     [TestCase("k", TestName = "Key is too short")]
-    public void ShouldHaveError_WhenKeyIsEmptyTooShortOrNull(string? key)
+    public void WhenKeyIsEmptyTooShortOrNull_ShouldHaveError(string? key)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -84,7 +84,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenKeyIsTooLong()
+    public void WhenKeyIsTooLong_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -101,7 +101,7 @@ public class GameValidatorTests
     [TestCase("cyber-warriors-2077", TestName = "Valid key with hyphens")]
     [TestCase("dragon-legacy-2024", TestName = "Valid descriptive key")]
     [TestCase("street-racer-ultimate", TestName = "Valid multi-word key")]
-    public void ShouldNotHaveError_WhenKeyIsValid(string key)
+    public void WhenKeyIsValid_ShouldNotHaveError(string key)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -117,7 +117,7 @@ public class GameValidatorTests
     [TestCase(0, TestName = "Price is zero")]
     [TestCase(-1, TestName = "Price is negative")]
     [TestCase(-0.01, TestName = "Price is slightly negative")]
-    public void ShouldHaveError_WhenPriceIsZeroOrNegative(decimal price)
+    public void WhenPriceIsZeroOrNegative_ShouldHaveError(decimal price)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -135,7 +135,7 @@ public class GameValidatorTests
     [TestCase(69.99, TestName = "Valid premium price")]
     [TestCase(0.01, TestName = "Valid minimum price")]
     [TestCase(999.99, TestName = "Valid high price")]
-    public void ShouldNotHaveError_WhenPriceIsValid(decimal price)
+    public void WhenPriceIsValid_ShouldNotHaveError(decimal price)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -149,7 +149,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenDescriptionIsTooLong()
+    public void WhenDescriptionIsTooLong_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -165,7 +165,7 @@ public class GameValidatorTests
     [TestCase(null, TestName = "Description is null")]
     [TestCase("", TestName = "Description is empty")]
     [TestCase("A futuristic action RPG set in a dystopian cyberpunk world.", TestName = "Valid description")]
-    public void ShouldNotHaveError_WhenDescriptionIsValidOrEmpty(string? description)
+    public void WhenDescriptionIsValidOrEmpty_ShouldNotHaveError(string? description)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -180,7 +180,7 @@ public class GameValidatorTests
 
     [TestCase(-1, TestName = "Rating is negative")]
     [TestCase(-0.5, TestName = "Rating is slightly negative")]
-    public void ShouldHaveCustomError_WhenRatingIsBelowMinimum(double rating)
+    public void WhenRatingIsBelowMinimum_ShouldHaveCustomError(double rating)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -196,7 +196,7 @@ public class GameValidatorTests
 
     [TestCase(6, TestName = "Rating exceeds maximum")]
     [TestCase(10, TestName = "Rating way above maximum")]
-    public void ShouldHaveCustomError_WhenRatingExceedsMaximum(double rating)
+    public void WhenRatingExceedsMaximum_ShouldHaveCustomError(double rating)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -214,7 +214,7 @@ public class GameValidatorTests
     [TestCase(2.5, TestName = "Mid-range rating")]
     [TestCase(4.5, TestName = "High rating")]
     [TestCase(5, TestName = "Maximum valid rating")]
-    public void ShouldNotHaveError_WhenRatingIsValid(double rating)
+    public void WhenRatingIsValid_ShouldNotHaveError(double rating)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -228,7 +228,7 @@ public class GameValidatorTests
     }
     
     [Test]
-    public void ShouldHaveCustomError_WhenAgeRatingIsInvalid()
+    public void WhenAgeRatingIsInvalid_ShouldHaveCustomError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -248,7 +248,7 @@ public class GameValidatorTests
     [TestCase(16, TestName = "16+ rating valid rating")]
     [TestCase(18, TestName = "18+ rating valid rating")]
 
-    public void ShouldNotHaveError_WhenAgeRatingIsValid(int ageRating)
+    public void WhenAgeRatingIsValid_ShouldNotHaveError(int ageRating)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -262,7 +262,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenReleaseDateIsInFuture()
+    public void WhenReleaseDateIsInFuture_ShouldHaveCustomError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -277,7 +277,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenReleaseDateIsWayInFuture()
+    public void WhenReleaseDateIsWayInFuture_ShouldHaveCustomError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -292,7 +292,7 @@ public class GameValidatorTests
     }
 
    [Test]
-    public void ShouldNotHaveError_WhenReleaseDateIsValid()
+    public void WhenReleaseDateIsValid_ShouldNotHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -306,7 +306,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenReleaseDateIsToday()
+    public void WhenReleaseDateIsToday_ShouldNotHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -320,7 +320,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenPublisherIdIsEmpty()
+    public void WhenPublisherIdIsEmpty_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -334,7 +334,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenPublisherIdIsValid()
+    public void WhenPublisherIdIsValid_ShouldNotHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -348,7 +348,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenPlatformIdsIsEmpty()
+    public void WhenPlatformIdsIsEmpty_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -362,7 +362,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenPlatformIdsIsNull()
+    public void WhenPlatformIdsIsNull_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -376,7 +376,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenPlatformIdsContainsEmptyGuid()
+    public void WhenPlatformIdsContainsEmptyGuid_ShouldHaveCustomError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -391,7 +391,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenPlatformIdsAreValid()
+    public void WhenPlatformIdsAreValid_ShouldNotHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -405,7 +405,7 @@ public class GameValidatorTests
     }
     
     [Test]
-    public void ShouldHaveError_WhenGenreIdsIsEmpty()
+    public void WhenGenreIdsIsEmpty_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -419,7 +419,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenGenreIdsIsNull()
+    public void WhenGenreIdsIsNull_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -433,7 +433,7 @@ public class GameValidatorTests
     }
     
     [Test]
-    public void ShouldHaveCustomError_WhenGenreIdsContainsEmptyGuid()
+    public void WhenGenreIdsContainsEmptyGuid_ShouldHaveCustomError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -449,7 +449,7 @@ public class GameValidatorTests
     [TestCase(1, TestName = "Single genre")]
     [TestCase(2, TestName = "Two genres")]
     [TestCase(5, TestName = "Multiple genres")]
-    public void ShouldNotHaveError_WhenGenreIdsAreValid(int genreCount)
+    public void WhenGenreIdsAreValid_ShouldNotHaveError(int genreCount)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -463,7 +463,7 @@ public class GameValidatorTests
     }
     
     [Test]
-    public void ShouldNotHaveError_WhenPictureIsNull()
+    public void WhenPictureIsNull_ShouldNotHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -477,7 +477,7 @@ public class GameValidatorTests
     }
     
     [Test]
-    public void ShouldHaveError_WhenPictureIsTooSmall()
+    public void WhenPictureIsTooSmall_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -492,7 +492,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenPictureIsTooLarge()
+    public void WhenPictureIsTooLarge_ShouldHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -510,7 +510,7 @@ public class GameValidatorTests
     [TestCase(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }, TestName = "PNG format")]
     [TestCase(new byte[] { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61 }, TestName = "GIF87a format")]
     [TestCase(new byte[] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61 }, TestName = "VGIF89a format")]
-    public void ShouldNotHaveError_WhenPictureHasValidFormat(byte[] pictureBytes)
+    public void WhenPictureHasValidFormat_ShouldNotHaveError(byte[] pictureBytes)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -527,7 +527,7 @@ public class GameValidatorTests
     [TestCase(new byte[] { 0x49, 0x49, 0x2A, 0x00 }, TestName = "TIFF format")]
     [TestCase(new byte[] { 0x50, 0x4B, 0x03, 0x04 }, TestName = "ZIP format")]
     [TestCase(new byte[] { 0x25, 0x50, 0x44, 0x46 }, TestName = "PDF format")]
-    public void ShouldHaveError_WhenPictureHasInvalidFormat(byte[] pictureBytes)
+    public void WhenPictureHasInvalidFormat_ShouldHaveError(byte[] pictureBytes)
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -542,7 +542,7 @@ public class GameValidatorTests
     }
     
     [Test]
-    public void ShouldNotHaveError_WhenAllPropertiesAreValid()
+    public void WhenAllPropertiesAreValid_ShouldNotHaveError()
     {
         // Arrange
         var game = TestData.Game.GenerateGameRequestModel();
@@ -555,7 +555,7 @@ public class GameValidatorTests
     }
 
     [Test]
-    public void ShouldHaveMultipleErrors_WhenMultiplePropertiesAreInvalid()
+    public void WhenMultiplePropertiesAreInvalid_ShouldHaveMultipleErrors()
     {
         var game = new GameRequestModel
         {
