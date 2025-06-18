@@ -1,7 +1,7 @@
 using FluentValidation;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Models.Genre;
- 
+
 namespace PracticeGamestore.Validators;
 
 public class GenreValidator : AbstractValidator<GenreRequestModel>

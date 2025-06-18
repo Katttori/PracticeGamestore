@@ -14,6 +14,7 @@ public static class UserMappingExtensions
             user.Email,
             user.PhoneNumber,
             user.PasswordHash,
+            user.PasswordSalt,
             (UserRole)user.Role,
             (UserStatus)user.Status,
             user.CountryId,
@@ -25,10 +26,11 @@ public static class UserMappingExtensions
     {
         return new()
         {
-            UserName = userDto.UserName,
-            Email = userDto.Email,
+            UserName = userDto.UserName.Trim(),
+            Email = userDto.Email.Trim(),
             PhoneNumber = userDto.PhoneNumber,
             PasswordHash = userDto.Password,
+            PasswordSalt = userDto.PasswordSalt!,
             Role = (DataAccess.Enums.UserRole)userDto.Role,
             Status = (DataAccess.Enums.UserStatus)userDto.Status,
             CountryId = userDto.CountryId,

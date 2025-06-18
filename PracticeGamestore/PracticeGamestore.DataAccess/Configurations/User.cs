@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PracticeGamestore.DataAccess.Constants;
 using PracticeGamestore.DataAccess.Enums;
 
 namespace PracticeGamestore.DataAccess.Configurations;
@@ -19,22 +20,22 @@ public class User : IEntityTypeConfiguration<Entities.User>
         
         builder.Property(x => x.UserName)
             .HasColumnName("username")
-            .HasMaxLength(100)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
         
         builder.Property(x => x.Email)
             .HasColumnName("email")
-            .HasMaxLength(100)
+            .HasMaxLength(ValidationConstants.StringLength.ShortMaximum)
             .IsRequired();
         
         builder.Property(x => x.PhoneNumber)
             .HasColumnName("phone_number")
-            .HasMaxLength(15)
+            .HasMaxLength(ValidationConstants.MaxPhoneLength)
             .IsRequired();
         
         builder.Property(x => x.PasswordHash)
             .HasColumnName("password_hash")
-            .HasMaxLength(255)
+            .HasMaxLength(ValidationConstants.MaxHashLength)
             .IsRequired();
         
         builder.Property(x => x.Role)
@@ -48,6 +49,11 @@ public class User : IEntityTypeConfiguration<Entities.User>
             .HasConversion<int>()
             .IsRequired()
             .HasDefaultValue(UserStatus.Active);
+
+        builder.Property(x => x.PasswordSalt)
+            .HasColumnName("password_salt")
+            .HasMaxLength(ValidationConstants.MaxPasswordSaltLength)
+            .IsRequired();
         
         builder.Property(x => x.CountryId)
             .HasColumnName("country_id")

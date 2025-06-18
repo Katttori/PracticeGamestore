@@ -9,6 +9,5 @@ public interface IUserService
     Task<Guid?> CreateAsync(UserDto model);
     Task<bool> UpdateAsync(Guid id, UserDto model);
     Task DeleteAsync(Guid id);
-    Task<bool> BanUserAsync(Guid id);   
-    
+    Task<bool> BanUserAsync(Guid id);
 }

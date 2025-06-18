@@ -8,7 +8,7 @@ namespace PracticeGamestore.Business.Services.Location;
 
 public class LocationService(ICountryService countryService, IBlacklistService blacklistService) : ILocationService
 {
-    public async Task HandleLocationAccessAsync(string countryName, string userEmail)
+    public async Task HandleLocationAccessAsync(string? countryName, string userEmail)
     {
         if (string.IsNullOrWhiteSpace(countryName))
             throw new ArgumentException(ErrorMessages.MissingLocationHeader);

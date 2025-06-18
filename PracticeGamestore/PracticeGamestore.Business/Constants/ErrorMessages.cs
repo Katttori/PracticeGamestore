@@ -5,8 +5,9 @@ public static class ErrorMessages
     public static string FailedToCreate(string entityName) => $"Failed to create {entityName}.";
     public static string NotFound(string entityName, Guid id) => $"{entityName} with id {id} does not exist.";
     public static string FailedToUpdate(string entityName, Guid id) => $"Failed to update {entityName} with id {id}.";
-
+    public static string FailedLogIn(string email) => $"Could not find a user with email {email}, who is allowed to log in in our system:)";
     public static string HasIncorrectIds => "{PropertyName} does not contain corrects ids";
+    public static string FailedRegistrationBecauseOfBannedCountry(string country) => $"Country {country} is banned! You are not allowed to register:)";
 
     public static string FirstCannotBeGreaterThanSecond(string first, string second)
         => $"{first} cannot be greater than {second}";
@@ -43,4 +44,9 @@ public static class ErrorMessages
     public const string MissingLocationHeader = "Missing X-Location-Country header.";
     public const string BlacklistedUser = "you are banned :)";
     public const string IncorrectPhoneNumber = "Phone number must be in the format +1234567890 or 1234567890, and must not contain letters or special characters.";
+    public const string RegistrationFailed = "Registartion failed.";
+    public const string InvalidRegistrationCountry = "Invalid country was specified during registration.";
+    public const string PasswordRequired = "Password is required.";
+    public const string InsecurePassword =
+        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character";
 }

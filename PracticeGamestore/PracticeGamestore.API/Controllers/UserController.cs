@@ -84,39 +84,4 @@ public class UserController(
         logger.LogWarning("Failed to ban user with ID {Id}", id);
         return BadRequest("User ban failed. User might not exist or is already banned.");
     }
-    
-    [HttpGet("/token")]
-    public IActionResult GetToken([FromQuery] string email, [FromQuery] string role, [FromQuery] Guid id)
-    {
-        // this endpoint is only for testing purposes
-        // should be deleted later
-        
-        UserRole userRole;
-
-        switch (role)
-        {
-            case "Admin":
-                userRole = UserRole.Admin;
-                break;
-            case "User":
-                userRole = UserRole.User;
-                break;
-            case "Manager":
-                userRole = UserRole.Manager;
-                break;
-            default:
-                userRole = UserRole.User;
-                break;
-        }
-        
-        var user = new UserRequestModel()
-        {
-            Email = email,
-            Role = userRole,
-        }.MapToUserDto();
-        user.Id = id;
-
-        var token = tokenService.GenerateJwtToken(user);
-        return Ok(new { token });
-    }
 }

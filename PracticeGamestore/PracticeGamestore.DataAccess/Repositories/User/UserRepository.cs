@@ -19,6 +19,12 @@ public class UserRepository(GamestoreDbContext context) : IUserRepository
         return await _usersNoTracking
                 .FirstOrDefaultAsync(u => u.Id == id);
     }
+    
+    public async Task<Entities.User?> GetByEmailAsync(string email)
+    {
+        return await _usersNoTracking
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
 
     public async Task<Guid?> CreateAsync(Entities.User user)
     {

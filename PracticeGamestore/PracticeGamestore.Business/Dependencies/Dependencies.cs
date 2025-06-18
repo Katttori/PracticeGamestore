@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PracticeGamestore.Business.Options;
+using PracticeGamestore.Business.Services.Auth;
 using PracticeGamestore.Business.Services.Blacklist;
 using PracticeGamestore.Business.Services.Country;
 using PracticeGamestore.Business.Services.File;
@@ -12,8 +15,8 @@ using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Order;
-using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.Business.Services.Token;
+using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
 using PracticeGamestore.DataAccess.Repositories.Country;
 using PracticeGamestore.DataAccess.Repositories.File;
@@ -65,5 +68,13 @@ public static class Dependencies
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IHeaderHandleService, HeaderHandleService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()!;
+                options.TokenValidationParameters = TokenService.CreateTokenValidationParameters(jwtOptions);
+            });
     }
 }

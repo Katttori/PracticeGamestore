@@ -63,29 +63,29 @@ public class User
     
     public static List<Business.DataTransferObjects.UserDto> GenerateUserDtos()
     {
-        return new()
-        {
-            new(Guid.NewGuid(), "user1", "user1@example", "1234567890", "password1", Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active, Guid.NewGuid(),
-                new DateTime(1990, 1, 1)),
-            new(Guid.NewGuid(), "user2", "user2@example.com", "2345678901", "password2", Business.Enums.UserRole.Admin, (Business.Enums.UserStatus)UserStatus.Active,
-                Guid.NewGuid(), new DateTime(1991, 2, 2)),
-            new(Guid.NewGuid(), "user3", "user3@example.com", "3456789012", "password3", Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Banned,
-                Guid.NewGuid(), new DateTime(1992, 3, 3)),
-            new(Guid.NewGuid(), "user4", "user4@example.com", "4567890123", "password4", Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active,
-                Guid.NewGuid(), new DateTime(1993, 4, 4)),
-            new(Guid.NewGuid(), "user5", "user5@example.com", "5678901234", "password5", Business.Enums.UserRole.Manager, (Business.Enums.UserStatus)UserStatus.Active,
-                Guid.NewGuid(), new DateTime(1994, 5, 5)),
-            new(Guid.NewGuid(), "user6", "user6@example.com", "6789012345", "password6", Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active,
-                Guid.NewGuid(), new DateTime(1995, 6, 6)),
-            new(Guid.NewGuid(), "user7", "user7@example.com", "7890123456", "password7", Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active,
-                Guid.NewGuid(), new DateTime(1996, 7, 7)),
-            new(Guid.NewGuid(), "user8", "user8@example.com", "8901234567", "password8", Business.Enums.UserRole.Admin, (Business.Enums.UserStatus)UserStatus.Active,
-                Guid.NewGuid(), new DateTime(1997, 8, 8)),
-            new(Guid.NewGuid(), "user9", "user9@example.com", "9012345678", "password9", Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Banned,
-                Guid.NewGuid(), new DateTime(1998, 9, 9)),
-            new(Guid.NewGuid(), "user10", "user10@example.com", "0123456789", "password10", Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active,
-                Guid.NewGuid(), new DateTime(1999, 10, 10))
-        };
+       return new()
+    {
+        new(Guid.NewGuid(), "user1", "user1@example", "1234567890", "password1", Guid.NewGuid().ToString(), Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active, Guid.NewGuid(),
+            new DateTime(1990, 1, 1)),
+        new(Guid.NewGuid(), "user2", "user2@example.com", "2345678901", "password2", Guid.NewGuid().ToString(), Business.Enums.UserRole.Admin, (Business.Enums.UserStatus)UserStatus.Active,
+            Guid.NewGuid(), new DateTime(1991, 2, 2)),
+        new(Guid.NewGuid(), "user3", "user3@example.com", "3456789012", "password3", Guid.NewGuid().ToString(), Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Banned,
+            Guid.NewGuid(), new DateTime(1992, 3, 3)),
+        new(Guid.NewGuid(), "user4", "user4@example.com", "4567890123", "password4", Guid.NewGuid().ToString(), Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active,
+            Guid.NewGuid(), new DateTime(1993, 4, 4)),
+        new(Guid.NewGuid(), "user5", "user5@example.com", "5678901234", "password5", Guid.NewGuid().ToString(), Business.Enums.UserRole.Manager, (Business.Enums.UserStatus)UserStatus.Active,
+            Guid.NewGuid(), new DateTime(1994, 5, 5)),
+        new(Guid.NewGuid(), "user6", "user6@example.com", "6789012345", "password6", Guid.NewGuid().ToString(), Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active,
+            Guid.NewGuid(), new DateTime(1995, 6, 6)),
+        new(Guid.NewGuid(), "user7", "user7@example.com", "7890123456", "password7", Guid.NewGuid().ToString(), Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active,
+            Guid.NewGuid(), new DateTime(1996, 7, 7)),
+        new(Guid.NewGuid(), "user8", "user8@example.com", "8901234567", "password8", Guid.NewGuid().ToString(), Business.Enums.UserRole.Admin, (Business.Enums.UserStatus)UserStatus.Active,
+            Guid.NewGuid(), new DateTime(1997, 8, 8)),
+        new(Guid.NewGuid(), "user9", "user9@example.com", "9012345678", "password9", Guid.NewGuid().ToString(), Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Banned,
+            Guid.NewGuid(), new DateTime(1998, 9, 9)),
+        new(Guid.NewGuid(), "user10", "user10@example.com", "0123456789", "password10", Guid.NewGuid().ToString(), Business.Enums.UserRole.User, (Business.Enums.UserStatus)UserStatus.Active,
+            Guid.NewGuid(), new DateTime(1999, 10, 10))
+    };
     }
 
     public static DataAccess.Entities.User GenerateUserEntity(Guid? id = null)
@@ -113,6 +113,7 @@ public class User
             "testuser@example.com",
             "123456789",
             "hashedpassword",
+            Guid.NewGuid().ToString(),
             Business.Enums.UserRole.User,
             (Business.Enums.UserStatus)UserStatus.Active,
             Guid.NewGuid(),
