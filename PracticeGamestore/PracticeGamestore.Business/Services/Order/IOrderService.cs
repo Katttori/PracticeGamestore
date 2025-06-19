@@ -9,4 +9,5 @@ public interface IOrderService
     Task<Guid?> CreateAsync(OrderRequestDto dto);
     Task<bool> UpdateAsync(Guid id, OrderRequestDto dto);
     Task DeleteAsync(Guid id);
+    Task<IEnumerable<OrderResponseDto>> GetOrdersByUserEmailAsync(string userEmail);
 }

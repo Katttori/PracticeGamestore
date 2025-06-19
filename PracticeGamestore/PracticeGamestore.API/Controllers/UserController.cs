@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Enums;
+using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Business.Services.Token;
 using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.Mappers;
@@ -12,6 +14,7 @@ namespace PracticeGamestore.Controllers;
 public class UserController(
     IUserService userService,
     ITokenService tokenService,
+    IOrderService orderService,
     ILogger<UserController> logger) : ControllerBase
 {
     [HttpGet]
@@ -83,5 +86,32 @@ public class UserController(
         if (user) return NoContent();
         logger.LogWarning("Failed to ban user with ID {Id}", id);
         return BadRequest("User ban failed. User might not exist or is already banned.");
+    }
+    
+    [HttpGet("{id:guid}/orders/history")]
+    [Authorize(Roles = nameof(UserRole.User))]
+
+    public async Task<IActionResult> GetHistory(Guid id)
+    {
+        var user = await userService.GetByIdAsync(id);
+        
+        if (user is null)
+        {
+            logger.LogWarning("User with ID {Id} not found", id);
+            return NotFound("User not found");
+        }
+        
+        var callerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (callerId != id.ToString())
+        {
+            logger.LogWarning("User with ID {Id} not found", id);
+            return Forbid("You do not have permission to access this user's order history");
+        }
+
+        var ordersDto = await orderService.GetOrdersByUserEmailAsync(user.Email);
+        
+        var orders = ordersDto.Select(o => o.MapToOrderModel()).ToList();
+        
+        return Ok(orders);
     }
 }

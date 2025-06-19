@@ -47,4 +47,11 @@ public class OrderRepository(GamestoreDbContext context) : IOrderRepository
             context.Orders.Remove(order);
         }
     }
+    
+    public async Task<IEnumerable<Entities.Order>> GetOrdersByUserEmailAsync(string userEmail)
+    {
+        return await _ordersWithGamesIncluded
+            .Where(o => o.UserEmail == userEmail)
+            .ToListAsync();
+    }
 }

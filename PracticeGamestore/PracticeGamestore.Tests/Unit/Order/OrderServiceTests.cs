@@ -196,4 +196,47 @@ public class OrderServiceTests
         _orderRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Test]
+    public async Task GetOrdersByUserEmailAsync_WhenUserExists_ShouldReturnOrdersDtos()
+    {
+        // Arrange
+        var userEmail = "user@example.com";
+        
+        _orderRepositoryMock
+            .Setup(x => x.GetOrdersByUserEmailAsync(userEmail))
+            .ReturnsAsync(_orderEntities.Where(o => o.UserEmail == userEmail).ToList());
+        
+        // Act
+        var result = (await _orderService.GetOrdersByUserEmailAsync(userEmail)).ToList();
+        
+        // Assert
+        Assert.That(result.Count, Is.EqualTo(_orderEntities.Count(o => o.UserEmail == userEmail)));
+        for (var i = 0; i < result.Count; i++)
+        {
+            Assert.That(result[i].Id, Is.EqualTo(_orderEntities[i].Id));
+            Assert.That(result[i].Status, Is.EqualTo(_orderEntities[i].Status));
+            Assert.That(result[i].UserEmail, Is.EqualTo(_orderEntities[i].UserEmail));
+            Assert.That(result[i].Total, Is.EqualTo(_orderEntities[i].Total));
+            Assert.That(result[i].Games.Count, Is.EqualTo(_orderEntities[i].GameOrders.Count));
+        }
+    }
+
+    [Test]
+    public async Task GetOrdersByUserEmailAsync_WhenUserDoesNotExist_ShouldReturnEmptyList()
+    {
+        // Arrange
+        var userEmail = "nouser@example.com";
+
+        _orderRepositoryMock
+            .Setup(x => x.GetOrdersByUserEmailAsync(userEmail))
+            .ReturnsAsync(new List<DataAccess.Entities.Order>());
+
+        // Act
+        var result = (await _orderService.GetOrdersByUserEmailAsync(userEmail)).ToList();
+
+        // Assert
+        Assert.That(result.Count, Is.EqualTo(0));
+        Assert.That(result, Is.Not.Null);
+    }
 }
