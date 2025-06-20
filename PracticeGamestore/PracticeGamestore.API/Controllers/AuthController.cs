@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.Auth;
@@ -17,8 +18,8 @@ public class AuthController(IUserService userService,
     ILogger<AuthController> logger,
     IAuthService authService) : ControllerBase
 {
-    
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] UserRequestModel model)
     {
         var country = await countryService.GetByIdAsync(model.CountryId);
@@ -51,6 +52,7 @@ public class AuthController(IUserService userService,
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var token = await authService.AuthenticateUser(request.Email, request.Password);
