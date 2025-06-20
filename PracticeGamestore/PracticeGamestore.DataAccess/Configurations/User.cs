@@ -40,7 +40,7 @@ public class User : IEntityTypeConfiguration<Entities.User>
         
         builder.Property(x => x.Role)
             .HasColumnName("role")
-            .HasConversion<int>()
+            .HasConversion<string>()
             .IsRequired()
             .HasDefaultValue(UserRole.User);
         
