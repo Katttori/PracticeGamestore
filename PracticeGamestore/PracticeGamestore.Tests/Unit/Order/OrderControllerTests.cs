@@ -164,4 +164,33 @@ public class OrderControllerTests
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
+    
+    [Test]
+    public async Task GetHistory_WhenUserEmailIsValid_ReturnsOkWithOrders()
+    {
+        // Arrange 
+        _headerHandleServiceMock.Setup(x => x.CheckAccessAsync(CountryHeader, UserEmailHeader))
+            .Returns(Task.CompletedTask);
+        _orderServiceMock.Setup(x => x.GetOrdersByUserEmailAsync(UserEmailHeader))
+            .ReturnsAsync(_orderDtos);
+        
+        // Act
+        var result = await _orderController.GetOrdersByUserEmail(CountryHeader, UserEmailHeader);
+        
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        var responseModels = 
+            (okResult?.Value as IEnumerable<OrderResponseModel> ?? Array.Empty<OrderResponseModel>()).ToList();
+
+        for (var i = 0; i < responseModels.Count; i++)
+        {
+            Assert.That(responseModels[i], Is.InstanceOf<OrderResponseModel>());
+            Assert.That(responseModels[i].Id, Is.EqualTo(_orderDtos[i].Id));
+            Assert.That(responseModels[i].Status, Is.EqualTo(_orderDtos[i].Status.ToString()));
+            Assert.That(responseModels[i].UserEmail, Is.EqualTo(_orderDtos[i].UserEmail));
+            Assert.That(responseModels[i].Total, Is.EqualTo(_orderDtos[i].Total));
+            Assert.That(responseModels[i].Games.Count, Is.EqualTo(_orderDtos[i].Games.Count));
+        }
+    }
 }

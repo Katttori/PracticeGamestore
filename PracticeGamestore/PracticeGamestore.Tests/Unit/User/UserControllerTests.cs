@@ -20,7 +20,6 @@ public class UserControllerTests
 {
     private Mock<IUserService> _userService;
     private Mock<ITokenService> _tokenService;
-    private Mock<IOrderService> _orderService;
     private Mock<ILogger<UserController>> _loggerMock;
     private UserController _userController;
     
@@ -29,9 +28,8 @@ public class UserControllerTests
     {
         _userService = new Mock<IUserService>();
         _tokenService = new Mock<ITokenService>();
-        _orderService = new Mock<IOrderService>();
         _loggerMock = new Mock<ILogger<UserController>>();
-        _userController = new UserController(_userService.Object, _tokenService.Object, _orderService.Object, _loggerMock.Object);
+        _userController = new UserController(_userService.Object, _tokenService.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -198,71 +196,5 @@ public class UserControllerTests
 
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [Test]
-    public async Task GetHistory_WhenUserHasHistory_ShouldReturnListOfOrdersAndOkResult()
-    {
-        // Arrange 
-        var id = Guid.NewGuid();
-        var userDto = TestData.User.GenerateUserDto();
-        
-        _userService
-            .Setup(s => s.GetByIdAsync(id))
-            .ReturnsAsync(userDto);
-        
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, id.ToString()),
-            new Claim(ClaimTypes.Email, userDto.Email)
-        };
-        var identity = new ClaimsIdentity(claims, "test");
-        _userController.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(identity) }
-        };
-        
-        _orderService.Setup((s => s.GetOrdersByUserEmailAsync(userDto.Email)))
-            .ReturnsAsync(new List<OrderResponseDto>());
-        
-        // Act
-        var res = _userController.GetHistory(id);
-        
-        // Assert
-        var okResult = await res as OkObjectResult;
-        Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        var response = (okResult.Value as IEnumerable<OrderResponseModel> ?? []).ToList();
-        Assert.That(response, Is.Not.Null);
-        Assert.That(response.Count, Is.EqualTo(0));
-    }
-    
-    [Test]
-    public async Task GetHistory_WhenUserTriesToAccessAnotherUserHistory_ShouldReturnForbid()
-    {
-        // Arrange 
-        var id = Guid.NewGuid();
-        var userDto = TestData.User.GenerateUserDto();
-        
-        _userService
-            .Setup(s => s.GetByIdAsync(id))
-            .ReturnsAsync(userDto);
-        
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()), 
-            new Claim(ClaimTypes.Email, userDto.Email)
-        };
-        var identity = new ClaimsIdentity(claims, "test");
-        _userController.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(identity) }
-        };
-        
-        // Act
-        var res = await _userController.GetHistory(id);
-        
-        // Assert
-        Assert.That(res, Is.InstanceOf<ForbidResult>());
     }
 }
