@@ -1,3 +1,5 @@
+using PracticeGamestore.Business.Enums;
+
 namespace PracticeGamestore.Business.Constants;
 
 public static class ErrorMessages
@@ -6,6 +8,7 @@ public static class ErrorMessages
     public static string NotFound(string entityName, Guid id) => $"{entityName} with id {id} does not exist.";
     public static string FailedToUpdate(string entityName, Guid id) => $"Failed to update {entityName} with id {id}.";
     public static string FailedLogIn(string email) => $"Could not find a user with email {email}, who is allowed to log in in our system:)";
+    public static string PropertyRequired(string propertyName) => $"{propertyName} is required.";
     public static string HasIncorrectIds => "{PropertyName} does not contain corrects ids";
     public static string FailedRegistrationBecauseOfBannedCountry(string country) => $"Country {country} is banned! You are not allowed to register:)";
 
@@ -20,6 +23,9 @@ public static class ErrorMessages
     
     public static string InvalidRole =>
         $"Role must be one of: {string.Join(", ", ValidationConstants.UserRoleValues)}";
+
+    public static string InvalidPaymentType =>
+        $"Payment type must be one of: {string.Join("", Enum.GetValues(typeof(PaymentMethod)))}";
 
     public static string IncorrectOrderByFields =>
         $"OrderBy fields must be one of: {string.Join(", ", ValidationConstants.OrderByFields)}";
@@ -49,4 +55,11 @@ public static class ErrorMessages
     public const string PasswordRequired = "Password is required.";
     public const string InsecurePassword =
         "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+    public const string IncorrectOrderStatusForPayment = "Payment could only be made for orders in 'Initiated' status.";
+    public const string InvalidIbanFormat = "Invalid IBAN format. Expected: UA followed by 27 digits (e.g., UA903052992990004149123456789).";
+    public const string InvalidCardNumber = "Invalid card number. Enter a valid credit card number (e.g., 4111111111111111).";
+    public const string InvalidExpirationDate = "Invalid expiration date format or card has expired. Use MM/YY format (e.g., 04/27).";
+    public const string InvalidCvc = "Invalid CVC format. Enter a 3-digit number (e.g., 123).";
+    public const string InvalidIbox = "Invalid IBox ID. Provide a valid non-empty GUID (e.g., b1e29de0-728e-4a76-b6e2-123456789abc).";
+    public const string SomethingWentWrong = "Something went wrong, try again later.";
 }
