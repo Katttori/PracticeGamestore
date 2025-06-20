@@ -21,7 +21,7 @@ public class GenreValidatorTests
     [TestCase("", TestName = "Name is empty")]
     [TestCase(" ", TestName = "Name is whitespace")]
     [TestCase("a", TestName = "Name is too short")]
-    public void ShouldHaveError_WhenNameIsEmptyTooShortOrNull(string? name)
+    public void WhenNameIsEmptyTooShortOrNull_ShouldHaveError(string? name)
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -35,7 +35,7 @@ public class GenreValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenNameIsTooLong()
+    public void WhenNameIsTooLong_ShouldHaveError()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -53,7 +53,7 @@ public class GenreValidatorTests
     [TestCase("FPS123", TestName = "Name contains numbers at end")]
     [TestCase("Shoot@em-up", TestName = "Name contains @ symbol")]
     [TestCase("RPG#1", TestName = "Name contains hash symbol")]
-    public void ShouldHaveCustomError_WhenNameHasInvalidFormat(string name)
+    public void WhenNameHasInvalidFormat_ShouldHaveCustomError(string name)
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -75,7 +75,7 @@ public class GenreValidatorTests
     [TestCase("Action RPG", TestName = "Combined genre name")]
     [TestCase("First-Person Shooter", TestName = "Hyphenated genre name")]
     [TestCase("Tower Defense", TestName = "Two-word genre")]
-    public void ShouldNotHaveError_WhenNameIsValid(string name)
+    public void WhenNameIsValid_ShouldNotHaveError(string name)
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -89,7 +89,7 @@ public class GenreValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenDescriptionIsTooLong()
+    public void WhenDescriptionIsTooLong_ShouldHaveError()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -106,7 +106,7 @@ public class GenreValidatorTests
     [TestCase("", TestName = "Description is empty")]
     [TestCase("Fast-paced action games", TestName = "Valid description")]
     [TestCase("Strategic thinking and planning games", TestName = "Longer valid description")]
-    public void ShouldNotHaveError_WhenDescriptionIsValidOrEmpty(string? description)
+    public void WhenDescriptionIsValidOrEmpty_ShouldNotHaveError(string? description)
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -120,7 +120,7 @@ public class GenreValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenParentIdIsEmpty()
+    public void WhenParentIdIsEmpty_ShouldHaveError()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -134,7 +134,7 @@ public class GenreValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenParentIdIsNull()
+    public void WhenParentIdIsNull_ShouldNotHaveError()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -148,7 +148,7 @@ public class GenreValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenParentIdIsValidGuid()
+    public void WhenParentIdIsValidGuid_ShouldNotHaveError()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -162,7 +162,7 @@ public class GenreValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValid()
+    public void WhenModelIsValid_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -175,7 +175,7 @@ public class GenreValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValidWithParentId()
+    public void WhenModelIsValidWithParentId_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -189,7 +189,7 @@ public class GenreValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValidWithDescription()
+    public void WhenModelIsValidWithDescription_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();
@@ -203,7 +203,7 @@ public class GenreValidatorTests
     }
     
     [Test]
-    public void ShouldHaveMultipleErrors_WhenModelHasMultipleInvalidFields()
+    public void WhenModelHasMultipleInvalidFields_ShouldHaveMultipleErrors()
     {
         // Arrange
         var genre = TestData.Genre.GenerateGenreRequestModel();

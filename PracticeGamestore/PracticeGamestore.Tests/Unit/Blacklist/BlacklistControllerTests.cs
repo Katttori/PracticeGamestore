@@ -31,7 +31,7 @@ public class BlacklistControllerTests
     }
 
     [Test]
-    public async Task GetAll_ReturnsOkWithBlacklists()
+    public async Task GetAll_WhenBlacklistsExist_ReturnsOkWithBlacklists()
     {
         // Arrange
         var blacklistDtos = TestData.Blacklist.GenerateBlacklistDtos();
@@ -152,7 +152,7 @@ public class BlacklistControllerTests
     }
     
     [Test]
-    public async Task Delete_ReturnsNoContent()
+    public async Task Delete_WhenBlacklistIsDeleted_ReturnsNoContent()
     {
         // Arrange
         _blacklistServiceMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);

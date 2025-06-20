@@ -26,7 +26,7 @@ public class PublisherServiceTests
     }
 
     [Test]
-    public async Task GetAllAsync_ShouldReturnAllPublishers()
+    public async Task GetAllAsync_WhenPublishersExist_ShouldReturnAllPublishers()
     {
         //Arrange
         var publishers = TestData.Publisher.GeneratePublisherEntities();
@@ -49,7 +49,7 @@ public class PublisherServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_WhenPublisherExists_ReturnsPublisherDto()
+    public async Task GetByIdAsync_WhenPublisherExists_ShouldReturnPublisherDto()
     {
         //Arrange
         var publisher = TestData.Publisher.GeneratePublisherEntity();
@@ -69,7 +69,7 @@ public class PublisherServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_WhenPublisherDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_WhenPublisherDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         _publisherRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
@@ -83,7 +83,7 @@ public class PublisherServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_WhenPublisherExistsAndChangesSavedSuccessfully_ReturnsTrue()
+    public async Task UpdateAsync_WhenPublisherExistsAndChangesSavedSuccessfully_ShouldReturnTrue()
     {
         //Arrange
         var publisher = TestData.Publisher.GeneratePublisherEntity();
@@ -100,7 +100,7 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenPublisherDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenPublisherDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         var id = Guid.NewGuid();
@@ -116,7 +116,7 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void UpdateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -132,7 +132,7 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public void UpdateAsync_WhenPageUrlAlreadyExists_ThrowsArgumentException()
+    public void UpdateAsync_WhenPageUrlAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -148,7 +148,7 @@ public class PublisherServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldAddPublisher_WhenChangesSavedSuccessfully()
+    public async Task CreateAsync_WhenChangesSavedSuccessfully_ShouldAddPublisher()
     {
         //Arrange
         var publisher = TestData.Publisher.GeneratePublisherEntity();
@@ -166,7 +166,7 @@ public class PublisherServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
+    public async Task CreateAsync_WhenChangesNotSaved_ShouldReturnNull()
     {
         //Arrange
         var publisher = TestData.Publisher.GeneratePublisherEntity();
@@ -183,7 +183,7 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void CreateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var publisher = TestData.Publisher.GeneratePublisherEntity();
@@ -195,7 +195,7 @@ public class PublisherServiceTests
     }
     
     [Test]
-    public void CreateAsync_WhenPageUrlAlreadyExists_ThrowsArgumentException()
+    public void CreateAsync_WhenPageUrlAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var dto = TestData.Publisher.GeneratePublisherDto();
@@ -207,7 +207,7 @@ public class PublisherServiceTests
     }
 
     [Test]
-    public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
+    public async Task DeleteAsync_WhenPublisherIsDeleted_ShouldCallDeleteAndSaveChanges()
     {
         //Arrange
         var id = Guid.NewGuid();

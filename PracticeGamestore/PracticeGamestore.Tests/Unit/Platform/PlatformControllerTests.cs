@@ -41,7 +41,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task GetAllPlatforms_ShouldReturnOkResult_WhenPlatformsExist()
+    public async Task GetAllPlatforms_WhenPlatformsExist_ShouldReturnOkResult()
     {
         // Arrange
         var platforms = TestData.Platform.GeneratePlatformDtos();
@@ -65,7 +65,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task GetPlatformById_ShouldReturnOkResult_WhenPlatformExists()
+    public async Task GetPlatformById_WhenPlatformExists_ShouldReturnOkResult()
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformDto();
@@ -87,7 +87,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task GetPlatformById_ShouldReturnNotFound_WhenPlatformDoesNotExist()
+    public async Task GetPlatformById_WhenPlatformDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
         var platformId = Guid.NewGuid();
@@ -156,7 +156,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task CreatePlatform_ShouldReturnCreatedResult_WhenPlatformIsCreated()
+    public async Task CreatePlatform_WhenPlatformIsCreated_ShouldReturnCreatedResult()
     {
         // Arrange
         var platformRequest = TestData.Platform.GeneratePlatformRequestModel();
@@ -176,7 +176,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task CreatePlatform_ShouldReturnBadRequest_WhenCreationFails()
+    public async Task CreatePlatform_WhenCreationFails_ShouldReturnBadRequest()
     {
         // Arrange
         var platformRequest = TestData.Platform.GeneratePlatformRequestModel();
@@ -192,7 +192,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task Update_ShouldReturnNoContent_WhenPlatformIsUpdated()
+    public async Task Update_WhenPlatformIsUpdated_ShouldReturnNoContent()
     {
         // Arrange
         _platformService.Setup(s => s.UpdateAsync(It.IsAny<PlatformDto>())).ReturnsAsync(true);
@@ -207,7 +207,7 @@ public class PlatformControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
+    public async Task Update_WhenUpdateFails_ShouldReturnBadRequest()
     {
         // Arrange
         _platformService.Setup(s => s.UpdateAsync(It.IsAny<PlatformDto>())).ReturnsAsync(false);
@@ -223,7 +223,7 @@ public class PlatformControllerTests
     }
     
     [Test]
-    public async Task Delete_ShouldReturnNoContent_WhenPlatformIsDeleted()
+    public async Task Delete_WhenPlatformIsDeleted_ShouldReturnNoContent()
     {
         // Arrange
         var platformId = Guid.NewGuid();

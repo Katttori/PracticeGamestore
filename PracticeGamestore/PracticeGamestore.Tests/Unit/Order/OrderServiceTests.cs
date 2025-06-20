@@ -30,7 +30,7 @@ public class OrderServiceTests
     }
 
     [Test]
-    public async Task GetAllAsync_ReturnsAllOrders()
+    public async Task GetAllAsync__WhenOrdersExist_ShouldReturnAllOrders()
     {
         //Arrange
         _orderRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(_orderEntities);
@@ -51,7 +51,7 @@ public class OrderServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_WhenOrderExists_ReturnsOrderDto()
+    public async Task GetByIdAsync_WhenOrderExists_ShouldReturnOrderDto()
     {
         //Arrange
         _orderRepositoryMock
@@ -71,7 +71,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public async Task GetByIdAsync_WhenOrderDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_WhenOrderDoesNotExist_ShouldReturnNull()
     {
         //Arrange
         _orderRepositoryMock
@@ -86,7 +86,7 @@ public class OrderServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_WhenChangesSavedSuccessfully_ReturnsCreatedId()
+    public async Task CreateAsync_WhenChangesSavedSuccessfully_ShouldReturnCreatedId()
     {
         //Arrange
         _gameRepositoryMock
@@ -107,7 +107,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_WhenSaveChangesFailed_ReturnsNull()
+    public async Task CreateAsync_WhenSaveChangesFailed_ShouldReturnNull()
     {
         //Arrange
         _gameRepositoryMock
@@ -128,7 +128,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_WhenGameIdIsMissing_ReturnsNull()
+    public async Task CreateAsync_WhenGameIdIsMissing_ShouldReturnNull()
     {
         // Arrange
         var existingIds = _orderRequestDto.GameIds.Take(1).ToList();
@@ -145,7 +145,7 @@ public class OrderServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ReturnsTrue()
+    public async Task UpdateAsync_WhenEntityExistsAndChangesSavedSuccessfully_ShouldReturnTrue()
     {
         //Arrange
         _gameRepositoryMock
@@ -166,7 +166,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_WhenEntityDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_WhenEntityDoesNotExist_ShouldReturnFalse()
     {
         //Arrange
         _gameRepositoryMock
@@ -184,7 +184,7 @@ public class OrderServiceTests
     }
 
     [Test]
-    public async Task DeleteAsync_CallsDeleteAndSaveChanges()
+    public async Task DeleteAsync_WhenOrderIsDeleted_ShouldCallDeleteAndSaveChanges()
     {
         //Arrange
         var id = Guid.NewGuid();

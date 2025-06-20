@@ -31,7 +31,7 @@ public class RequestModelValidationFilterTests
     
 
 [Test]
-    public async Task OnActionExecuting_ShouldInterceptAndReturnBadRequestWithErrorsWhenRequestModelIsInvalidAndLogIt()
+    public async Task OnActionExecuting_WhenRequestModelIsInvalidAndLogIt_ShouldInterceptAndReturnBadRequestWithErrors()
     {
         // Arrange
         _context.ModelState.AddModelError("error", "message");
@@ -61,7 +61,7 @@ public class RequestModelValidationFilterTests
     }
 
     [Test]
-    public async Task OnActionExecuting_ShouldContinueWhenRequestModelIsValid()
+    public async Task OnActionExecuting_WhenRequestModelIsValid_ShouldContinue()
     {
         // Arrange
         

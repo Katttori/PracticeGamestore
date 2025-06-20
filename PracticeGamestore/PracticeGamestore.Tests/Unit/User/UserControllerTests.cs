@@ -29,7 +29,7 @@ public class UserControllerTests
     }
 
     [Test]
-    public async Task GetAll_ReturnsOkWithUsers()
+    public async Task GetAll_WhenUsersExist_ShouldReturnOkWithUsers()
     {
         // Arrange
         var userDtos = TestData.User.GenerateUserDtos();

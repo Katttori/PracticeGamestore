@@ -39,7 +39,7 @@ public class GenreControllerTests
     }
 
     [Test]
-    public async Task GetAll_ReturnsOkWithGenres()
+    public async Task GetAll_WhenGenreExists_ShouldReturnOkWithGenres()
     {
         // Arrange
         var genreDtos = TestData.Genre.GenerateGenreDtos();
@@ -60,7 +60,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task GetById_WhenGenreIsNull_ReturnsNotFound()
+    public async Task GetById_WhenGenreIsNull_ShouldReturnNotFound()
     {
         // Arrange
         _genreService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as GenreDto);
@@ -73,7 +73,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task GetById_WhenGenreFound_ReturnsOkWithGenre()
+    public async Task GetById_WhenGenreFound_ShouldReturnOkWithGenre()
     {
         // Arrange
         var genreDto = TestData.Genre.GenerateGenreDto();
@@ -92,7 +92,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task Create_WhenOperationFailed_ReturnsBadRequest()
+    public async Task Create_WhenOperationFailed_ShouldReturnBadRequest()
     {
         // Arrange
         var model = TestData.Genre.GenerateGenreRequestModel();
@@ -107,7 +107,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task Create_WhenOperationSuccessful_ReturnsCreatedWithId()
+    public async Task Create_WhenOperationSuccessful_ShouldReturnCreatedWithId()
     {
         // Arrange
         var newId = Guid.NewGuid();
@@ -124,7 +124,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
+    public async Task Update_WhenOperationSuccessful_ShouldReturnNoContent()
     {
         // Arrange
         _genreService.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(true);
@@ -137,7 +137,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task Update_WhenOperationFailed_ReturnsBadRequest()
+    public async Task Update_WhenOperationFailed_ShouldReturnBadRequest()
     {
         // Arrange
         _genreService.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GenreDto>())).ReturnsAsync(false);
@@ -150,7 +150,7 @@ public class GenreControllerTests
     }
     
     [Test]
-    public async Task Delete_ReturnsNoContent()
+    public async Task Delete_WhenGenreIsDeleted_ShouldReturnNoContent()
     {
         // Arrange
         _genreService.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);

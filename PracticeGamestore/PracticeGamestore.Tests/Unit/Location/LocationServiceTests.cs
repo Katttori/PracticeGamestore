@@ -25,7 +25,7 @@ public class LocationServiceTests
     }
 
     [Test]
-    public async Task HandleLocationAccessAsync_WhenCountryNotFound_CreatesNewCountry()
+    public async Task HandleLocationAccessAsync_WhenCountryNotFound_ShouldCreateNewCountry()
     {
         // Arrange
         const string countryName = "Narnia";
@@ -42,7 +42,7 @@ public class LocationServiceTests
     }
 
     [Test]
-    public void HandleLocationAccessAsync_WhenLocationHeaderIsMissing_ThrowsArgumentException()
+    public void HandleLocationAccessAsync_WhenLocationHeaderIsMissing_ShouldThrowArgumentException()
     {
         // Act & Assert
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _locationService.HandleLocationAccessAsync("", ""));
@@ -50,7 +50,7 @@ public class LocationServiceTests
     }
 
     [Test]
-    public void HandleLocationAccessAsync_WhenCountryIsBanned_AddsToBlacklistAndThrows()
+    public void HandleLocationAccessAsync_WhenCountryIsBanned_ShouldAddToBlacklistAndThrows()
     {
         // Arrange
         var bannedCountry = TestData.Country.GenerateBannedCountryDto();
