@@ -7,5 +7,5 @@ public class PaymentOptions
     public const string SectionName = "Payment";
 
     public required string BaseUrl { get; set; }
-    public required Dictionary<PaymentMethod, string> Options { get; set; } = new();
+    public required Dictionary<PaymentMethod, string> Endpoints { get; set; } = new();
 }

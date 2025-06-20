@@ -30,7 +30,7 @@ public class PaymentService(HttpClient httpClient,
 
     private async Task<bool> ProcessPaymentAsync<T>(T paymentModel, PaymentMethod paymentMethod)
     {
-        var endpoint = _paymentOptions.Options.GetValueOrDefault(paymentMethod);
+        var endpoint = _paymentOptions.Endpoints.GetValueOrDefault(paymentMethod);
         try
         {
             var response = await httpClient.PostAsJsonAsync(endpoint, paymentModel);
@@ -41,19 +41,22 @@ public class PaymentService(HttpClient httpClient,
                 logger.LogInformation("Successfully processed {PaymentMethod} payment. Response: {Response}",
                     paymentMethod.ToString(), response); 
                 return true;
-            }    
-            logger.LogWarning("{PaymentMethod} payment failed with status {StatusCode}. Response: {Response}", 
+            }  
+            
+            logger.LogError("{PaymentMethod} payment failed with status {StatusCode}. Response: {Response}", 
                 paymentMethod.ToString(), response.StatusCode, responseContent);
             return false;
         }
         catch (HttpRequestException ex)
         {
-            logger.LogError(ex, "{PaymentMethod} payment failed after all retries", paymentMethod.ToString());
+            logger.LogError(ex, "{PaymentMethod} payment failed after all retries", 
+                paymentMethod.ToString());
             return false;
         }
         catch (TaskCanceledException ex)
         {
-            logger.LogError(ex, "{PaymentMethod} payment timed out", paymentMethod.ToString());
+            logger.LogError(ex, "{PaymentMethod} payment timed out", 
+                paymentMethod.ToString());
             return false;
         }
     }
