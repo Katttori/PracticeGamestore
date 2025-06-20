@@ -89,7 +89,9 @@ public class GenreController(
         await genreService.DeleteAsync(id);
         return NoContent();
     }
+    
     [BirthdateRestrictionFilter]
+    [ServiceFilter(typeof(BirthdateRestrictionFilter))]
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetGamesByGenre(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,

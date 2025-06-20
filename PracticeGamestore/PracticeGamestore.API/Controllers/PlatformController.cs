@@ -49,6 +49,7 @@ public class PlatformController(
     }
     
     [BirthdateRestrictionFilter]
+    [ServiceFilter(typeof(BirthdateRestrictionFilter))]
     [HttpGet("{platformId:guid}/games")]
     public async Task<IActionResult> GetGamesByPlatform(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
