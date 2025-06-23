@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
 using PracticeGamestore.Business.Options;
 using PracticeGamestore.Business.Services.Auth;
 using PracticeGamestore.Business.Services.Blacklist;
@@ -15,6 +17,7 @@ using PracticeGamestore.Business.Services.Genre;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Location;
 using PracticeGamestore.Business.Services.Order;
+using PracticeGamestore.Business.Services.Payment;
 using PracticeGamestore.Business.Services.Token;
 using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.DataAccess.Repositories.Blacklist;
@@ -52,6 +55,39 @@ public static class Dependencies
             options.UseSqlServer(configuration.GetConnectionString("GamestoreDatabase")));
     }
 
+    private static void AddPaymentConfigurations(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<PaymentOptions>(configuration.GetSection(PaymentOptions.SectionName));
+        
+        var retryConfig = configuration.GetSection(RetryPolicyOptions.SectionName).Get<RetryPolicyOptions>();
+        
+        services.AddHttpClient<IPaymentService, PaymentService>(client =>
+            {
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                client.DefaultRequestHeaders.Add("User-Agent", "GameStore-PaymentService/1.0");
+                client.Timeout = TimeSpan.FromSeconds(retryConfig!.TimeoutSeconds);
+
+            })
+            .AddPolicyHandler(GetRetryPolicy(retryConfig!));
+        services.AddScoped<IPaymentService, PaymentService>();
+    }
+
+    private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(RetryPolicyOptions retryPolicy)
+    {
+        return HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .OrResult(message => !message.IsSuccessStatusCode)
+            .WaitAndRetryAsync(
+                retryCount: retryPolicy.MaxRetryAttempts,
+                sleepDurationProvider: retryAttempt =>
+                {
+                    var delay = TimeSpan.FromMilliseconds(retryPolicy.RetryDelayMs *
+                                                          Math.Pow(retryPolicy.BackoffMultiplier, retryAttempt - 1));
+                    var maxDelay = TimeSpan.FromMilliseconds(retryPolicy.MaxRetryDelayMs);
+                    return delay > maxDelay ? maxDelay : delay;
+                });
+    }
+
     public static void AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
     {
         RegisterDbContext(services, configuration);
@@ -69,6 +105,7 @@ public static class Dependencies
         services.AddScoped<IHeaderHandleService, HeaderHandleService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddPaymentConfigurations(configuration);
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
