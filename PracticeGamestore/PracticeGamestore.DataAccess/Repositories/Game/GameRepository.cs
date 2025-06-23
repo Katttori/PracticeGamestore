@@ -10,6 +10,7 @@ public class GameRepository(GamestoreDbContext context) : IGameRepository
     private readonly Func<bool, IQueryable<Entities.Game>> _gamesNoTracking = 
         hideAdultContent => context.Games.AsNoTracking()
             .Where(g => !hideAdultContent || g.AgeRating != AgeRating.EighteenPlus)
+            .Include(g => g.Publisher)
             .Include(g => g.GamePlatforms)
             .ThenInclude(gp => gp.Platform)
             .Include(g => g.GameGenres)
