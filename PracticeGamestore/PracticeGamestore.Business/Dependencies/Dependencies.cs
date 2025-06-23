@@ -59,14 +59,12 @@ public static class Dependencies
     {
         services.Configure<PaymentOptions>(configuration.GetSection(PaymentOptions.SectionName));
         
-        var paymentConfig = configuration.GetSection(PaymentOptions.SectionName).Get<PaymentOptions>();
         var retryConfig = configuration.GetSection(RetryPolicyOptions.SectionName).Get<RetryPolicyOptions>();
         
         services.AddHttpClient<IPaymentService, PaymentService>(client =>
             {
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
                 client.DefaultRequestHeaders.Add("User-Agent", "GameStore-PaymentService/1.0");
-                client.BaseAddress = new Uri(paymentConfig!.BaseUrl);
                 client.Timeout = TimeSpan.FromSeconds(retryConfig!.TimeoutSeconds);
 
             })

@@ -30,7 +30,7 @@ public class PaymentService(HttpClient httpClient,
 
     private async Task<bool> ProcessPaymentAsync<T>(T paymentModel, PaymentMethod paymentMethod)
     {
-        var endpoint = _paymentOptions.Endpoints.GetValueOrDefault(paymentMethod);
+        var endpoint = _paymentOptions.Urls.GetValueOrDefault(paymentMethod);
         try
         {
             var response = await httpClient.PostAsJsonAsync(endpoint, paymentModel);

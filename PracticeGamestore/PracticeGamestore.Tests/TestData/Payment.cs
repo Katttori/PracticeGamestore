@@ -8,12 +8,11 @@ public class Payment
 {
     public static readonly PaymentOptions PaymentOptions = new ()
     {
-        BaseUrl = "https://localhost:5001",
-        Endpoints = new ()
+        Urls = new ()
         {
-            { PaymentMethod.Iban, "/externalPayment/iban" },
-            { PaymentMethod.CreditCard, "/externalPayment/card" },
-            { PaymentMethod.Ibox, "/externalPayment/ibox" }
+            { PaymentMethod.Iban, "https://localhost:5001/externalPayment/iban" },
+            { PaymentMethod.CreditCard, "https://localhost:5001/externalPayment/card" },
+            { PaymentMethod.Ibox, "https://localhost:5001/externalPayment/ibox" }
         }
     };
     

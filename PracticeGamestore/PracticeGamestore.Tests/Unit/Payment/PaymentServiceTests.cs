@@ -60,7 +60,7 @@ public class PaymentServiceTests
     public async Task PayAsync_WhenPaymentWasSuccessful_ShouldReturnTrue(PaymentMethod method, object paymentDto)
     {
         // Arrange
-        var endpoint = TestData.Payment.PaymentOptions.Endpoints.GetValueOrDefault(method);
+        var endpoint = TestData.Payment.PaymentOptions.Urls.GetValueOrDefault(method);
         mockHttp.When(HttpMethod.Post, endpoint!)
             .Respond(HttpStatusCode.OK);
         
@@ -76,7 +76,7 @@ public class PaymentServiceTests
     public async Task PayAsync_WhenPaymentFailed_ShouldReturnFalse(PaymentMethod method, object paymentDto)
     {
         // Arrange
-        var endpoint = TestData.Payment.PaymentOptions.Endpoints.GetValueOrDefault(method);
+        var endpoint = TestData.Payment.PaymentOptions.Urls.GetValueOrDefault(method);
         mockHttp.When(HttpMethod.Post, endpoint!)
             .Respond(HttpStatusCode.BadRequest);
         
@@ -92,7 +92,7 @@ public class PaymentServiceTests
     public async Task PayAsync_WhenNetworkErrorOccurs_ShouldReturnFalse(PaymentMethod method, object paymentDto)
     {
         // Arrange
-        var endpoint = TestData.Payment.PaymentOptions.Endpoints.GetValueOrDefault(method);
+        var endpoint = TestData.Payment.PaymentOptions.Urls.GetValueOrDefault(method);
         mockHttp.When(HttpMethod.Post, endpoint!)
             .Throw(new HttpRequestException("Network error!"));
         
@@ -108,7 +108,7 @@ public class PaymentServiceTests
     public async Task PayAsync_WhenTimeoutOccurs_ShouldReturnFalse(PaymentMethod method, object paymentDto)
     {
         // Arrange
-        var endpoint = TestData.Payment.PaymentOptions.Endpoints.GetValueOrDefault(method);
+        var endpoint = TestData.Payment.PaymentOptions.Urls.GetValueOrDefault(method);
         mockHttp.When(HttpMethod.Post, endpoint!)
             .Throw(new TaskCanceledException("Request timeout"));
 
