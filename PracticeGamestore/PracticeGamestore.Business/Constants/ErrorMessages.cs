@@ -6,6 +6,9 @@ public static class ErrorMessages
     public static string NotFound(string entityName, Guid id) => $"{entityName} with id {id} does not exist.";
     public static string FailedToUpdate(string entityName, Guid id) => $"Failed to update {entityName} with id {id}.";
     public static string FailedLogIn(string email) => $"Could not find a user with email {email}, who is allowed to log in in our system:)";
+    public static string Forbid(string entityName, string action)
+        => $"You are not allowed to {action} {entityName}. You need to be an admin to perform this action.";
+    public static string UserEmailNotFound() => "User email not found in the request headers. Please provide a valid email.";
     public static string HasIncorrectIds => "{PropertyName} does not contain corrects ids";
     public static string FailedRegistrationBecauseOfBannedCountry(string country) => $"Country {country} is banned! You are not allowed to register:)";
 
