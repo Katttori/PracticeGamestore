@@ -91,7 +91,7 @@ public class GenreController(
     }
     
     [BirthdateRestrictionFilter]
-    [ServiceFilter(typeof(BirthdateRestrictionFilter))]
+    [ServiceFilter(typeof(BirthdateRestrictionFromDbFilter))]
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetGamesByGenre(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
