@@ -98,10 +98,11 @@ public class OrderController(
             logger.LogError("Payment failed for order with id: {Id}", id);
             return BadRequest(ErrorMessages.SomethingWentWrong);
         }
-        
+
         logger.LogInformation("Payment successful for order with id: {Id}", id);
         return Ok();
-    
+    }
+
     [HttpGet("history")]
     [Authorize(Roles = nameof(UserRole.User))]
     public async Task<IActionResult> GetOrdersByUserEmail(

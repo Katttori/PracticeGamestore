@@ -286,6 +286,7 @@ public class OrderServiceTests
         // Assert
         Assert.That(result, Is.True);
         Assert.That(order.Status, Is.EqualTo(OrderStatus.Paid));
+    }
 
     [Test]
     public async Task GetOrdersByUserEmailAsync_WhenUserExists_ShouldReturnOrdersDtos()

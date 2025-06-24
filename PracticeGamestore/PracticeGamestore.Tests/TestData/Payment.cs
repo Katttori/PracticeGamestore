@@ -21,7 +21,7 @@ public class Payment
     [
         new object[] { PaymentMethod.Iban, new IbanDto { Iban = "some iban" } },
         new object[] { PaymentMethod.CreditCard, new CreditCardDto { Number = "1234567890123456", Cvc = "233", ExpirationDate = "09/28" } },
-        new object[] { PaymentMethod.Ibox, new IboxDto { TransactionId = "some account" } }
+        new object[] { PaymentMethod.Ibox, new IboxDto { TransactionId = Guid.NewGuid() } }
     ];
   
     public static PaymentRequestModel GeneratePaymentRequestModel(bool? iban = null, bool? creditCard = null, bool? ibox = null)
