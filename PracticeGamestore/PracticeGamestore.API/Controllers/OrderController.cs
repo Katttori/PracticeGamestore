@@ -101,5 +101,20 @@ public class OrderController(
         
         logger.LogInformation("Payment successful for order with id: {Id}", id);
         return Ok();
+    
+    [HttpGet("history")]
+    [Authorize(Roles = nameof(UserRole.User))]
+    public async Task<IActionResult> GetOrdersByUserEmail(
+        [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
+        [FromHeader(Name = HeaderNames.UserEmail), Required] string email
+        )
+    {
+        await headerHandleService.CheckAccessAsync(country, email);
+        
+        var dto = await orderService.GetOrdersByUserEmailAsync(email);
+        
+        var history = dto.Select(o => o.MapToOrderModel()).ToList();
+        
+        return Ok(history);
     }
 }

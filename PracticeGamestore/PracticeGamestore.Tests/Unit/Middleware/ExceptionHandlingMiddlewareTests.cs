@@ -22,7 +22,7 @@ public class ExceptionHandlingMiddlewareTests
     }
 
     [Test]
-    public async Task InvokeAsync_WhenExceptionIsThrown_Returns500AndLogs()
+    public async Task InvokeAsync_WhenExceptionIsThrown_ShouldReturn500AndLogs()
     {
         // Act
         var (status, message) = await InvokeAndReadAsync(new Exception("Test exception"));
@@ -34,7 +34,7 @@ public class ExceptionHandlingMiddlewareTests
     }
     
     [Test]
-    public async Task InvokeAsync_WhenArgumentExceptionIsThrown_Returns400AndLogs()
+    public async Task InvokeAsync_WhenArgumentExceptionIsThrown_ShouldReturn400AndLogs()
     {
         // Act
         var (status, message) = await InvokeAndReadAsync(new ArgumentException("Incorrect argument"));
@@ -46,7 +46,7 @@ public class ExceptionHandlingMiddlewareTests
     }
     
     [Test]
-    public async Task InvokeAsync_WhenUnauthorizedAccessExceptionIsThrown_Returns403AndLogs()
+    public async Task InvokeAsync_WhenUnauthorizedAccessExceptionIsThrown_ShouldReturn403AndLogs()
     {
         // Act
         var (status, message) = await InvokeAndReadAsync(new UnauthorizedAccessException(ErrorMessages.BlacklistedUser));
@@ -73,7 +73,7 @@ public class ExceptionHandlingMiddlewareTests
     }
     
     [Test]
-    public async Task InvokeAsync_WhenNoExceptionIsThrown_CallsNextMiddleware()
+    public async Task InvokeAsync_WhenNoExceptionIsThrown_ShouldCallNextMiddleware()
     {
         // Arrange
         var middleware = new ExceptionHandlingMiddleware(_ => Task.CompletedTask, _loggerMock.Object);

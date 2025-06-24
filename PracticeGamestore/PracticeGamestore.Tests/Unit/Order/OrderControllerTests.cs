@@ -37,7 +37,7 @@ public class OrderControllerTests
     }
 
     [Test]
-    public async Task GetAll_ReturnsOkWithOrders()
+    public async Task GetAll_WhenOrdersExist_ShouldReturnOkWithOrders()
     {
         // Arrange
         _orderServiceMock.Setup(x => x.GetAllAsync()).ReturnsAsync(_orderDtos);
@@ -61,7 +61,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task GetById_WhenOrderIsNull_ReturnsNotFound()
+    public async Task GetById_WhenOrderIsNull_ShouldReturnNotFound()
     {
         // Arrange
         _orderServiceMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(null as OrderResponseDto);
@@ -74,7 +74,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task GetById_WhenOrderFound_ReturnsOkWithOrder()
+    public async Task GetById_WhenOrderFound_ShouldReturnOkWithOrder()
     {
         // Arrange
         _orderServiceMock.Setup(x => x.GetByIdAsync(_orderDtos[0].Id!.Value)).ReturnsAsync(_orderDtos[0]);
@@ -94,7 +94,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task Create_WhenOperationFailed_ReturnsBadRequest()
+    public async Task Create_WhenOperationFailed_ShouldReturnBadRequest()
     {
         // Arrange
         _orderServiceMock
@@ -109,7 +109,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task Create_WhenOperationSuccessful_ReturnsCreatedWithId()
+    public async Task Create_WhenOperationSuccessful_ShouldReturnCreatedWithId()
     {
         // Arrange
         var newId = Guid.NewGuid();
@@ -126,7 +126,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task Update_WhenOperationSuccessful_ReturnsNoContent()
+    public async Task Update_WhenOperationSuccessful_ShouldReturnNoContent()
     {
         // Arrange
         _orderServiceMock
@@ -141,7 +141,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task Update_WhenOperationFailed_ReturnsBadRequest()
+    public async Task Update_WhenOperationFailed_ShouldReturnBadRequest()
     {
         // Arrange
         _orderServiceMock
@@ -156,7 +156,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task Delete_ReturnsNoContent()
+    public async Task Delete_WhenOrderIsDeleted_ShouldReturnNoContent()
     {
         // Arrange
         _orderServiceMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
@@ -185,18 +185,47 @@ public class OrderControllerTests
     }
     
     [Test]
-        public async Task PayOrder_WhenPaymentSuccessful_ReturnsOk()
+    public async Task PayOrder_WhenPaymentSuccessful_ReturnsOk()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var model = TestData.Payment.GeneratePaymentRequestModel(true);
+
+        _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, It.IsAny<PaymentDto>())).ReturnsAsync(true);
+
+        // Act
+        var result = await _orderController.PayOrder(orderId, model);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkResult>());
+    }
+    
+    [Test]
+    public async Task GetHistory_WhenUserEmailIsValid_ReturnsOkWithOrders()
+    {
+        // Arrange 
+        _headerHandleServiceMock.Setup(x => x.CheckAccessAsync(CountryHeader, UserEmailHeader))
+            .Returns(Task.CompletedTask);
+        _orderServiceMock.Setup(x => x.GetOrdersByUserEmailAsync(UserEmailHeader))
+            .ReturnsAsync(_orderDtos);
+        
+        // Act
+        var result = await _orderController.GetOrdersByUserEmail(CountryHeader, UserEmailHeader);
+        
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        var responseModels = 
+            (okResult?.Value as IEnumerable<OrderResponseModel> ?? Array.Empty<OrderResponseModel>()).ToList();
+
+        for (var i = 0; i < responseModels.Count; i++)
         {
-            // Arrange
-            var orderId = Guid.NewGuid();
-            var model = TestData.Payment.GeneratePaymentRequestModel(true);
-            
-            _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, It.IsAny<PaymentDto>())).ReturnsAsync(true);
-
-            // Act
-            var result = await _orderController.PayOrder(orderId, model);
-
-            // Assert
-            Assert.That(result, Is.InstanceOf<OkResult>());
+            Assert.That(responseModels[i], Is.InstanceOf<OrderResponseModel>());
+            Assert.That(responseModels[i].Id, Is.EqualTo(_orderDtos[i].Id));
+            Assert.That(responseModels[i].Status, Is.EqualTo(_orderDtos[i].Status.ToString()));
+            Assert.That(responseModels[i].UserEmail, Is.EqualTo(_orderDtos[i].UserEmail));
+            Assert.That(responseModels[i].Total, Is.EqualTo(_orderDtos[i].Total));
+            Assert.That(responseModels[i].Games.Count, Is.EqualTo(_orderDtos[i].Games.Count));
         }
+    }
 }

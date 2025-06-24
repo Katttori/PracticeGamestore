@@ -22,7 +22,7 @@ public class BlacklistServiceTests
     }
 
     [Test]
-    public async Task GetAllAsync_ReturnsAllBlacklists()
+    public async Task GetAllAsync_WhenBlacklistsExist_ReturnsAllBlacklists()
     {
         // Arrange
         var entities = TestData.Blacklist.GenerateBlacklistEntities();
@@ -176,7 +176,7 @@ public class BlacklistServiceTests
     }
 
     [Test]
-    public async Task DeleteAsync_CallsDeleteAndSaveChanges()
+    public async Task DeleteAsync_WhenCalled_CallsDeleteAndSaveChanges()
     {
         // Arrange
         var id = Guid.NewGuid();

@@ -24,7 +24,7 @@ public class BlackListValidatorTests
     [TestCase("user.domain.com", TestName = "Email missing @ symbol")]
     [TestCase("user@domain", TestName = "Email missing TLD")]
     [TestCase("user name@domain.com", TestName = "Email with space in local part")]
-    public void ShouldHaveError_WhenUserEmailIsInvalid(string? email)
+    public void WhenUserEmailIsInvalid_ShouldHaveError(string? email)
     {
         // Arrange
         var blacklist = TestData.Blacklist.GenerateBlacklistRequestModel();
@@ -38,7 +38,7 @@ public class BlackListValidatorTests
     }
     
     [Test]
-    public void ShouldHaveError_WhenUserEmailIsTooLong()
+    public void WhenUserEmailIsTooLong_ShouldHaveError()
     {
         // Arrange
         var blacklist = TestData.Blacklist.GenerateBlacklistRequestModel();
@@ -57,7 +57,7 @@ public class BlackListValidatorTests
     [TestCase("user_name@example-domain.com", TestName = "Email with underscore and hyphen")]
     [TestCase("firstname.lastname@company.travel", TestName = "Email with long TLD")]
     [TestCase("a@b.co", TestName = "Minimal valid email")]
-    public void ShouldNotHaveError_WhenUserEmailIsValid(string email)
+    public void WhenUserEmailIsValid_ShouldNotHaveError(string email)
     {
         // Arrange
         var blacklist = TestData.Blacklist.GenerateBlacklistRequestModel();
@@ -71,7 +71,7 @@ public class BlackListValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenCountryIdIsEmpty()
+    public void WhenCountryIdIsEmpty_ShouldHaveError()
     {
         // Arrange
         var blacklist = TestData.Blacklist.GenerateBlacklistRequestModel();
@@ -85,7 +85,7 @@ public class BlackListValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValid()
+    public void WhenModelIsValid_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var blacklist = TestData.Blacklist.GenerateBlacklistRequestModel();
@@ -98,7 +98,7 @@ public class BlackListValidatorTests
     }
 
     [Test]
-    public void ShouldHaveMultipleErrors_WhenAllFieldsAreInvalid()
+    public void WhenAllFieldsAreInvalid_ShouldHaveMultipleErrors()
     {
         // Arrange
         var blacklist = TestData.Blacklist.GenerateBlacklistRequestModel();

@@ -101,7 +101,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetAll_ShouldReturnOkWithAllGamesIfUserIsAdult()
+    public async Task GetAll_WhenUserIsAdult_ShouldReturnOkWithAllGames()
     {
         //Arrange
         var hideAdultContent = false;
@@ -120,7 +120,7 @@ public class GameControllerTests
     }
     
     [Test]
-    public async Task GetAll_ShouldReturnOkWithGamesOfAgeRatingLessThan18IfUserIsUnderage()
+    public async Task GetAll_WhenUserIsUnderage_ShouldReturnOkWithGamesOfAgeRatingLessThan18()
     {
         //Arrange
         var hideAdultContent = true;

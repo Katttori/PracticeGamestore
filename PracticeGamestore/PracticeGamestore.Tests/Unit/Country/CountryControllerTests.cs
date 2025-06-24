@@ -25,7 +25,7 @@ public class CountryControllerTests
     }
     
     [Test]
-    public async Task GetAllCountrys_ShouldReturnOkResult_WhenCountrysExist()
+    public async Task GetAllCountries_WhenCountriesExist_ShouldReturnOkResult()
     {
         // Arrange
         var countries = TestData.Country.GenerateCountryDtos();
@@ -49,7 +49,7 @@ public class CountryControllerTests
     }
     
     [Test]
-    public async Task GetCountryById_ShouldReturnOkResult_WhenCountryExists()
+    public async Task GetCountryById_WhenCountryExists_ShouldReturnOkResult()
     {
         // Arrange
         var country = TestData.Country.GenerateCountryDto();
@@ -71,7 +71,7 @@ public class CountryControllerTests
     }
     
     [Test]
-    public async Task GetCountryById_ShouldReturnNotFound_WhenCountryDoesNotExist()
+    public async Task GetCountryById_WhenCountryDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
         var countryId = Guid.NewGuid();
@@ -86,7 +86,7 @@ public class CountryControllerTests
     }
     
     [Test]
-    public async Task CreateCountry_ShouldReturnCreatedResult_WhenCountryIsCreated()
+    public async Task CreateCountry_WhenCountryIsCreated_ShouldReturnCreatedResult()
     {
         // Arrange
         var countryRequest = TestData.Country.GenerateCountryCreateRequestModel();
@@ -104,7 +104,7 @@ public class CountryControllerTests
     }
     
     [Test]
-    public async Task CreateCountry_ShouldReturnBadRequest_WhenCreationFails()
+    public async Task CreateCountry_WhenCreationFails_ShouldReturnBadRequest()
     {
         // Arrange
         var countryRequest = TestData.Country.GenerateCountryCreateRequestModel();
@@ -120,7 +120,7 @@ public class CountryControllerTests
     }
     
     [Test]
-    public async Task Update_ShouldReturnNoContent_WhenCountryIsUpdated()
+    public async Task Update_WhenCountryIsUpdated_ShouldReturnNoContent()
     {
         // Arrange
         _countryService.Setup(s => s.UpdateAsync(It.IsAny<CountryDto>())).ReturnsAsync(true);
@@ -134,7 +134,7 @@ public class CountryControllerTests
     }
 
     [Test]
-    public async Task Update_ShouldReturnBadRequest_WhenUpdateFails()
+    public async Task Update_WhenUpdateFails_ShouldReturnBadRequest()
     {
         // Arrange
         _countryService.Setup(s => s.UpdateAsync(It.IsAny<CountryDto>())).ReturnsAsync(false);
@@ -150,7 +150,7 @@ public class CountryControllerTests
     }
     
     [Test]
-    public async Task Delete_ShouldReturnNoContent_WhenCountryIsDeleted()
+    public async Task Delete_WhenCountryIsDeleted_ShouldReturnNoContent()
     {
         // Arrange
         var countryId = Guid.NewGuid();

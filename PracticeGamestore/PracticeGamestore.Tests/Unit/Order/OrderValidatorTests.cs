@@ -19,7 +19,7 @@ public class OrderValidatorTests
     [TestCase(0, TestName = "Total is zero")]
     [TestCase(-1, TestName = "Total is negative")]
     [TestCase(-99.99, TestName = "Total is a large negative")]
-    public void ShouldHaveError_WhenTotalIsZeroOrNegative(decimal total)
+    public void WhenTotalIsZeroOrNegative_ShouldHaveError(decimal total)
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -35,7 +35,7 @@ public class OrderValidatorTests
     [TestCase(0.01, TestName = "Total is minimal valid value")]
     [TestCase(100, TestName = "Total is typical value")]
     [TestCase(9999.99, TestName = "Total is high valid value")]
-    public void ShouldNotHaveError_WhenTotalIsPositive(decimal total)
+    public void WhenTotalIsPositive_ShouldNotHaveError(decimal total)
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -57,7 +57,7 @@ public class OrderValidatorTests
     [TestCase("user.domain.com", TestName = "Email missing @ symbol")]
     [TestCase("user@domain", TestName = "Email missing TLD")]
     [TestCase("user name@domain.com", TestName = "Email with space in local part")]
-    public void ShouldHaveError_WhenEmailIsInvalid(string? email)
+    public void WhenEmailIsInvalid_ShouldHaveError(string? email)
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -72,7 +72,7 @@ public class OrderValidatorTests
 
     [TestCase("valid@example.com", TestName = "Valid email")]
     [TestCase("user.name+tag@sub.domain.com", TestName = "Complex valid email")]
-    public void ShouldNotHaveError_WhenEmailIsValid(string email)
+    public void WhenEmailIsValid_ShouldNotHaveError(string email)
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -86,7 +86,7 @@ public class OrderValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenGameIdsIsNull()
+    public void WhenGameIdsIsNull_ShouldHaveError()
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -100,7 +100,7 @@ public class OrderValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenGameIdsIsEmpty()
+    public void WhenGameIdsIsEmpty_ShouldHaveError()
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -114,7 +114,7 @@ public class OrderValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenGameIdsContainEmptyGuid()
+    public void WhenGameIdsContainEmptyGuid_ShouldHaveCustomError()
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -129,7 +129,7 @@ public class OrderValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenGameIdsAreValid()
+    public void WhenGameIdsAreValid_ShouldNotHaveError()
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -143,7 +143,7 @@ public class OrderValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValid()
+    public void WhenModelIsValid_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var order = TestData.Order.GenerateOrderRequestModel();
@@ -156,7 +156,7 @@ public class OrderValidatorTests
     }
 
     [Test]
-    public void ShouldHaveMultipleErrors_WhenModelHasMultipleInvalidFields()
+    public void WhenModelHasMultipleInvalidFields_ShouldHaveMultipleErrors()
     {
         // Arrange
         var order = new OrderRequestModel

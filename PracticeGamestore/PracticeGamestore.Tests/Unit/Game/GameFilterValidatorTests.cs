@@ -19,7 +19,7 @@ public class GameFilterValidatorTests
 
     [TestCase(-10, TestName = "MinPrice is negative")]
     [TestCase(-0.01, TestName = "MinPrice is slightly negative")]
-    public void ShouldHaveError_WhenMinPriceIsNegative(decimal minPrice)
+    public void WhenMinPriceIsNegative_ShouldHaveError(decimal minPrice)
     {
         // Arrange
         var filter = new GameFilter { MinPrice = minPrice };
@@ -33,7 +33,7 @@ public class GameFilterValidatorTests
 
     [TestCase(-5, TestName = "MaxPrice is negative")]
     [TestCase(-1, TestName = "MaxPrice is minus one")]
-    public void ShouldHaveError_WhenMaxPriceIsNegative(decimal maxPrice)
+    public void WhenMaxPriceIsNegative_ShouldHaveError(decimal maxPrice)
     {
         // Arrange
         var filter = new GameFilter { MaxPrice = maxPrice };
@@ -46,7 +46,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenMinPriceIsGreaterThanMaxPrice()
+    public void WhenMinPriceIsGreaterThanMaxPrice_ShouldHaveCustomError()
     {
         // Arrange
         var filter = new GameFilter { MinPrice = 100, MaxPrice = 50 };
@@ -63,7 +63,7 @@ public class GameFilterValidatorTests
     [TestCase(30, 60, TestName = "Valid price range")]
     [TestCase(10, 100, TestName = "Large price range")]
     [TestCase(50, 50, TestName = "Equal min and max price")]
-    public void ShouldNotHaveError_WhenPriceRangeIsValid(decimal minPrice, decimal maxPrice)
+    public void WhenPriceRangeIsValid_ShouldNotHaveError(decimal minPrice, decimal maxPrice)
     {
         // Arrange
         var filter = new GameFilter { MinPrice = minPrice, MaxPrice = maxPrice };
@@ -80,7 +80,7 @@ public class GameFilterValidatorTests
     [TestCase(null, 50, TestName = "Only MaxPrice provided")]
     [TestCase(10, null, TestName = "Only MinPrice provided")]
     [TestCase(null, null, TestName = "No prices provided")]
-    public void ShouldNotHaveError_WhenOnlyOnePriceIsProvided(decimal? minPrice, decimal? maxPrice)
+    public void WhenOnlyOnePriceIsProvided_ShouldNotHaveError(decimal? minPrice, decimal? maxPrice)
     {
         // Arrange
         var filter = new GameFilter { MinPrice = minPrice, MaxPrice = maxPrice };
@@ -94,7 +94,7 @@ public class GameFilterValidatorTests
     
     [TestCase(-1, TestName = "RatingFrom is negative")]
     [TestCase(-0.5, TestName = "RatingFrom is slightly negative")]
-    public void ShouldHaveError_WhenRatingFromIsNegative(double ratingFrom)
+    public void WhenRatingFromIsNegative_ShouldHaveError(double ratingFrom)
     {
         // Arrange
         var filter = new GameFilter { RatingFrom = ratingFrom };
@@ -108,7 +108,7 @@ public class GameFilterValidatorTests
 
     [TestCase(6, TestName = "RatingFrom exceeds maximum")]
     [TestCase(7.5, TestName = "RatingFrom is way above maximum")]
-    public void ShouldHaveError_WhenRatingFromExceedsMaximum(double ratingFrom)
+    public void WhenRatingFromExceedsMaximum_ShouldHaveError(double ratingFrom)
     {
         // Arrange
         var filter = new GameFilter { RatingFrom = ratingFrom };
@@ -122,7 +122,7 @@ public class GameFilterValidatorTests
 
     [TestCase(-0.5, TestName = "RatingTo is negative")]
     [TestCase(-1, TestName = "RatingTo is minus one")]
-    public void ShouldHaveError_WhenRatingToIsNegative(double ratingTo)
+    public void WhenRatingToIsNegative_ShouldHaveError(double ratingTo)
     {
         // Arrange
         var filter = new GameFilter { RatingTo = ratingTo };
@@ -136,7 +136,7 @@ public class GameFilterValidatorTests
 
     [TestCase(7.5, TestName = "RatingTo exceeds maximum")]
     [TestCase(10, TestName = "RatingTo is way above maximum")]
-    public void ShouldHaveError_WhenRatingToExceedsMaximum(double ratingTo)
+    public void WhenRatingToExceedsMaximum_ShouldHaveError(double ratingTo)
     {
         // Arrange
         var filter = new GameFilter { RatingTo = ratingTo };
@@ -149,7 +149,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenRatingFromIsGreaterThanRatingTo()
+    public void WhenRatingFromIsGreaterThanRatingTo_ShouldHaveCustomError()
     {
         // Arrange
         var filter = new GameFilter { RatingFrom = 4.5, RatingTo = 3.0 };
@@ -167,7 +167,7 @@ public class GameFilterValidatorTests
     [TestCase(4.0, 4.0, TestName = "Equal rating from and to")]
     [TestCase(null, 4.0, TestName = "Only RatingTo provided")]
     [TestCase(2.0, null, TestName = "Only RatingFrom provided")]
-    public void ShouldNotHaveError_WhenRatingRangeIsValid(double? ratingFrom, double? ratingTo)
+    public void WhenRatingRangeIsValid_ShouldNotHaveError(double? ratingFrom, double? ratingTo)
     {
         // Arrange
         var filter = new GameFilter { RatingFrom = ratingFrom, RatingTo = ratingTo };
@@ -182,7 +182,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenReleaseDateStartIsInFuture()
+    public void WhenReleaseDateStartIsInFuture_ShouldHaveCustomError()
     {
         // Arrange
         var filter = new GameFilter { ReleaseDateStart = DateTime.Today.AddDays(1) };
@@ -196,7 +196,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenReleaseDateEndIsInFuture()
+    public void WhenReleaseDateEndIsInFuture_ShouldHaveCustomError()
     {
         // Arrange
         var filter = new GameFilter { ReleaseDateEnd = DateTime.Today.AddDays(10) };
@@ -210,7 +210,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenStartDateIsAfterEndDate()
+    public void WhenStartDateIsAfterEndDate_ShouldHaveCustomError()
     {
         // Arrange
         var filter = new GameFilter 
@@ -229,7 +229,7 @@ public class GameFilterValidatorTests
 
     [TestCase("2024-01-01", "2024-12-31", TestName = "Valid date range for 2024")]
     [TestCase("2023-06-15", "2023-06-15", TestName = "Same start and end date")]
-    public void ShouldNotHaveError_WhenDateRangeIsValid(string startDateStr, string endDateStr)
+    public void WhenDateRangeIsValid_ShouldNotHaveError(string startDateStr, string endDateStr)
     {
         // Arrange
         var filter = new GameFilter 
@@ -248,7 +248,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenOnlyStartDateProvided()
+    public void WhenOnlyStartDateProvided_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter { ReleaseDateStart = DateTime.Today.AddDays(-30) };
@@ -262,7 +262,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenOnlyEndDateProvided()
+    public void WhenOnlyEndDateProvided_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter { ReleaseDateEnd = DateTime.Today };
@@ -279,7 +279,7 @@ public class GameFilterValidatorTests
     [TestCase("ascending", TestName = "Wrong order term")]
     [TestCase("descending", TestName = "Wrong order term")]
     [TestCase("up", TestName = "Random order value")]
-    public void ShouldHaveCustomError_WhenOrderDirectionIsInvalid(string order)
+    public void WhenOrderDirectionIsInvalid_ShouldHaveCustomError(string order)
     {
         // Arrange
         var filter = new GameFilter { Order = order };
@@ -297,7 +297,7 @@ public class GameFilterValidatorTests
     [TestCase("ASC", TestName = "Valid ascending order uppercase")]
     [TestCase("DESC", TestName = "Valid descending order uppercase")]
     [TestCase("Asc", TestName = "Valid ascending order mixed case")]
-    public void ShouldNotHaveError_WhenOrderDirectionIsValid(string order)
+    public void WhenOrderDirectionIsValid_ShouldNotHaveError(string order)
     {
         // Arrange
         var filter = new GameFilter { Order = order };
@@ -310,7 +310,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveCustomError_WhenOrderByFieldsAreInvalid()
+    public void WhenOrderByFieldsAreInvalid_ShouldHaveCustomError()
     {
         // Arrange
         var filter = new GameFilter { OrderBy = new List<string> { "invalid-field", "another-invalid" } };
@@ -324,7 +324,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenOrderByFieldsAreValid()
+    public void WhenOrderByFieldsAreValid_ShouldNotHaveError()
     {
         // Arrange - Assuming these are valid fields based on ValidationConstants
         var filter = new GameFilter { OrderBy = new List<string> { "price", "rating", "name" } };
@@ -337,7 +337,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenOrderByIsEmpty()
+    public void WhenOrderByIsEmpty_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter { OrderBy = new List<string>() };
@@ -350,7 +350,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenOrderByIsNull()
+    public void WhenOrderByIsNull_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter { OrderBy = null };
@@ -365,7 +365,7 @@ public class GameFilterValidatorTests
     [TestCase(new[] { 999 }, TestName = "Invalid age rating")]
     [TestCase(new[] { -1 }, TestName = "Negative age rating")]
     [TestCase(new[] { 12, 999 }, TestName = "Mix of valid and invalid ratings")]
-    public void ShouldHaveCustomError_WhenAgeRatingsAreInvalid(int[] ageRatings)
+    public void WhenAgeRatingsAreInvalid_ShouldHaveCustomError(int[] ageRatings)
     {
         // Arrange
         var filter = new GameFilter { Age = ageRatings.ToList() };
@@ -381,7 +381,7 @@ public class GameFilterValidatorTests
     [TestCase(new[] { 12 }, TestName = "Single valid age rating")]
     [TestCase(new[] { 12, 16 }, TestName = "Multiple valid age ratings")]
     [TestCase(new[] { 3, 7, 12, 16, 18 }, TestName = "All valid age ratings")]
-    public void ShouldNotHaveError_WhenAgeRatingsAreValid(int[] ageRatings)
+    public void WhenAgeRatingsAreValid_ShouldNotHaveError(int[] ageRatings)
     {
         // Arrange
         var filter = new GameFilter { Age = ageRatings.ToList() };
@@ -394,7 +394,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenAgeIsEmpty()
+    public void WhenAgeIsEmpty_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter { Age = new List<int>() };
@@ -407,7 +407,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenAgeIsNull()
+    public void WhenAgeIsNull_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter { Age = null };
@@ -421,7 +421,7 @@ public class GameFilterValidatorTests
 
     [TestCase(-1, TestName = "Page is negative")]
     [TestCase(0, TestName = "Page is zero")]
-    public void ShouldHaveError_WhenPageIsInvalid(int page)
+    public void WhenPageIsInvalid_ShouldHaveError(int page)
     {
         // Arrange
         var filter = new GameFilter { Page = page };
@@ -435,7 +435,7 @@ public class GameFilterValidatorTests
 
     [TestCase(-5, TestName = "PageSize is negative")]
     [TestCase(0, TestName = "PageSize is zero")]
-    public void ShouldHaveError_WhenPageSizeIsInvalid(int pageSize)
+    public void WhenPageSizeIsInvalid_ShouldHaveError(int pageSize)
     {
         // Arrange
         var filter = new GameFilter { PageSize = pageSize };
@@ -448,7 +448,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenPageSizeExceedsMaximum()
+    public void WhenPageSizeExceedsMaximum_ShouldHaveError()
     {
         // Arrange
         var filter = new GameFilter { PageSize = ValidationConstants.MaxPageSize + 1 };
@@ -463,7 +463,7 @@ public class GameFilterValidatorTests
     [TestCase(1, 1, TestName = "Minimum valid pagination")]
     [TestCase(1, 10, TestName = "Common pagination")]
     [TestCase(5, 20, TestName = "Larger pagination")]
-    public void ShouldNotHaveError_WhenPaginationIsValid(int page, int pageSize)
+    public void WhenPaginationIsValid_ShouldNotHaveError(int page, int pageSize)
     {
         // Arrange
         var filter = new GameFilter { Page = page, PageSize = pageSize };
@@ -477,7 +477,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenPageSizeIsAtMaximum()
+    public void WhenPageSizeIsAtMaximum_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter { PageSize = ValidationConstants.MaxPageSize };
@@ -490,7 +490,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenNameIsTooLong()
+    public void WhenNameIsTooLong_ShouldHaveError()
     {
         // Arrange
         var filter = new GameFilter { Name = new string('a', ValidationConstants.StringLength.ShortMaximum + 1) };
@@ -506,7 +506,7 @@ public class GameFilterValidatorTests
     [TestCase("Call of Duty", TestName = "Normal game name")]
     [TestCase("", TestName = "Empty name")]
     [TestCase(null, TestName = "Null name")]
-    public void ShouldNotHaveError_WhenNameIsValid(string? name)
+    public void WhenNameIsValid_ShouldNotHaveError(string? name)
     {
         // Arrange
         var filter = new GameFilter { Name = name };
@@ -519,7 +519,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenNameIsAtMaximumLength()
+    public void WhenNameIsAtMaximumLength_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter { Name = new string('a', ValidationConstants.StringLength.ShortMaximum) };
@@ -533,7 +533,7 @@ public class GameFilterValidatorTests
     
 
     [Test]
-    public void ShouldNotHaveError_WhenAllPropertiesAreValid()
+    public void WhenAllPropertiesAreValid_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter 
@@ -560,7 +560,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldHaveMultipleErrors_WhenMultiplePropertiesAreInvalid()
+    public void WhenMultiplePropertiesAreInvalid_ShouldHaveMultipleErrors()
     {
         // Arrange
         var filter = new GameFilter 
@@ -594,7 +594,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenFilterIsEmpty()
+    public void WhenFilterIsEmpty_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter();
@@ -607,7 +607,7 @@ public class GameFilterValidatorTests
     }
     
     [Test]
-    public void ShouldNotHaveError_WhenNoFieldsAreProvided()
+    public void WhenNoFieldsAreProvided_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter();
@@ -620,7 +620,7 @@ public class GameFilterValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveError_WhenBoundaryValuesAreUsed()
+    public void WhenBoundaryValuesAreUsed_ShouldNotHaveError()
     {
         // Arrange
         var filter = new GameFilter 

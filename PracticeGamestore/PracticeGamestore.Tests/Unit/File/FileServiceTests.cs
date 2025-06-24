@@ -45,7 +45,7 @@ public class FileServiceTests
     }
 
     [Test]
-    public async Task GetAll_ShouldReturnAllFiles()
+    public async Task GetAll_WhenFilesExist_ShouldReturnAllFiles()
     {
         // Arrange
         var files = TestData.File.GenerateFileEntities();
@@ -63,7 +63,7 @@ public class FileServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_ShouldReturnFileDto_WhenFileExists()
+    public async Task GetByIdAsync_WhenFileExists_ShouldReturnFileDto()
     {
         // Arrange
         var file = TestData.File.GenerateFileEntity();
@@ -80,7 +80,7 @@ public class FileServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_ShouldReturnNull_WhenFileDoesNotExists()
+    public async Task GetByIdAsync_WhenFileDoesNotExists_ShouldReturnNull()
     {
         // Arrange
         _fileRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>()))
@@ -94,7 +94,7 @@ public class FileServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldAddFile_WhenChangesSavedSuccessfully()
+    public async Task CreateAsync_WhenChangesSavedSuccessfully_ShouldAddFile()
     {
         // Arrange
         var fileDto = TestData.File.GenerateFileDto();
@@ -118,7 +118,7 @@ public class FileServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
+    public async Task CreateAsync_WhenChangesNotSaved_ShouldReturnNull()
     {
         // Arrange
         var fileDto = TestData.File.GenerateFileDto();
@@ -139,7 +139,7 @@ public class FileServiceTests
     }
 
     [Test]
-    public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
+    public async Task DeleteAsync_WhenFileIsDeleted_ShouldCallDeleteAndSaveChanges()
     {
         // Arrange
         var fileId = Guid.NewGuid();

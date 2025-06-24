@@ -2,5 +2,5 @@ namespace PracticeGamestore.Business.DataTransferObjects.Payment;
 
 public class IboxDto
 {
-    public Guid TransactionId { get; set; }
+    public required string TransactionId { get; set; }
 }

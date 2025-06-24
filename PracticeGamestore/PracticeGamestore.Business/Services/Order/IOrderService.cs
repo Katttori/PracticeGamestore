@@ -11,4 +11,5 @@ public interface IOrderService
     Task<bool> UpdateAsync(Guid id, OrderRequestDto dto);
     Task DeleteAsync(Guid id);
     Task<bool> PayOrderAsync(Guid orderId, PaymentDto payment);
+    Task<IEnumerable<OrderResponseDto>> GetOrdersByUserEmailAsync(string userEmail);
 }

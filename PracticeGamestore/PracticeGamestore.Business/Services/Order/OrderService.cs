@@ -100,6 +100,12 @@ public class OrderService(
         return changes > 0;
     }
 
+    public async Task<IEnumerable<OrderResponseDto>> GetOrdersByUserEmailAsync(string userEmail)
+    {
+        var orders = await orderRepository.GetOrdersByUserEmailAsync(userEmail);
+        return orders.Select(o => o.MapToOrderDto());
+    }
+    
     private async Task<bool> AreAllGameIdsValid(List<Guid> gameIds)
     {
         var existingIds = await gameRepository.GetExistingIdsAsync(gameIds);

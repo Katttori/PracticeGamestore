@@ -28,7 +28,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public async Task GetAllAsync_ShouldReturnAllPlatforms()
+    public async Task GetAllAsync_WhenServicesExist_ShouldReturnAllPlatforms()
     {
         // Arrange
         var platforms = TestData.Platform.GeneratePlatformEntities();
@@ -46,7 +46,7 @@ public class PlatformServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_ShouldReturnPlatformDto_WhenPlatformExists()
+    public async Task GetByIdAsync_WhenPlatformExists_ShouldReturnPlatformDto()
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformEntity();
@@ -63,7 +63,7 @@ public class PlatformServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_ShouldReturnNull_WhenPlatformDoesNotExists()
+    public async Task GetByIdAsync_WhenPlatformDoesNotExists_ShouldReturnNull()
     {
         // Arrange
         _platformRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>()))
@@ -77,7 +77,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public async Task CreateAsync_ShouldAddPlatform_WhenChangesSavedSuccessfully()
+    public async Task CreateAsync_WhenChangesSavedSuccessfully_ShouldAddPlatform()
     {
         // Arrange
         var platformDto = TestData.Platform.GeneratePlatformDto();
@@ -95,7 +95,7 @@ public class PlatformServiceTests
     }
 
     [Test]
-    public async Task CreateAsync_ShouldReturnNull_WhenChangesNotSaved()
+    public async Task CreateAsync_WhenChangesNotSaved_ShouldReturnNull()
     {
         // Arrange
         var platformDto = TestData.Platform.GeneratePlatformDto();
@@ -116,7 +116,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public void CreateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void CreateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var platformDto = TestData.Platform.GeneratePlatformDto();
@@ -128,7 +128,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_ShouldReturnTrue_WhenPlatformUpdatedSuccessfully()
+    public async Task UpdateAsync_WhenPlatformUpdatedSuccessfully_ShouldReturnTrue()
     {
         // Arrange
         var platformDto = TestData.Platform.GeneratePlatformDto();
@@ -150,7 +150,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_ShouldReturnFalse_WhenPlatformNotFound()
+    public async Task UpdateAsync_WhenPlatformNotFound_ShouldReturnFalse()
     {
         // Arrange
         var platformDto = TestData.Platform.GeneratePlatformDto();
@@ -167,7 +167,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public void UpdateAsync_WhenNameAlreadyExists_ThrowsArgumentException()
+    public void UpdateAsync_WhenNameAlreadyExists_ShouldThrowArgumentException()
     {
         // Arrange
         var platformDto = TestData.Platform.GeneratePlatformDto();
@@ -182,7 +182,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public async Task UpdateAsync_ShouldReturnFalse_WhenChangesNotSaved()
+    public async Task UpdateAsync_WhenChangesNotSaved_ShouldReturnFalse()
     {
         // Arrange
         var platformDto = TestData.Platform.GeneratePlatformDto();
@@ -204,7 +204,7 @@ public class PlatformServiceTests
     }
     
     [Test]
-    public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
+    public async Task DeleteAsync_WhenPlatformIsDeleted_ShouldCallDeleteAndSaveChanges()
     {
         // Arrange
         var platformId = Guid.NewGuid();

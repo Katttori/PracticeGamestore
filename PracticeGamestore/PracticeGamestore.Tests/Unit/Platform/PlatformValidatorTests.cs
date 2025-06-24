@@ -20,7 +20,7 @@ public class PlatformValidatorTests
     [TestCase("", TestName = "Name is empty")]
     [TestCase(" ", TestName = "Name is whitespace")]
     [TestCase("a", TestName = "Name is too short")]
-    public void ShouldHaveError_WhenNameIsEmptyTooShortOrNull(string? name)
+    public void WhenNameIsEmptyTooShortOrNull_ShouldHaveError(string? name)
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformRequestModel();
@@ -34,7 +34,7 @@ public class PlatformValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenNameIsTooLong()
+    public void WhenNameIsTooLong_ShouldHaveError()
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformRequestModel();
@@ -54,7 +54,7 @@ public class PlatformValidatorTests
     [TestCase("Steam Deck", TestName = "Platform with descriptive name")]
     [TestCase("PS5", TestName = "Abbreviated platform name")]
     [TestCase("MacOS", TestName = "Operating system platform")]
-    public void ShouldNotHaveError_WhenNameIsValid(string name)
+    public void WhenNameIsValid_ShouldNotHaveError(string name)
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformRequestModel();
@@ -68,7 +68,7 @@ public class PlatformValidatorTests
     }
 
     [Test]
-    public void ShouldHaveError_WhenDescriptionIsTooLong()
+    public void WhenDescriptionIsTooLong_ShouldHaveError()
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformRequestModel();
@@ -84,7 +84,7 @@ public class PlatformValidatorTests
     [TestCase(null, TestName = "Description is null")]
     [TestCase("", TestName = "Description is empty")]
     [TestCase("Personal Computer", TestName = "Simple description")]
-    public void ShouldNotHaveError_WhenDescriptionIsValidOrEmpty(string? description)
+    public void WhenDescriptionIsValidOrEmpty_ShouldNotHaveError(string? description)
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformRequestModel();
@@ -98,7 +98,7 @@ public class PlatformValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValid()
+    public void WhenModelIsValid_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformRequestModel();
@@ -111,7 +111,7 @@ public class PlatformValidatorTests
     }
 
     [Test]
-    public void ShouldNotHaveAnyErrors_WhenModelIsValidWithDescription()
+    public void WhenModelIsValidWithDescription_ShouldNotHaveAnyErrors()
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformRequestModel();
@@ -125,7 +125,7 @@ public class PlatformValidatorTests
     }
 
     [Test]
-    public void ShouldHaveMultipleErrors_WhenModelHasMultipleInvalidFields()
+    public void WhenModelHasMultipleInvalidFields_ShouldHaveMultipleErrors()
     {
         // Arrange
         var platform = TestData.Platform.GeneratePlatformRequestModel();
