@@ -49,6 +49,7 @@ public class PublisherController(
     }
     
     [BirthdateRestrictionFilter]
+    [ServiceFilter(typeof(BirthdateRestrictionFromDbFilter))]
     [HttpGet("{id:guid}/games")]
     public async Task<IActionResult> GetPublisherGames(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,

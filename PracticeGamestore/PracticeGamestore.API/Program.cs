@@ -27,6 +27,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddControllers();
 builder.Services.AddBusinessServices(builder.Configuration);
 
+builder.Services.AddScoped<BirthdateRestrictionFromDbFilter>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

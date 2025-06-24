@@ -20,6 +20,7 @@ public class GameController(
     ILogger<GameController> logger) : ControllerBase
 {
     [BirthdateRestrictionFilter]
+    [ServiceFilter(typeof(BirthdateRestrictionFilter))]
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
@@ -32,6 +33,7 @@ public class GameController(
     }
 
     [BirthdateRestrictionFilter]
+    [ServiceFilter(typeof(BirthdateRestrictionFromDbFilter))]
     [HttpGet("/filter")]
     public async Task<IActionResult> GetFiltered(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
@@ -51,6 +53,7 @@ public class GameController(
     }
 
     [BirthdateRestrictionFilter]
+    [ServiceFilter(typeof(BirthdateRestrictionFromDbFilter))]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
