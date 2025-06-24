@@ -58,7 +58,7 @@ public class ExceptionHandlingMiddlewareTests
     }
     
     [Test]
-    public async Task InvokeAsync_WhenKeyNotFoundExceptionIsThrown_Returns404AndLogs()
+    public async Task InvokeAsync_WhenKeyNotFoundExceptionIsThrown_ShouldReturn404AndLogs()
     {
         // Arrange
         var id = Guid.NewGuid();

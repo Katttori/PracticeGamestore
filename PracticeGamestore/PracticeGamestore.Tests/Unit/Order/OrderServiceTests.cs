@@ -204,7 +204,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public void PayOrderAsync_WhenOrderNotFound_ThrowsKeyNotFoundException()
+    public void PayOrderAsync_WhenOrderNotFound_ShouldThrowKeyNotFoundException()
     {
         // Arrange
         var orderId = Guid.NewGuid();
@@ -218,7 +218,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public void PayOrderAsync_WhenOrderNotInInitiatedStatus_ThrowsArgumentException()
+    public void PayOrderAsync_WhenOrderNotInInitiatedStatus_ShouldThrowArgumentException()
     {
         // Arrange
         var orderId = Guid.NewGuid();
@@ -233,7 +233,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public void PayOrderAsync_WhenInvalidPaymentType_ThrowsArgumentException()
+    public void PayOrderAsync_WhenInvalidPaymentType_ShouldThrowArgumentException()
     {
         // Arrange
         var orderId = Guid.NewGuid();
@@ -251,7 +251,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public async Task PayOrderAsync_WhenPaymentFails_ReturnsFalse()
+    public async Task PayOrderAsync_WhenPaymentFails_ShouldReturnFalse()
     {
         // Arrange
         var orderId = Guid.NewGuid();
@@ -269,7 +269,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public async Task PayOrderAsync_WhenPaymentSucceeds_ReturnsTrueAndChangeOrderStatus()
+    public async Task PayOrderAsync_WhenPaymentSucceeds_ShouldReturnTrueAndChangeOrderStatus()
     {
         // Arrange
         var orderId = Guid.NewGuid();

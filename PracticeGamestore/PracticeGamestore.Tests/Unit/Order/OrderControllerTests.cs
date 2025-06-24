@@ -169,7 +169,7 @@ public class OrderControllerTests
     }
 
     [Test]
-    public async Task PayOrder_WhenPaymentFails_ReturnsBadRequest()
+    public async Task PayOrder_WhenPaymentFails_ShouldReturnBadRequest()
     {
         // Arrange
         var orderId = Guid.NewGuid();
@@ -185,7 +185,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task PayOrder_WhenPaymentSuccessful_ReturnsOk()
+    public async Task PayOrder_WhenPaymentSuccessful_ShouldReturnOk()
     {
         // Arrange
         var orderId = Guid.NewGuid();
@@ -201,7 +201,7 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task GetHistory_WhenUserEmailIsValid_ReturnsOkWithOrders()
+    public async Task GetHistory_WhenUserEmailIsValid_ShouldReturnOkWithOrders()
     {
         // Arrange 
         _headerHandleServiceMock.Setup(x => x.CheckAccessAsync(CountryHeader, UserEmailHeader))
