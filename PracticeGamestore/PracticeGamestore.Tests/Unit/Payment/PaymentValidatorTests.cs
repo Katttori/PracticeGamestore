@@ -1,8 +1,6 @@
 using FluentValidation.TestHelper;
 using NUnit.Framework;
 using PracticeGamestore.Business.Constants;
-using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Models.Payment;
 using PracticeGamestore.Validators;
 
@@ -20,23 +18,10 @@ public class PaymentValidatorTests
     }
 
     [Test]
-    public void WhenPaymentTypeIsInvalid_ShouldHaveError()
-    {
-        // Arrange
-        var model = new PaymentRequestModel { Type = (PaymentMethod)999 };
-
-        // Act
-        var result = _validator.TestValidate(model);
-
-        // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Type).WithErrorMessage(ErrorMessages.InvalidPaymentType);
-    }
-
-    [Test]
     public void WhenIbanIsValid_ShouldNotHaveError()
     {
         // Arrange
-        var model = TestData.Payment.GenerateIbanPaymentRequestModel();
+        var model = TestData.Payment.GeneratePaymentRequestModel(iban: true);
 
         // Act
         var result = _validator.TestValidate(model);
@@ -52,14 +37,14 @@ public class PaymentValidatorTests
     public void WhenIbanIsInvalid_ShouldHaveError(string? iban)
     {
         // Arrange
-        var model = TestData.Payment.GenerateIbanPaymentRequestModel();
-        model.Iban = iban;
+        var model = TestData.Payment.GeneratePaymentRequestModel(iban: true);
+        model.Iban = new IbanModel { Iban = iban! };
 
         // Act
         var result = _validator.TestValidate(model);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Iban);
+        result.ShouldHaveValidationErrorFor(x => x.Iban!.Iban);
     }
 
     [TestCase("123", "12/30", "123", TestName = "Card number too short")]
@@ -68,10 +53,10 @@ public class PaymentValidatorTests
     public void WhenCardFieldsAreInvalid_ShouldHaveError(string number, string expiration, string cvc)
     {
         // Arrange
-        var model = TestData.Payment.GenerateCardPaymentRequestModel();
-        model.Card!.Number = number;
-        model.Card.ExpirationDate = expiration;
-        model.Card.Cvc = cvc;
+        var model = TestData.Payment.GeneratePaymentRequestModel(creditCard: true);
+        model.CreditCard!.Number = number;
+        model.CreditCard.ExpirationDate = expiration;
+        model.CreditCard.Cvc = cvc;
 
         // Act
         var result = _validator.TestValidate(model);
@@ -84,7 +69,7 @@ public class PaymentValidatorTests
     public void WhenCardIsValid_ShouldNotHaveError()
     {
         // Arrange
-        var model = TestData.Payment.GenerateCardPaymentRequestModel();
+        var model = TestData.Payment.GeneratePaymentRequestModel(creditCard: true);
 
         // Act
         var result = _validator.TestValidate(model);
@@ -99,26 +84,54 @@ public class PaymentValidatorTests
     public void WhenIboxIsEmpty_ShouldHaveError()
     {
         // Arrange
-        var model = TestData.Payment.GenerateIboxPaymentRequestModel();
-        model.Ibox = Guid.Empty;
+        var model = TestData.Payment.GeneratePaymentRequestModel(ibox: true);
+        model.Ibox = new IboxModel { TransactionId = Guid.Empty };
 
         // Act
         var result = _validator.TestValidate(model);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Ibox).WithErrorMessage(ErrorMessages.InvalidIbox);
+        result.ShouldHaveValidationErrorFor(x => x.Ibox!.TransactionId).WithErrorMessage(ErrorMessages.InvalidIbox);
     }
 
     [Test]
     public void WhenIboxIsValid_ShouldNotHaveError()
     {
         // Arrange
-        var model = TestData.Payment.GenerateIboxPaymentRequestModel();
+        var model = TestData.Payment.GeneratePaymentRequestModel(ibox: true);
 
         // Act
         var result = _validator.TestValidate(model);
 
         // Assert
         result.ShouldNotHaveValidationErrorFor(x => x.Ibox);
+    }
+    
+    [Test]
+    public void WhenNoPaymentMethodsProvided_ShouldHaveError()
+    {
+        // Arrange
+        var model = TestData.Payment.GeneratePaymentRequestModel();
+
+        // Act
+        var result = _validator.TestValidate(model);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x);
+    }
+    
+    [Test]
+    public void WhenCardExpirationDateIsInvalid_ShouldHaveError()
+    {
+        // Arrange
+        var model = TestData.Payment.GeneratePaymentRequestModel(creditCard: true);
+        model.CreditCard!.ExpirationDate = "12/21";
+
+        // Act
+        var result = _validator.TestValidate(model);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.CreditCard!.ExpirationDate)
+            .WithErrorMessage(ErrorMessages.InvalidExpirationDate);
     }
 }

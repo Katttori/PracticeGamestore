@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using Microsoft.AspNetCore.Authorization;
-using PracticeGamestore.Business.Enums;
 using PracticeGamestore.Business.Services.Order;
-using PracticeGamestore.Business.Services.Payment;
-using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.Filters;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Order;
@@ -18,7 +15,6 @@ namespace PracticeGamestore.Controllers;
 [ApiController, Route("orders")]
 public class OrderController(
     IOrderService orderService,
-    IPaymentService paymentService,
     IHeaderHandleService headerHandleService,
     ILogger<OrderController> logger) : ControllerBase
 {
@@ -94,37 +90,16 @@ public class OrderController(
     [Authorize(Roles = nameof(UserRole.User))]
     public async Task<IActionResult> PayOrder(Guid id, [FromBody] PaymentRequestModel model)
     {
-        logger.LogInformation("Attempting to process payment for order ID: {Id} using {PaymentType}", id, model.Type);
-        
-        var order = await orderService.GetByIdAsync(id);
-        if (order is null)
-        {
-            logger.LogWarning("Payment failed: Order with ID {Id} not found.", id);
-            return NotFound(ErrorMessages.NotFound("Order", id));
-        }
+        logger.LogInformation("Attempting to process payment for order with id: {Id}", id);
 
-        if (order.Status != OrderStatus.Initiated)
-        {
-            logger.LogWarning("Payment attempt for order ID {Id} rejected due to invalid status: {Status}", id, order.Status);
-            return BadRequest(ErrorMessages.IncorrectOrderStatusForPayment);
-        }
-
-        var isSuccessful = model.Type switch
-        {
-            PaymentMethod.Iban => await paymentService.PayIbanAsync(model.Iban!),
-            PaymentMethod.Card => await paymentService.PayCardAsync(model.Card!),
-            PaymentMethod.Ibox => await paymentService.PayIboxAsync(model.Ibox!.Value),
-            _ => throw new ArgumentException(ErrorMessages.InvalidPaymentType)
-        };
-
+        var isSuccessful = await orderService.PayOrderAsync(id, model.MapToPaymentDto());
         if (!isSuccessful)
         {
-            logger.LogError("Payment failed for order ID {Id} with payment type {PaymentType}", id, model.Type);
+            logger.LogError("Payment failed for order with id: {Id}", id);
             return BadRequest(ErrorMessages.SomethingWentWrong);
         }
-
-        order.Status = OrderStatus.Paid;
-        logger.LogInformation("Payment successful for order ID {Id}. Status set to Paid.", id);
-        return Ok(order);
+        
+        logger.LogInformation("Payment successful for order with id: {Id}", id);
+        return Ok();
     }
 }

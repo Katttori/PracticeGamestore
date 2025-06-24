@@ -1,12 +1,8 @@
-using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Enums;
-
 namespace PracticeGamestore.Models.Payment;
 
 public class PaymentRequestModel
 {
-    public PaymentMethod Type { get; set; }
-    public string? Iban { get; set; }
-    public CardInfoDto? Card { get; set; }
-    public Guid? Ibox { get; set; }
+    public IbanModel? Iban { get; set; }
+    public CreditCardModel? CreditCard { get; set; }
+    public IboxModel? Ibox { get; set; }
 }

@@ -58,6 +58,21 @@ public class ExceptionHandlingMiddlewareTests
     }
     
     [Test]
+    public async Task InvokeAsync_WhenKeyNotFoundExceptionIsThrown_Returns404AndLogs()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        
+        // Act
+        var (status, message) = await InvokeAndReadAsync(new KeyNotFoundException(ErrorMessages.NotFound("Entity", id)));
+        
+        // Assert
+        Assert.That(status, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(message, Is.EqualTo(ErrorMessages.NotFound("Entity", id)));
+        VerifyLogCalled();
+    }
+    
+    [Test]
     public async Task InvokeAsync_WhenNoExceptionIsThrown_CallsNextMiddleware()
     {
         // Arrange

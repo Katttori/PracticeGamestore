@@ -19,7 +19,7 @@ public class Order
             new()
             {
                 Id = FirstId,
-                Status = OrderStatus.Created,
+                Status = OrderStatus.Initiated,
                 UserEmail = "test@test.com",
                 Total = 100,
                 GameOrders =

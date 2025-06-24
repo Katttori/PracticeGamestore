@@ -3,14 +3,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects.Order;
-using PracticeGamestore.Business.Enums;
+using PracticeGamestore.Business.DataTransferObjects.Payment;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Order;
-using PracticeGamestore.Business.Services.Payment;
 using PracticeGamestore.Controllers;
-using PracticeGamestore.DataAccess.Enums;
+using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Order;
-using PracticeGamestore.Models.Payment;
 
 namespace PracticeGamestore.Tests.Unit.Order;
 
@@ -18,7 +16,6 @@ namespace PracticeGamestore.Tests.Unit.Order;
 public class OrderControllerTests
 {
     private Mock<IOrderService> _orderServiceMock;
-    private Mock<IPaymentService> _paymentServiceMock;
     private Mock<IHeaderHandleService> _headerHandleServiceMock;
     private Mock<ILogger<OrderController>> _loggerMock;
     private OrderController _orderController;
@@ -33,11 +30,10 @@ public class OrderControllerTests
     public void Setup()
     {
         _orderServiceMock = new Mock<IOrderService>();
-        _paymentServiceMock = new Mock<IPaymentService>();
         _headerHandleServiceMock = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<OrderController>>();
-        _orderController = new OrderController(_orderServiceMock.Object, _paymentServiceMock.Object,
-            _headerHandleServiceMock.Object, _loggerMock.Object);
+        _orderController =
+            new OrderController(_orderServiceMock.Object, _headerHandleServiceMock.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -173,61 +169,13 @@ public class OrderControllerTests
     }
 
     [Test]
-    public async Task PayOrder_WhenOrderNotFound_ReturnsNotFound()
-    {
-        // Arrange
-        var orderId = Guid.NewGuid();
-        var model = TestData.Payment.GenerateIbanPaymentRequestModel();
-        
-        _orderServiceMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(null as OrderResponseDto);
-
-        // Act
-        var result = await _orderController.PayOrder(orderId, model);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
-    }
-
-    [Test]
-    public async Task PayOrder_WhenOrderNotInInitiatedStatus_ReturnsBadRequest()
-    {
-        // Arrange
-        var orderId = Guid.NewGuid();
-        var model = TestData.Payment.GenerateIbanPaymentRequestModel();
-        var orderResponse = TestData.Order.GenerateOrderResponseDto();
-        orderResponse.Status = OrderStatus.Created;
-
-        _orderServiceMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(orderResponse);
-
-        // Act
-        var result = await _orderController.PayOrder(orderId, model);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
-
-    [Test]
-    public void PayOrder_WhenInvalidPaymentType_ThrowsArgumentException()
-    {
-        // Arrange
-        var orderId = Guid.NewGuid();
-        var model = new PaymentRequestModel { Type = (PaymentMethod)99 };
-
-        _orderServiceMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(TestData.Order.GenerateOrderResponseDto());
-
-        // Act & Assert
-        Assert.ThrowsAsync<ArgumentException>(() => _orderController.PayOrder(orderId, model));
-    }
-
-    [Test]
     public async Task PayOrder_WhenPaymentFails_ReturnsBadRequest()
     {
         // Arrange
         var orderId = Guid.NewGuid();
-        var model = TestData.Payment.GenerateIbanPaymentRequestModel();
-
-        _orderServiceMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(TestData.Order.GenerateOrderResponseDto());
-        _paymentServiceMock.Setup(p => p.PayIbanAsync(model.Iban!)).ReturnsAsync(false);
+        var model = TestData.Payment.GeneratePaymentRequestModel(true);
+        
+        _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, model.MapToPaymentDto())).ReturnsAsync(false);
 
         // Act
         var result = await _orderController.PayOrder(orderId, model);
@@ -235,27 +183,20 @@ public class OrderControllerTests
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
-
+    
     [Test]
-    public async Task PayOrder_WhenPaymentSucceeds_ReturnsOkAndChangeOrderStatus()
-    {
-        // Arrange
-        var orderId = Guid.NewGuid();
-        var model = TestData.Payment.GenerateIbanPaymentRequestModel();
-        var order = TestData.Order.GenerateOrderResponseDto();
+        public async Task PayOrder_WhenPaymentSuccessful_ReturnsOk()
+        {
+            // Arrange
+            var orderId = Guid.NewGuid();
+            var model = TestData.Payment.GeneratePaymentRequestModel(true);
+            
+            _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, It.IsAny<PaymentDto>())).ReturnsAsync(true);
 
-        _orderServiceMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(order);
-        _paymentServiceMock.Setup(p => p.PayIbanAsync(It.IsAny<string>())).ReturnsAsync(true);
+            // Act
+            var result = await _orderController.PayOrder(orderId, model);
 
-        // Act
-        var result = await _orderController.PayOrder(orderId, model);
-
-        // Assert
-        Assert.That(result, Is.InstanceOf<OkObjectResult>());
-
-        var okResult = result as OkObjectResult;
-        var returnedOrder = okResult?.Value as OrderResponseDto;
-        Assert.That(returnedOrder, Is.Not.Null);
-        Assert.That(returnedOrder?.Status, Is.EqualTo(OrderStatus.Paid));
-    }
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkResult>());
+        }
 }

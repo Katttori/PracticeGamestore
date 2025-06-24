@@ -1,13 +1,21 @@
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects.Order;
+using PracticeGamestore.Business.DataTransferObjects.Payment;
 using PracticeGamestore.Business.Mappers;
+using PracticeGamestore.Business.Services.Payment;
 using PracticeGamestore.DataAccess.Entities;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Order;
 using PracticeGamestore.DataAccess.UnitOfWork;
 
 namespace PracticeGamestore.Business.Services.Order;
 
-public class OrderService(IOrderRepository orderRepository, IGameRepository gameRepository, IUnitOfWork unitOfWork) : IOrderService
+public class OrderService(
+    IPaymentService paymentService,
+    IOrderRepository orderRepository,
+    IGameRepository gameRepository,
+    IUnitOfWork unitOfWork) : IOrderService
 {
     public async Task<IEnumerable<OrderResponseDto>> GetAllAsync()
     {
@@ -64,6 +72,34 @@ public class OrderService(IOrderRepository orderRepository, IGameRepository game
         await unitOfWork.SaveChangesAsync();
     }
     
+    public async Task<bool> PayOrderAsync(Guid orderId, PaymentDto payment)
+    {
+        var order = await orderRepository.GetByIdAsync(orderId);
+        if (order is null)
+            throw new KeyNotFoundException(ErrorMessages.NotFound("Order", orderId));
+
+        if (order.Status != OrderStatus.Initiated)
+            throw new ArgumentException(ErrorMessages.IncorrectOrderStatusForPayment);
+
+        bool isSuccessful;
+        if (payment.Iban is not null)
+            isSuccessful = await paymentService.PayIbanAsync(payment.Iban);
+        else if (payment.CreditCard is not null)
+            isSuccessful = await paymentService.PayCardAsync(payment.CreditCard);
+        else if (payment.Ibox is not null)
+            isSuccessful = await paymentService.PayIboxAsync(payment.Ibox);
+        else
+            throw new ArgumentException(ErrorMessages.InvalidPaymentType);
+        
+        if (!isSuccessful) return false;
+
+        order.Status = OrderStatus.Paid;
+        orderRepository.Update(order);
+        var changes = await unitOfWork.SaveChangesAsync();
+        
+        return changes > 0;
+    }
+
     private async Task<bool> AreAllGameIdsValid(List<Guid> gameIds)
     {
         var existingIds = await gameRepository.GetExistingIdsAsync(gameIds);

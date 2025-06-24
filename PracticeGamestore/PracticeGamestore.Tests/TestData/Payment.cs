@@ -1,40 +1,39 @@
-using PracticeGamestore.Business.DataTransferObjects;
-using PracticeGamestore.Business.Enums;
+using PracticeGamestore.Business.DataTransferObjects.Payment;
 using PracticeGamestore.Models.Payment;
 
 namespace PracticeGamestore.Tests.TestData;
 
 public class Payment
 {
-    public static PaymentRequestModel GenerateIbanPaymentRequestModel()
+    public static PaymentRequestModel GeneratePaymentRequestModel(bool? iban = null, bool? creditCard = null, bool? ibox = null)
     {
         return new()
         {
-            Type = PaymentMethod.Iban,
-            Iban = "UA903052992990004149123456789"
+            Iban = iban is not null ? new IbanModel { Iban = "UA903052992990004149123456789" } : null,
+            CreditCard = creditCard is not null
+                ? new CreditCardModel
+                {
+                    Number = "4111111111111111",
+                    ExpirationDate = "12/30",
+                    Cvc = "123"
+                }
+                : null,
+            Ibox = ibox is not null ? new IboxModel { TransactionId = Guid.NewGuid() } : null
         };
     }
-    
-    public static PaymentRequestModel GenerateCardPaymentRequestModel()
+
+    public static PaymentDto GeneratePaymentDto()
     {
         return new()
         {
-            Type = PaymentMethod.Card,
-            Card = new CardInfoDto
+            Iban = new IbanDto { Iban = "UA903052992990004149123456789" },
+            CreditCard = new CreditCardDto
             {
                 Number = "4111111111111111",
                 ExpirationDate = "12/30",
                 Cvc = "123"
-            }
-        };
-    }
-    
-    public static PaymentRequestModel GenerateIboxPaymentRequestModel()
-    {
-        return new()
-        {
-            Type = PaymentMethod.Ibox,
-            Ibox = Guid.NewGuid()
+            },
+            Ibox = new IboxDto { TransactionId = Guid.NewGuid() }
         };
     }
 }

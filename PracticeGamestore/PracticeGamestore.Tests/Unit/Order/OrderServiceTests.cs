@@ -1,7 +1,10 @@
 using Moq;
 using NUnit.Framework;
+using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.DataTransferObjects.Order;
 using PracticeGamestore.Business.Services.Order;
+using PracticeGamestore.Business.Services.Payment;
+using PracticeGamestore.DataAccess.Enums;
 using PracticeGamestore.DataAccess.Repositories.Game;
 using PracticeGamestore.DataAccess.Repositories.Order;
 using PracticeGamestore.DataAccess.UnitOfWork;
@@ -11,6 +14,7 @@ namespace PracticeGamestore.Tests.Unit.Order;
 [TestFixture]
 public class OrderServiceTests
 {
+    private Mock<IPaymentService> _paymentServiceMock;
     private Mock<IOrderRepository> _orderRepositoryMock;
     private Mock<IGameRepository> _gameRepositoryMock;
     private Mock<IUnitOfWork> _unitOfWorkMock;
@@ -23,10 +27,12 @@ public class OrderServiceTests
     [SetUp]
     public void Setup()
     {
+        _paymentServiceMock = new Mock<IPaymentService>();
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _gameRepositoryMock = new Mock<IGameRepository>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _orderService = new OrderService(_orderRepositoryMock.Object, _gameRepositoryMock.Object, _unitOfWorkMock.Object);
+        _orderService = new OrderService(_paymentServiceMock.Object, _orderRepositoryMock.Object,
+            _gameRepositoryMock.Object, _unitOfWorkMock.Object);
     }
 
     [Test]
@@ -195,5 +201,90 @@ public class OrderServiceTests
         // Assert
         _orderRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Test]
+    public void PayOrderAsync_WhenOrderNotFound_ThrowsKeyNotFoundException()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var dto = TestData.Payment.GeneratePaymentDto();
+        
+        _orderRepositoryMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(null as DataAccess.Entities.Order);
+    
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _orderService.PayOrderAsync(orderId, dto));
+        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.NotFound("Order", orderId)));
+    }
+    
+    [Test]
+    public void PayOrderAsync_WhenOrderNotInInitiatedStatus_ThrowsArgumentException()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var dto = TestData.Payment.GeneratePaymentDto();
+        var order = TestData.Order.GenerateOrderEntities()[1];
+    
+        _orderRepositoryMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(order);
+    
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<ArgumentException>(() => _orderService.PayOrderAsync(orderId, dto));
+        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.IncorrectOrderStatusForPayment));
+    }
+    
+    [Test]
+    public void PayOrderAsync_WhenInvalidPaymentType_ThrowsArgumentException()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var dto = TestData.Payment.GeneratePaymentDto();
+        dto.Iban = null;
+        dto.CreditCard = null;
+        dto.Ibox = null;
+
+        _orderRepositoryMock.Setup(s => s.GetByIdAsync(orderId))
+            .ReturnsAsync(TestData.Order.GenerateOrderEntities()[0]);
+    
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<ArgumentException>(() => _orderService.PayOrderAsync(orderId, dto));
+        Assert.That(ex?.Message, Is.EqualTo(ErrorMessages.InvalidPaymentType));
+    }
+    
+    [Test]
+    public async Task PayOrderAsync_WhenPaymentFails_ReturnsFalse()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var dto = TestData.Payment.GeneratePaymentDto();
+    
+        _orderRepositoryMock.Setup(s => s.GetByIdAsync(orderId))
+            .ReturnsAsync(TestData.Order.GenerateOrderEntities()[0]);
+        _paymentServiceMock.Setup(p => p.PayIbanAsync(dto.Iban!)).ReturnsAsync(false);
+    
+        // Act
+        var result = await _orderService.PayOrderAsync(orderId, dto);
+    
+        // Assert
+        Assert.That(result, Is.False);
+    }
+    
+    [Test]
+    public async Task PayOrderAsync_WhenPaymentSucceeds_ReturnsTrueAndChangeOrderStatus()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var dto = TestData.Payment.GeneratePaymentDto();
+        var order = TestData.Order.GenerateOrderEntities()[0];
+    
+        _orderRepositoryMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(order);
+        _paymentServiceMock.Setup(p => p.PayIbanAsync(dto.Iban!)).ReturnsAsync(true);
+        _unitOfWorkMock.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+    
+        // Act
+        var result = await _orderService.PayOrderAsync(orderId, dto);
+    
+        // Assert
+        Assert.That(result, Is.True);
+        Assert.That(order.Status, Is.EqualTo(OrderStatus.Paid));
     }
 }
