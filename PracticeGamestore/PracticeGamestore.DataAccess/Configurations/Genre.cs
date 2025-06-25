@@ -42,11 +42,11 @@ public class Genre : IEntityTypeConfiguration<Entities.Genre>
     
     private void SeedGenres(EntityTypeBuilder<Entities.Genre> builder)
     {
-        var strategyId = Guid.NewGuid();
-        var rpgId = Guid.NewGuid();
-        var sportsId = Guid.NewGuid();
-        var actionId = Guid.NewGuid();
-        var puzzleSkillId = Guid.NewGuid();
+        var strategyId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var rpgId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+        var sportsId = Guid.Parse("33333333-3333-3333-3333-333333333333");
+        var actionId = Guid.Parse("44444444-4444-4444-4444-444444444444");
+        var puzzleSkillId = Guid.Parse("55555555-5555-5555-5555-555555555555");
 
         builder.HasData(
             new Entities.Genre { Id = strategyId, Name = "Strategy", Description = "Strategic thinking and planning games" },

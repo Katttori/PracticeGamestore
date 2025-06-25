@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PracticeGamestore.Controllers.Tasks.Models;
+using PracticeGamestore.Models.Payment;
 
 namespace PracticeGamestore.Controllers.Tasks;
 
@@ -27,7 +27,7 @@ public class PaymentApiController : ControllerBase
     }
 
     [HttpPost("card")]
-    public IActionResult PayCard([FromBody] CardModel model)
+    public IActionResult PayCard([FromBody] CreditCardModel model)
     {
         if (model is null)
         {
