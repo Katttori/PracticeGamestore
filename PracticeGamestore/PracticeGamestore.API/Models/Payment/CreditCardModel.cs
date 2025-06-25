@@ -1,6 +1,6 @@
-namespace PracticeGamestore.Business.DataTransferObjects.Payment;
+namespace PracticeGamestore.Models.Payment;
 
-public class CreditCardDto
+public class CreditCardModel
 {
     public required string Number { get; set;}
     public required string ExpirationDate { get; set; }

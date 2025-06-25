@@ -3,9 +3,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PracticeGamestore.Business.DataTransferObjects.Order;
+using PracticeGamestore.Business.DataTransferObjects.Payment;
 using PracticeGamestore.Business.Services.HeaderHandle;
 using PracticeGamestore.Business.Services.Order;
 using PracticeGamestore.Controllers;
+using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.Order;
 
 namespace PracticeGamestore.Tests.Unit.Order;
@@ -30,7 +32,8 @@ public class OrderControllerTests
         _orderServiceMock = new Mock<IOrderService>();
         _headerHandleServiceMock = new Mock<IHeaderHandleService>();
         _loggerMock = new Mock<ILogger<OrderController>>();
-        _orderController = new OrderController(_orderServiceMock.Object, _headerHandleServiceMock.Object, _loggerMock.Object);
+        _orderController =
+            new OrderController(_orderServiceMock.Object, _headerHandleServiceMock.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -164,9 +167,41 @@ public class OrderControllerTests
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
     }
+
+    [Test]
+    public async Task PayOrder_WhenPaymentFails_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var model = TestData.Payment.GeneratePaymentRequestModel(true);
+        
+        _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, model.MapToPaymentDto())).ReturnsAsync(false);
+
+        // Act
+        var result = await _orderController.PayOrder(orderId, model);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
     
     [Test]
-    public async Task GetHistory_WhenUserEmailIsValid_ReturnsOkWithOrders()
+    public async Task PayOrder_WhenPaymentSuccessful_ShouldReturnOk()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var model = TestData.Payment.GeneratePaymentRequestModel(true);
+
+        _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, It.IsAny<PaymentDto>())).ReturnsAsync(true);
+
+        // Act
+        var result = await _orderController.PayOrder(orderId, model);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkResult>());
+    }
+    
+    [Test]
+    public async Task GetHistory_WhenUserEmailIsValid_ShouldReturnOkWithOrders()
     {
         // Arrange 
         _headerHandleServiceMock.Setup(x => x.CheckAccessAsync(CountryHeader, UserEmailHeader))

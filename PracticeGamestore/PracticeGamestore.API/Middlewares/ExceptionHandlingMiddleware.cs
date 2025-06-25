@@ -28,6 +28,10 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
                     statusCode = StatusCodes.Status403Forbidden;
                     message = e.Message;
                     break;
+                case KeyNotFoundException:
+                    statusCode = StatusCodes.Status404NotFound;
+                    message = e.Message;
+                    break;
                 default:
                     statusCode = StatusCodes.Status500InternalServerError;
                     message = ErrorMessages.GlobalError;
