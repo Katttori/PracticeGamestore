@@ -8,7 +8,6 @@ public class GameResponseModel
 {
     public Guid Id { get; set; }
     public required string Name { get; set; }
-    public required string Key { get; set; }
     public decimal Price { get; set; }
     public byte[]? Picture { get; set; }
     public string Description { get; set; } = string.Empty;

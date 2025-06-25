@@ -95,4 +95,14 @@ public class Order
             GameIds = [FirstId, SecondId]
         };
     }
+
+    public static Dictionary<string, string> GenerateGameKeyMapForOrder(DataAccess.Entities.Order order)
+    {
+        return order.GameOrders.Select(go => new 
+        {
+            GameName = go.Game.Name,
+            GameKey = go.Game.Key
+                
+        }).ToDictionary(x => x.GameName, x => x.GameKey);
+    }
 }

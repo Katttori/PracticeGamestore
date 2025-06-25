@@ -8,4 +8,5 @@ public interface IOrderRepository
     void Update(Entities.Order order);
     Task DeleteAsync(Guid id);
     Task<IEnumerable<Entities.Order>> GetOrdersByUserEmailAsync(string userEmail);
+    Task<Dictionary<string, string>> GetGameKeysByOrderIdAsync(Guid id);
 }

@@ -92,15 +92,15 @@ public class OrderController(
     {
         logger.LogInformation("Attempting to process payment for order with id: {Id}", id);
 
-        var isSuccessful = await orderService.PayOrderAsync(id, model.MapToPaymentDto());
-        if (!isSuccessful)
+        var gameKeyMap = await orderService.PayOrderAsync(id, model.MapToPaymentDto());
+        if (gameKeyMap is null)
         {
             logger.LogError("Payment failed for order with id: {Id}", id);
             return BadRequest(ErrorMessages.SomethingWentWrong);
         }
 
         logger.LogInformation("Payment successful for order with id: {Id}", id);
-        return Ok();
+        return Ok(gameKeyMap);
     }
 
     [HttpGet("history")]

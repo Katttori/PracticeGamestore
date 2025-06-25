@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -175,7 +176,8 @@ public class OrderControllerTests
         var orderId = Guid.NewGuid();
         var model = TestData.Payment.GeneratePaymentRequestModel(true);
         
-        _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, model.MapToPaymentDto())).ReturnsAsync(false);
+        _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, model.MapToPaymentDto()))
+            .ReturnsAsync(null as Dictionary<string, string>);
 
         // Act
         var result = await _orderController.PayOrder(orderId, model);
@@ -185,19 +187,28 @@ public class OrderControllerTests
     }
     
     [Test]
-    public async Task PayOrder_WhenPaymentSuccessful_ShouldReturnOk()
+    public async Task PayOrder_WhenPaymentSuccessful_ShouldReturnOkWithGameKeyMap()
     {
         // Arrange
-        var orderId = Guid.NewGuid();
+        var order =TestData.Order.GenerateOrderEntities()[0];
+        var gameKeyMap = TestData.Order.GenerateGameKeyMapForOrder(order);
         var model = TestData.Payment.GeneratePaymentRequestModel(true);
-
-        _orderServiceMock.Setup(s => s.PayOrderAsync(orderId, It.IsAny<PaymentDto>())).ReturnsAsync(true);
+        
+        _orderServiceMock.Setup(s => s.PayOrderAsync(order.Id, It.IsAny<PaymentDto>())).ReturnsAsync(gameKeyMap);
 
         // Act
-        var result = await _orderController.PayOrder(orderId, model);
+        var result = await _orderController.PayOrder(order.Id, model);
 
         // Assert
-        Assert.That(result, Is.InstanceOf<OkResult>());
+        Assert.That(result, Is.Not.Null);
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult!.StatusCode, Is.EqualTo(200));
+        Assert.That(okResult.Value, Is.Not.Null);
+        var resultMap = okResult.Value as Dictionary<string, string>;
+        Assert.That(resultMap!.Count, Is.EqualTo(gameKeyMap.Count));
+        Assert.That(resultMap.Keys, Is.SubsetOf(gameKeyMap.Keys));
+        Assert.That(resultMap, Is.EquivalentTo(gameKeyMap));
     }
     
     [Test]

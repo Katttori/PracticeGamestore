@@ -72,7 +72,7 @@ public class OrderService(
         await unitOfWork.SaveChangesAsync();
     }
     
-    public async Task<bool> PayOrderAsync(Guid orderId, PaymentDto payment)
+    public async Task<Dictionary<string, string>?> PayOrderAsync(Guid orderId, PaymentDto payment)
     {
         var order = await orderRepository.GetByIdAsync(orderId);
         if (order is null)
@@ -91,13 +91,13 @@ public class OrderService(
         else
             throw new ArgumentException(ErrorMessages.InvalidPaymentType);
         
-        if (!isSuccessful) return false;
+        if (!isSuccessful) return null;
 
         order.Status = OrderStatus.Paid;
         orderRepository.Update(order);
         var changes = await unitOfWork.SaveChangesAsync();
-        
-        return changes > 0;
+        if (changes <= 0) return null;
+        return await orderRepository.GetGameKeysByOrderIdAsync(orderId);
     }
 
     public async Task<IEnumerable<OrderResponseDto>> GetOrdersByUserEmailAsync(string userEmail)

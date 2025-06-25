@@ -29,7 +29,6 @@ public static class GameMappingExtensions
         {
             Id = responseDto.Id,
             Name = responseDto.Name,
-            Key = responseDto.Key,
             AgeRating = (int)responseDto.AgeRating,
             Price = responseDto.Price,
             Description = responseDto.Description,
