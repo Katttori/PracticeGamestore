@@ -2,7 +2,7 @@ namespace PracticeGamestore.Models.Payment;
 
 public class PaymentRequestModel
 {
-    public IbanModel? Iban { get; set; }
-    public CreditCardModel? CreditCard { get; set; }
-    public IboxModel? Ibox { get; set; }
+    public PaymentIbanModel? Iban { get; set; }
+    public PaymentCreditCardModel? CreditCard { get; set; }
+    public PaymentIboxModel? Ibox { get; set; }
 }
