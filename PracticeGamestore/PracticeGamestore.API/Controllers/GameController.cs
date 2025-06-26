@@ -51,7 +51,7 @@ public class GameController(
             Count = totalCount
         });
     }
-
+    
     [BirthdateRestrictionFilter]
     [ServiceFilter(typeof(BirthdateRestrictionFromDbFilter))]
     [HttpGet("{id:guid}")]

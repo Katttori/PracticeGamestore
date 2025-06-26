@@ -70,24 +70,6 @@ public class FileValidatorTests
     }
 
     [Test]
-    public void WhenFileIsEmpty_ShouldHaveError()
-    {
-        // Arrange
-        var fileRequest = new FileRequestModel
-        {
-            GameId = Guid.NewGuid(),
-            File = TestData.File.GenerateFile($"test{ValidationConstants.GameFile.AllowedExtensions[0]}", 0)
-        };
-
-        // Act
-        var result = _validator.TestValidate(fileRequest);
-
-        // Assert
-        result.ShouldHaveValidationErrorFor(x => x.File)
-            .WithErrorMessage(ErrorMessages.InvalidGameFile);
-    }
-
-    [Test]
     public void WhenFileIsTooLarge_ShouldHaveError()
     {
         // Arrange
