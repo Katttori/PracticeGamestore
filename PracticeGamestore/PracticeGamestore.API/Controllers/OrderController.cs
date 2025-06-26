@@ -46,7 +46,7 @@ public class OrderController(
     public async Task<IActionResult> Create(
         [FromHeader(Name = HeaderNames.LocationCountry), Required] string country,
         [FromHeader(Name = HeaderNames.UserEmail), Required] string email,
-        [FromBody] OrderRequestModel model)
+        [FromBody] OrderCreateRequestModel model)
     {
         await headerHandleService.CheckAccessAsync(country, email);
         
@@ -65,7 +65,7 @@ public class OrderController(
     [HttpPut("{id:guid}")]
     [ServiceFilter(typeof(RequestModelValidationFilter))]
     [Authorize(Roles = nameof(UserRole.Admin))]
-    public async Task<IActionResult> Update(Guid id, [FromBody] OrderRequestModel model)
+    public async Task<IActionResult> Update(Guid id, [FromBody] OrderUpdateRequestModel model)
     {
         var isUpdated = await orderService.UpdateAsync(id, model.MapToOrderDto());
 

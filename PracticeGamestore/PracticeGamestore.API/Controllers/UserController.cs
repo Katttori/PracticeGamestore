@@ -1,10 +1,6 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PracticeGamestore.Business.Constants;
 using PracticeGamestore.Business.Enums;
-using PracticeGamestore.Business.Services.Order;
-using PracticeGamestore.Business.Services.Token;
 using PracticeGamestore.Business.Services.User;
 using PracticeGamestore.Mappers;
 using PracticeGamestore.Models.User;
@@ -14,7 +10,6 @@ namespace PracticeGamestore.Controllers;
 [ApiController, Route("users")]
 public class UserController(
     IUserService userService,
-    ITokenService tokenService,
     ILogger<UserController> logger) : ControllerBase
 {
     [HttpGet]

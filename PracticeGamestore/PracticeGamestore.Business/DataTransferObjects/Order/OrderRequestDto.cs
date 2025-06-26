@@ -9,9 +9,9 @@ public class OrderRequestDto
     public decimal Total { get; set; }
     public List<Guid> GameIds { get; set; }
     
-    public OrderRequestDto(string userEmail, decimal total, List<Guid> gameIds)
+    public OrderRequestDto(string userEmail, decimal total, List<Guid> gameIds, Enums.OrderStatus? status = null)
     {
-        Status = OrderStatus.Created;
+        Status = status is null ? OrderStatus.Created : (OrderStatus)status;
         UserEmail = userEmail;
         Total = total;
         GameIds = gameIds;

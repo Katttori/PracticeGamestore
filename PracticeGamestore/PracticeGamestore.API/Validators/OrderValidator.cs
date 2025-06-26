@@ -3,7 +3,7 @@ using PracticeGamestore.Models.Order;
 
 namespace PracticeGamestore.Validators;
 
-public class OrderValidator : AbstractValidator<OrderRequestModel>
+public class OrderValidator : AbstractValidator<OrderCreateRequestModel>
 {
     public OrderValidator()
     {
