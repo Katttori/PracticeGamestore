@@ -251,7 +251,7 @@ public class OrderServiceTests
     }
     
     [Test]
-    public async Task PayOrderAsync_WhenPaymentFails_ShouldReturnFalse()
+    public async Task PayOrderAsync_WhenPaymentFails_ShouldReturnNull()
     {
         // Arrange
         var orderId = Guid.NewGuid();
@@ -265,11 +265,40 @@ public class OrderServiceTests
         var result = await _orderService.PayOrderAsync(orderId, dto);
     
         // Assert
-        Assert.That(result, Is.False);
+        Assert.That(result, Is.Null);
     }
     
     [Test]
-    public async Task PayOrderAsync_WhenPaymentSucceeds_ShouldReturnTrueAndChangeOrderStatus()
+    public async Task PayOrderAsync_WhenPaymentSucceeds_ShouldReturnGameKeyMapAndChangeOrderStatus()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var dto = TestData.Payment.GeneratePaymentDto();
+        var order = TestData.Order.GenerateOrderEntities()[0];
+        var gameKeyMap = TestData.Order.GenerateGameKeyMapForOrder(order);
+    
+        _orderRepositoryMock.Setup(s => s.GetByIdAsync(orderId))
+            .ReturnsAsync(order);
+        _paymentServiceMock.Setup(p => p.PayIbanAsync(dto.Iban!))
+            .ReturnsAsync(true);
+        _orderRepositoryMock.Setup(s => s.GetGameKeysByOrderIdAsync(orderId))
+            .ReturnsAsync(gameKeyMap);
+        _unitOfWorkMock.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
+    
+        // Act
+        var result = await _orderService.PayOrderAsync(orderId, dto);
+    
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(order.Status, Is.EqualTo(OrderStatus.Paid));
+        Assert.That(result!.Count, Is.EqualTo(gameKeyMap.Count));
+        Assert.That(result.Keys, Is.SubsetOf(gameKeyMap.Keys));
+        Assert.That(result, Is.EquivalentTo(gameKeyMap));
+    }
+    
+    [Test]
+    public async Task PayOrderAsync_WhenPaymentSucceedsButOrderStatusIsNotUpdated_ShouldReturnNull()
     {
         // Arrange
         var orderId = Guid.NewGuid();
@@ -278,15 +307,15 @@ public class OrderServiceTests
     
         _orderRepositoryMock.Setup(s => s.GetByIdAsync(orderId)).ReturnsAsync(order);
         _paymentServiceMock.Setup(p => p.PayIbanAsync(dto.Iban!)).ReturnsAsync(true);
-        _unitOfWorkMock.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+        _unitOfWorkMock.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(0);
     
         // Act
         var result = await _orderService.PayOrderAsync(orderId, dto);
     
         // Assert
-        Assert.That(result, Is.True);
-        Assert.That(order.Status, Is.EqualTo(OrderStatus.Paid));
-    }
+        Assert.That(result, Is.Null);
+        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _orderRepositoryMock.Verify(r => r.Update(order), Times.Once);    }
 
     [Test]
     public async Task GetOrdersByUserEmailAsync_WhenUserExists_ShouldReturnOrdersDtos()

@@ -44,7 +44,6 @@ public class GameControllerTests
     {
         return dto1.Id.Equals(dto2.Id) && 
                dto1.Name == dto2.Name && 
-               dto1.Key == dto2.Key && 
                dto1.Price == dto2.Price && 
                Equals(dto1.Picture, dto2.Picture) &&  
                dto1.Description == dto2.Description && 

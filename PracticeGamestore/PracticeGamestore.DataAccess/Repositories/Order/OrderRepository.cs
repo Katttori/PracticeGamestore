@@ -47,6 +47,22 @@ public class OrderRepository(GamestoreDbContext context) : IOrderRepository
             context.Orders.Remove(order);
         }
     }
+
+    public async Task<Dictionary<string, string>> GetGameKeysByOrderIdAsync(Guid id)
+    {
+        var order = await _ordersWithGamesIncluded.FirstOrDefaultAsync(o => o.Id == id);
+        if (order is null)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        return order.GameOrders.Select(go => new 
+            {
+                GameName = go.Game.Name,
+                GameKey = go.Game.Key
+                
+            }).ToDictionary(x => x.GameName, x => x.GameKey);
+    }
     
     public async Task<IEnumerable<Entities.Order>> GetOrdersByUserEmailAsync(string userEmail)
     {
