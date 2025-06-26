@@ -68,7 +68,7 @@ public static class CommonValidationRules
         return ruleBuilder
             .Must(x =>
             {
-                if (x == null || x.Length < ValidationConstants.GameFile.MinSize || x.Length > ValidationConstants.GameFile.MaxSize) return false;
+                if (x == null || x.Length > ValidationConstants.GameFile.MaxSize) return false;
                 var extension = Path.GetExtension(x.FileName)?.ToLowerInvariant();
                 return !string.IsNullOrEmpty(extension) && allowedExtensions.Contains(extension);
             }).WithMessage(ErrorMessages.InvalidGameFile);
