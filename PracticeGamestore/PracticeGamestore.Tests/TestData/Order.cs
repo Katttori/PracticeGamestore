@@ -86,7 +86,7 @@ public class Order
         );
     }
 
-    public static OrderRequestModel GenerateOrderRequestModel()
+    public static OrderCreateRequestModel GenerateOrderCreateRequestModel()
     {
         return new()
         {
@@ -104,5 +104,16 @@ public class Order
             GameKey = go.Game.Key
                 
         }).ToDictionary(x => x.GameName, x => x.GameKey);
+    }
+
+    public static OrderUpdateRequestModel GenerateOrderUpdateRequestModel()
+    {
+        return new()
+        {
+            UserEmail = "test@test.com",
+            Status = Business.Enums.OrderStatus.Initiated,
+            Total = 100,
+            GameIds = [FirstId, SecondId]
+        };
     }
 }

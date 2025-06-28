@@ -1,6 +1,6 @@
 namespace PracticeGamestore.Models.Order;
 
-public class OrderRequestModel
+public class OrderCreateRequestModel
 {
     public required string UserEmail { get; set; }
     public decimal Total { get; set; }

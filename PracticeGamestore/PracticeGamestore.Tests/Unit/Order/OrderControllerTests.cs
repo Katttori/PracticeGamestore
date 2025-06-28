@@ -21,9 +21,6 @@ public class OrderControllerTests
     private Mock<ILogger<OrderController>> _loggerMock;
     private OrderController _orderController;
     
-    private readonly List<OrderResponseDto> _orderDtos = TestData.Order.GenerateOrderResponseDtos();
-    private readonly OrderRequestModel _orderRequestModel = TestData.Order.GenerateOrderRequestModel();
-    
     private const string CountryHeader = "Ukraine";
     private const string UserEmailHeader = "test@gmail.com";
 
@@ -41,7 +38,9 @@ public class OrderControllerTests
     public async Task GetAll_WhenOrdersExist_ShouldReturnOkWithOrders()
     {
         // Arrange
-        _orderServiceMock.Setup(x => x.GetAllAsync()).ReturnsAsync(_orderDtos);
+        var orderDtos = TestData.Order.GenerateOrderResponseDtos();
+        
+        _orderServiceMock.Setup(x => x.GetAllAsync()).ReturnsAsync(orderDtos);
         
         // Act
         var result = await _orderController.GetAll();
@@ -53,11 +52,11 @@ public class OrderControllerTests
             (okResult?.Value as IEnumerable<OrderResponseModel> ?? Array.Empty<OrderResponseModel>()).ToList();
         for (var i = 0; i < responseModels.Count; i++)
         {
-            Assert.That(responseModels[i].Id, Is.EqualTo(_orderDtos[i].Id));
-            Assert.That(responseModels[i].Status, Is.EqualTo(_orderDtos[i].Status.ToString()));
-            Assert.That(responseModels[i].UserEmail, Is.EqualTo(_orderDtos[i].UserEmail));
-            Assert.That(responseModels[i].Total, Is.EqualTo(_orderDtos[i].Total));
-            Assert.That(responseModels[i].Games.Count, Is.EqualTo(_orderDtos[i].Games.Count));
+            Assert.That(responseModels[i].Id, Is.EqualTo(orderDtos[i].Id));
+            Assert.That(responseModels[i].Status, Is.EqualTo(orderDtos[i].Status.ToString()));
+            Assert.That(responseModels[i].UserEmail, Is.EqualTo(orderDtos[i].UserEmail));
+            Assert.That(responseModels[i].Total, Is.EqualTo(orderDtos[i].Total));
+            Assert.That(responseModels[i].Games.Count, Is.EqualTo(orderDtos[i].Games.Count));
         }
     }
     
@@ -78,32 +77,36 @@ public class OrderControllerTests
     public async Task GetById_WhenOrderFound_ShouldReturnOkWithOrder()
     {
         // Arrange
-        _orderServiceMock.Setup(x => x.GetByIdAsync(_orderDtos[0].Id!.Value)).ReturnsAsync(_orderDtos[0]);
+        var orderDtos = TestData.Order.GenerateOrderResponseDtos();
+        
+        _orderServiceMock.Setup(x => x.GetByIdAsync(orderDtos[0].Id!.Value)).ReturnsAsync(orderDtos[0]);
         
         // Act
-        var result = await _orderController.GetById(_orderDtos[0].Id!.Value);
+        var result = await _orderController.GetById(orderDtos[0].Id!.Value);
         
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
         var receivedOrder = (result as OkObjectResult)?.Value as OrderResponseModel;
         Assert.That(receivedOrder, Is.Not.Null);
-        Assert.That(receivedOrder, Has.Property("Id").EqualTo(_orderDtos[0].Id));
-        Assert.That(receivedOrder, Has.Property("Status").EqualTo(_orderDtos[0].Status.ToString()));
-        Assert.That(receivedOrder, Has.Property("UserEmail").EqualTo(_orderDtos[0].UserEmail));
-        Assert.That(receivedOrder, Has.Property("Total").EqualTo(_orderDtos[0].Total));
-        Assert.That(receivedOrder, Has.Property("Games").Count.EqualTo(_orderDtos[0].Games.Count));
+        Assert.That(receivedOrder, Has.Property("Id").EqualTo(orderDtos[0].Id));
+        Assert.That(receivedOrder, Has.Property("Status").EqualTo(orderDtos[0].Status.ToString()));
+        Assert.That(receivedOrder, Has.Property("UserEmail").EqualTo(orderDtos[0].UserEmail));
+        Assert.That(receivedOrder, Has.Property("Total").EqualTo(orderDtos[0].Total));
+        Assert.That(receivedOrder, Has.Property("Games").Count.EqualTo(orderDtos[0].Games.Count));
     }
     
     [Test]
     public async Task Create_WhenOperationFailed_ShouldReturnBadRequest()
     {
         // Arrange
+        var orderCreateRequestModel = TestData.Order.GenerateOrderCreateRequestModel();
+        
         _orderServiceMock
             .Setup(x => x.CreateAsync(It.IsAny<OrderRequestDto>()))
             .ReturnsAsync(null as Guid?);
         
         // Act
-        var result = await _orderController.Create(CountryHeader, UserEmailHeader, _orderRequestModel);
+        var result = await _orderController.Create(CountryHeader, UserEmailHeader, orderCreateRequestModel);
         
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -114,11 +117,12 @@ public class OrderControllerTests
     {
         // Arrange
         var newId = Guid.NewGuid();
+        var orderCreateRequestModel = TestData.Order.GenerateOrderCreateRequestModel();
         
         _orderServiceMock.Setup(x => x.CreateAsync(It.IsAny<OrderRequestDto>())).ReturnsAsync(newId);
         
         // Act
-        var result = await _orderController.Create(CountryHeader, UserEmailHeader, _orderRequestModel);
+        var result = await _orderController.Create(CountryHeader, UserEmailHeader, orderCreateRequestModel);
         
         // Assert
         Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
@@ -135,7 +139,7 @@ public class OrderControllerTests
             .ReturnsAsync(true);
         
         // Act
-        var result = await _orderController.Update(Guid.NewGuid(), _orderRequestModel);
+        var result = await _orderController.Update(Guid.NewGuid(), TestData.Order.GenerateOrderUpdateRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<NoContentResult>());
@@ -150,7 +154,7 @@ public class OrderControllerTests
             .ReturnsAsync(false);
         
         // Act
-        var result = await _orderController.Update(Guid.NewGuid(), _orderRequestModel);
+        var result = await _orderController.Update(Guid.NewGuid(), TestData.Order.GenerateOrderUpdateRequestModel());
         
         // Assert
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -215,10 +219,12 @@ public class OrderControllerTests
     public async Task GetHistory_WhenUserEmailIsValid_ShouldReturnOkWithOrders()
     {
         // Arrange 
+        var orderDtos = TestData.Order.GenerateOrderResponseDtos();
+        
         _headerHandleServiceMock.Setup(x => x.CheckAccessAsync(CountryHeader, UserEmailHeader))
             .Returns(Task.CompletedTask);
         _orderServiceMock.Setup(x => x.GetOrdersByUserEmailAsync(UserEmailHeader))
-            .ReturnsAsync(_orderDtos);
+            .ReturnsAsync(orderDtos);
         
         // Act
         var result = await _orderController.GetOrdersByUserEmail(CountryHeader, UserEmailHeader);
@@ -232,11 +238,11 @@ public class OrderControllerTests
         for (var i = 0; i < responseModels.Count; i++)
         {
             Assert.That(responseModels[i], Is.InstanceOf<OrderResponseModel>());
-            Assert.That(responseModels[i].Id, Is.EqualTo(_orderDtos[i].Id));
-            Assert.That(responseModels[i].Status, Is.EqualTo(_orderDtos[i].Status.ToString()));
-            Assert.That(responseModels[i].UserEmail, Is.EqualTo(_orderDtos[i].UserEmail));
-            Assert.That(responseModels[i].Total, Is.EqualTo(_orderDtos[i].Total));
-            Assert.That(responseModels[i].Games.Count, Is.EqualTo(_orderDtos[i].Games.Count));
+            Assert.That(responseModels[i].Id, Is.EqualTo(orderDtos[i].Id));
+            Assert.That(responseModels[i].Status, Is.EqualTo(orderDtos[i].Status.ToString()));
+            Assert.That(responseModels[i].UserEmail, Is.EqualTo(orderDtos[i].UserEmail));
+            Assert.That(responseModels[i].Total, Is.EqualTo(orderDtos[i].Total));
+            Assert.That(responseModels[i].Games.Count, Is.EqualTo(orderDtos[i].Games.Count));
         }
     }
 }

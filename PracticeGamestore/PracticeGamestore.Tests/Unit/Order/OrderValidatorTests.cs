@@ -22,7 +22,7 @@ public class OrderValidatorTests
     public void WhenTotalIsZeroOrNegative_ShouldHaveError(decimal total)
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
         order.Total = total;
 
         // Act
@@ -38,7 +38,7 @@ public class OrderValidatorTests
     public void WhenTotalIsPositive_ShouldNotHaveError(decimal total)
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
         order.Total = total;
 
         // Act
@@ -60,7 +60,7 @@ public class OrderValidatorTests
     public void WhenEmailIsInvalid_ShouldHaveError(string? email)
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
         order.UserEmail = email!;
 
         // Act
@@ -75,7 +75,7 @@ public class OrderValidatorTests
     public void WhenEmailIsValid_ShouldNotHaveError(string email)
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
         order.UserEmail = email;
 
         // Act
@@ -89,7 +89,7 @@ public class OrderValidatorTests
     public void WhenGameIdsIsNull_ShouldHaveError()
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
         order.GameIds = null!;
 
         // Act
@@ -103,7 +103,7 @@ public class OrderValidatorTests
     public void WhenGameIdsIsEmpty_ShouldHaveError()
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
         order.GameIds = [];
 
         // Act
@@ -117,7 +117,7 @@ public class OrderValidatorTests
     public void WhenGameIdsContainEmptyGuid_ShouldHaveCustomError()
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
         order.GameIds = [Guid.NewGuid(), Guid.Empty];
 
         // Act
@@ -132,7 +132,7 @@ public class OrderValidatorTests
     public void WhenGameIdsAreValid_ShouldNotHaveError()
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
         order.GameIds = [Guid.NewGuid(), Guid.NewGuid()];
 
         // Act
@@ -146,7 +146,7 @@ public class OrderValidatorTests
     public void WhenModelIsValid_ShouldNotHaveAnyErrors()
     {
         // Arrange
-        var order = TestData.Order.GenerateOrderRequestModel();
+        var order = TestData.Order.GenerateOrderCreateRequestModel();
 
         // Act
         var result = _validator.TestValidate(order);
@@ -159,7 +159,7 @@ public class OrderValidatorTests
     public void WhenModelHasMultipleInvalidFields_ShouldHaveMultipleErrors()
     {
         // Arrange
-        var order = new OrderRequestModel
+        var order = new OrderCreateRequestModel
         {
             UserEmail = "invalid",
             Total = 0,

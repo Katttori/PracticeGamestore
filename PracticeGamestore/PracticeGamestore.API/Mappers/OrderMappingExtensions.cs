@@ -5,13 +5,23 @@ namespace PracticeGamestore.Mappers;
 
 public static class OrderMappingExtensions
 {
-    public static OrderRequestDto MapToOrderDto(this OrderRequestModel model)
+    public static OrderRequestDto MapToOrderDto(this OrderCreateRequestModel model)
     {
         return new(
             model.UserEmail,
             model.Total,
             model.GameIds
             );
+    }
+    
+    public static OrderRequestDto MapToOrderDto(this OrderUpdateRequestModel model)
+    {
+        return new(
+            model.UserEmail,
+            model.Total,
+            model.GameIds,
+            model.Status
+        );
     }
 
     public static OrderResponseModel MapToOrderModel(this OrderResponseDto dto)
